@@ -48,8 +48,8 @@ graph TB
     C --> E[バックエンドAPI]
     E --> F[RAGシステム]
     F --> G[Embedding処理]
-    F --> H[ベクトルDB<br/>Pinecone/Chroma]
-    F --> I[LLM<br/>OpenAI or Qwen]
+    F --> H[ベクトルDB<br/>TiDB Serverless]
+    F --> I[LLM<br/>GeminiAPI]
     H --> J[データソース]
     J --> K[Discord<br/>ログ]
     J --> L[Notion<br/>資料]
@@ -183,7 +183,7 @@ flowchart TD
 
 ---
 
-# 1⃣1⃣ URL設計テンプレ
+# 11 URL設計テンプレ
 
 ```
 /login

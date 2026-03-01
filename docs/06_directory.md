@@ -14,9 +14,9 @@
 | --- | --- |
 | リポジトリ構成 | Monorepo |
 | アーキテクチャ | Layered（P0は薄く、P1で分離強化） |
-| デプロイ単位 | Web（静的/SSR） + API（軽量） |
-| 言語 | TypeScript |
-| MVP方針 | **P0は新入生向けWeb + 軽量API + scripts** |
+| デプロイ単位 | Web（Cloudflare Pages） + API（Cloud Run） + Dify（自宅PC） |
+| 言語 | FE: TypeScript / API: Python |
+| MVP方針 | **P0は新入生向けWeb + 軽量API + Dify + scripts** |
 
 ---
 
@@ -28,25 +28,15 @@ root/
 │   ├── web/                 # 新入生向けチャットUI（P0）
 │   ├── api/                 # 軽量API（ログ保存/PII/評価）（P0）
 │   └── admin/               # 管理画面（P1）
-├── packages/
-│   ├── ui/                  # 共有UI（Button等）
-│   ├── shared/              # 型定義・共通関数
-│   └── config/              # 環境設定・定数
 ├── scripts/
 │   ├── ingest/              # 手動エクスポート整形（P0）
 │   └── ops/                 # KPI集計/バックアップ（P0）
 ├── infra/
-│   ├── docker/              # ローカル検証用
-│   └── deploy/              # デプロイスクリプト（簡易）
+│   ├── dify/                # Dify起動設定（docker-compose）
+│   ├── docker/              # API用Dockerfile
+│   ├── env/                 # 環境変数テンプレート
+│   └── ci/                  # GitHub Actions
 ├── docs/
-│   ├── 00_design_memo.md
-│   ├── 01_features.md
-│   ├── 03_screen_flow.md
-│   ├── 04_permissions.md
-│   ├── 05_db.md
-│   ├── 07_infra.md
-│   ├── 08_logging.md
-│   └── 09_issues.md
 └── README.md
 ```
 
@@ -57,119 +47,128 @@ root/
 ```
 apps/web/
 ├── src/
-│   ├── pages/ or app/        # ルーティング
+│   ├── app/                  # Next.js App Router
 │   ├── features/
 │   │   ├── chat/             # チャット画面
 │   │   ├── consent/          # オプトイン同意
 │   │   └── feedback/         # 👍👎
 │   ├── components/           # 共通コンポーネント
-│   ├── lib/
-│   │   ├── api.ts            # APIクライアント
-│   │   └── dify.ts           # Dify呼び出し補助（必要なら）
-│   └── styles/
-└── package.json
+│   └── lib/
+│       ├── api.ts            # Backend APIクライアント
+│       └── dify.ts           # Dify Chat API呼び出し
+├── package.json
+└── next.config.ts
 ```
 
 ---
 
-## 3️⃣ apps/api（P0：軽量API）
+# 3️⃣ apps/api（P0：軽量API・Python）
 
 ```
 apps/api/
+├── main.py                   # FastAPI エントリーポイント
+├── routers/
+│   ├── feedback.py           # 評価保存
+│   ├── consent.py            # 同意保存
+│   └── health.py
+├── services/
+│   ├── pii_mask.py           # 正規表現マスキング
+│   ├── log_store.py          # TiDB アクセス
+│   └── rate_limit.py         # レート制御ロジック
+├── middleware/
+│   └── request_id.py
+├── models/                   # Pydantic スキーマ定義
+│   ├── feedback.py
+│   └── session.py
+├── Dockerfile
+└── requirements.txt
+```
+
+---
+
+# 4️⃣ infra/dify（P0：Dify起動設定）
+
+```
+infra/dify/
+├── docker-compose.yml        # Dify公式composeをベースにカスタマイズ
+└── .env.dify.example         # Dify環境変数テンプレート
+                              # （TiDB / Supabase / OpenAI / Gemini キー等）
+```
+
+> Dify自体のコードは管理しない。公式Dockerイメージをそのまま使用。
+> GUIでRAGパイプライン・LLM設定・Chat API公開を管理する。
+
+---
+
+# 5️⃣ scripts/ingest（P0：手動取り込み支援）
+
+```
+scripts/ingest/
+├── README.md                 # 手順書（週1更新のやり方）
+├── discord/
+│   ├── export.md             # Discordの書き出し手順
+│   └── normalize.py          # テキスト整形（ノイズ除去）
+└── notion/
+    ├── export.md
+    └── normalize.py
+```
+
+---
+
+# 6️⃣ apps/admin（P1：管理画面）
+
+```
+apps/admin/
 ├── src/
-│   ├── routes/
-│   │   ├── chat.ts           # Difyプロキシ（任意）
-│   │   ├── feedback.ts       # 評価保存
-│   │   ├── consent.ts        # 同意保存
-│   │   └── health.ts
-│   ├── services/
-│   │   ├── piiMask.ts        # 正規表現マスキング
-│   │   ├── logStore.ts       # DBアクセス
-│   │   └── kpi.ts            # 集計
-│   ├── middleware/
-│   │   ├── rateLimit.ts
-│   │   └── requestId.ts
-│   └── index.ts
-└── package.json
+│   ├── app/                  # Next.js App Router
+│   ├── features/
+│   │   ├── dashboard/        # KPIダッシュボード
+│   │   ├── conversations/    # 会話ログ閲覧
+│   │   ├── feedbacks/        # 👍👎評価閲覧
+│   │   ├── ingestion/        # 取り込みジョブ管理
+│   │   ├── faq/              # FAQ編集
+│   │   └── settings/         # システム設定（レート制限等）
+│   ├── components/           # 共通コンポーネント
+│   └── lib/
+│       ├── api.ts            # Backend APIクライアント
+│       └── auth.ts           # Discord OAuth連携
+├── package.json
+└── next.config.ts
 ```
 
 ---
 
-# 4️⃣ scripts/ingest（P0：手動取り込み支援）
-
-```
-scripts/ingest/
-├── README.md                 # 手順書（週1更新のやり方）
-├── discord/
-│   ├── export.md             # Discordの書き出し手順
-│   └── normalize.ts          # テキスト整形（ノイズ除去）
-└── notion/
-    ├── export.md
-    └── normalize.ts
-```
-
----
-
-# 5️⃣ apps/admin（P1：管理画面）
-
-```
-scripts/ingest/
-├── README.md                 # 手順書（週1更新のやり方）
-├── discord/
-│   ├── export.md             # Discordの書き出し手順
-│   └── normalize.ts          # テキスト整形（ノイズ除去）
-└── notion/
-    ├── export.md
-    └── normalize.ts
-```
-
----
-
-# 5️⃣ マイクロサービス構成
-
-```
-services/
-├── auth-service/
-├── core-service/
-├── notification-service/
-└── gateway/
-```
-
----
-
-# 6️⃣ インフラ構成
+# 7️⃣ infra構成
 
 ```
 infra/
+├── dify/
+│   ├── docker-compose.yml        # Dify公式compose（自宅PC上で実行）
+│   └── .env.dify.example         # Supabase / TiDB / OpenAI キー等
 ├── docker/
-│   ├── web.Dockerfile
-│   ├── api.Dockerfile
-│   └── docker-compose.yml
+│   └── api.Dockerfile            # FastAPI用（Cloud Run へデプロイ）
 ├── env/
 │   ├── .env.example
 │   ├── .env.dev
 │   └── .env.prod
 └── ci/
-    └── github-actions.yml
+    ├── deploy-fe.yml             # Cloudflare Pages へ FEデプロイ
+    ├── deploy-api.yml            # Cloud Run へ FastAPIデプロイ
+    └── deploy-dify.yml           # self-hosted runner で Dify再起動
 ```
 
----
-
-# 7️⃣ ドキュメント構成
+### CDフロー
 
 ```
-docs/
-├── 00_vision.md
-├── 01_feature-list.md
-├── 03_screen-flow.md
-├── 04_permission-design.md
-├── 05_api-spec.md
-├── 06_directory.md
-├── 07_infra.md
-├── 08_logging.md
-├── 09_kpi.md
-├── 10_rag-design.md
-└── 11_cost-estimation.md
+git push (main)
+├── deploy-fe.yml    (cloud-hosted runner)
+│   └── Cloudflare Pages へ自動デプロイ
+│
+├── deploy-api.yml   (cloud-hosted runner)
+│   └── Cloud Run へ FastAPI自動デプロイ
+│
+└── deploy-dify.yml  (self-hosted runner = 自宅PC)
+    └── docker-compose pull && docker-compose up -d
 ```
 
 ---
@@ -179,93 +178,11 @@ docs/
 ```
 tests/
 ├── unit/
-│   ├── usecases/
-│   └── rateLimit/
+│   ├── pii_mask/
+│   └── rate_limit/
 ├── integration/
 │   ├── api/
-│   ├── rag/
 │   └── db/
-├── e2e/
-│   └── chat-flow.spec.ts
-└── load/
-    └── rate-limit-test.ts
-```
-
----
-
-# 9️⃣ ベクトルDB / AI機能がある場合
-
-メンターの「RAG ON/OFFボタン」反映。
-
-```
-packages/
-├── rag/
-│   ├── retriever.ts
-│   ├── prompt-builder.ts
-│   ├── rag-toggle.ts
-│   └── answer-validator.ts
-│
-├── llm/
-│   ├── openai.client.ts
-│   ├── qwen.client.ts
-│   └── cost-tracker.ts
-```
-
----
-
-## 🔥 RAG切替ロジック
-
-```
-if (ragEnabled) {
-context=awaitretriever.search(query)
-}else {
-context=""
-}
-```
-
----
-
-# 🔟 状態管理分離パターン（FE）
-
-```
-stores/
-├── session.store.ts
-├── rateLimit.store.ts
-├── consent.store.ts
-└── rag.store.ts
-```
-
----
-
-# 11️⃣ API設計分離パターン
-
-```
-apps/api/src/
-├── routes/
-│   ├── chat.route.ts
-│   ├── feedback.route.ts
-│   ├── rag-toggle.route.ts
-│   └── stats.route.ts
-│
-├── usecases/
-│   ├── sendMessage.usecase.ts
-│   ├── calculateUsage.usecase.ts
-│   ├── enforceRateLimit.usecase.ts
-│   └── toggleRag.usecase.ts
-│
-├── infrastructure/
-│   ├── db/
-│   ├── llm/
-│   ├── rag/
-│   └── cost/
-│
-├── middleware/
-│   ├── rateLimit.ts
-│   ├── tokenLogger.ts
-│   └── consentCheck.ts
-│
-└── domain/
-    ├── UsageLog.ts
-    ├── Session.ts
-    └── RatePolicy.ts
+└── e2e/
+    └── chat-flow.spec.ts
 ```
