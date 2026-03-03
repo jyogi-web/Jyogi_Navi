@@ -1,8 +1,8 @@
 # 06_directory
 
 作成日時: 2026年3月1日 17:36
-最終更新日時: 2026年3月1日 17:36
-最終更新者: iseebi
+最終更新日時: 2026年3月3日 12:21
+最終更新者: KOU050223
 
 # 📁 ディレクトリ構成図
 
@@ -68,21 +68,30 @@ apps/web/
 ```
 apps/api/
 ├── main.py                   # FastAPI エントリーポイント
+├── config.py                 # 設定・環境変数読み込み
 ├── routers/
+│   ├── __init__.py
 │   ├── feedback.py           # 評価保存
 │   ├── consent.py            # 同意保存
 │   └── health.py
 ├── services/
+│   ├── __init__.py
 │   ├── pii_mask.py           # 正規表現マスキング
 │   ├── log_store.py          # TiDB アクセス
 │   └── rate_limit.py         # レート制御ロジック
 ├── middleware/
+│   ├── __init__.py
 │   └── request_id.py
 ├── models/                   # Pydantic スキーマ定義
+│   ├── __init__.py
 │   ├── feedback.py
 │   └── session.py
 ├── Dockerfile
-└── requirements.txt
+├── pyproject.toml            # uv パッケージ管理
+├── uv.lock                   # uv ロックファイル
+├── requirements.txt
+├── .env.example              # 環境変数テンプレート
+└── .python-version           # Python バージョン指定
 ```
 
 ---
