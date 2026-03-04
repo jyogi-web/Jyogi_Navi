@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,5 +17,9 @@ class HealthResponse(BaseModel):
 @router.get("/health", response_model=HealthResponse)
 async def health_check(session: AsyncSession = Depends(get_db_session)):
     """サービスの死活監視エンドポイント。"""
-    db_status = "ok" if await ping(session) else "unreachable"
-    return HealthResponse(status="ok", db=db_status)
+    db_ok = await ping(session)
+    db_status = "ok" if db_ok else "unreachable"
+    status = "ok" if db_ok else "degraded"
+    response = HealthResponse(status=status, db=db_status)
+    http_status = 200 if db_ok else 503
+    return JSONResponse(content=response.model_dump(), status_code=http_status)
