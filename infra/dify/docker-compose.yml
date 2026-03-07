@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  # =====================================
+  # Dify Web UI
+  # =====================================
+  dify-web:
+    image: langgenius/dify-web:latest
+    container_name: dify-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: "${DIFY_API_URL:-http://localhost:5001}"
+      NEXT_PUBLIC_APP_URL: "${DIFY_APP_URL:-http://localhost:3000}"
+    depends_on:
+      - dify-api
+    networks:
+      - dify-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =====================================
+  # Dify API
+  # =====================================
+  dify-api:
+    image: langgenius/dify-api:latest
+    container_name: dify-api
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    expose:
+      - 5001
+    environment:
+      # =====================================
+      # Basic settings
+      # =====================================
+      SECRET_KEY: "${SECRET_KEY}"
+      LOG_LEVEL: "${LOG_LEVEL:-INFO}"
+      EDITION: "open-source"
+      DEPLOY_ENV: "${DEPLOY_ENV:-docker}"
+
+      # =====================================
+      # Database: Supabase (PostgreSQL)
+      # =====================================
+      DB_HOST: "${SUPABASE_DB_HOST}"
+      DB_PORT: "${SUPABASE_DB_PORT:-5432}"
+      DB_USER: "${SUPABASE_DB_USER}"
+      DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
+      DB_NAME: "${SUPABASE_DB_NAME:-postgres}"
+      SQLALCHEMY_DATABASE_URI: "postgresql://${SUPABASE_DB_USER}:${SUPABASE_DB_PASSWORD}@${SUPABASE_DB_HOST}:${SUPABASE_DB_PORT:-5432}/${SUPABASE_DB_NAME:-postgres}"
+
+      # =====================================
+      # Cache & Task Queue: Upstash Redis
+      # =====================================
+      REDIS_URL: "${UPSTASH_REDIS_URL}"
+      CELERY_BROKER_URL: "${UPSTASH_REDIS_URL}"
+      CELERY_RESULT_BACKEND: "${UPSTASH_REDIS_URL}"
+
+      # =====================================
+      # Vector DB: TiDB Serverless
+      # =====================================
+      VECTOR_STORE: "tidb"
+      TIDB_HOST: "${TIDB_HOST}"
+      TIDB_PORT: "${TIDB_PORT:-4000}"
+      TIDB_USER: "${TIDB_USER}"
+      TIDB_PASSWORD: "${TIDB_PASSWORD}"
+      TIDB_DATABASE: "${TIDB_DATABASE:-dify}"
+
+      # =====================================
+      # LLM: Gemini
+      # =====================================
+      LLM_PROVIDER: "google"
+      GOOGLE_API_KEY: "${GOOGLE_API_KEY}"
+
+      # =====================================
+      # Embedding: Gemini
+      # =====================================
+      EMBEDDINGS_PROVIDER: "google"
+      EMBEDDING_MODEL: "models/embedding-001"
+
+      # =====================================
+      # File Storage: local（デフォルト）
+      # =====================================
+      STORAGE_TYPE: "local"
+      UPLOAD_FILE_SIZE_LIMIT: "100"
+
+      # =====================================
+      # Auth settings
+      # =====================================
+      DIFY_API_SECRET_KEY: "${DIFY_API_SECRET_KEY}"
+
+      # =====================================
+      # CORS settings
+      # =====================================
+      CORS_ORIGINS: "*"
+
+    depends_on:
+      - dify-redis
+    networks:
+      - dify-network
+    volumes:
+      # ローカルファイルストレージ用
+      - dify-storage:/app/storage
+      # ログディレクトリ
+      - dify-logs:/var/log/dify
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =====================================
+  # Redis: Upstash 経由での代替
+  # キャッシュ・タスク管理用（ローカルテスト用）
+  # =====================================
+  dify-redis:
+    image: "redis:7-alpine"
+    container_name: dify-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD:-dify}"
+    volumes:
+      - dify-redis-data:/data
+    networks:
+      - dify-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+# =====================================
+# Networks
+# =====================================
+networks:
+  dify-network:
+    driver: bridge
+
+# =====================================
+# Volumes
+# =====================================
+volumes:
+  dify-storage:
+    driver: local
+  dify-logs:
+    driver: local
+  dify-redis-data:
+    driver: local

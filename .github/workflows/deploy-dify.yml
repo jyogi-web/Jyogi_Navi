@@ -1,0 +1,76 @@
+name: Deploy Dify (self-hosted runner on home PC)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/dify/**'
+      - '.github/workflows/deploy-dify.yml'
+
+jobs:
+  deploy-dify:
+    runs-on: [self-hosted, dify]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check docker-compose.yml syntax
+        run: |
+          cd infra/dify
+          docker-compose config > /dev/null
+          echo "✅ docker-compose.yml syntax OK"
+
+      - name: Pull latest images
+        run: |
+          cd infra/dify
+          docker-compose pull
+
+      - name: Start Dify services
+        run: |
+          cd infra/dify
+          docker-compose up -d
+
+      - name: Wait for Dify API to be healthy
+        run: |
+          cd infra/dify
+          for i in {1..30}; do
+            if docker-compose exec -T dify-api curl -f http://localhost:5001/health > /dev/null 2>&1; then
+              echo "✅ Dify API is healthy"
+              exit 0
+            fi
+            echo "Attempt $i: Waiting for Dify API..."
+            sleep 10
+          done
+          echo "❌ Dify API health check failed"
+          exit 1
+
+      - name: Verify services are running
+        run: |
+          cd infra/dify
+          docker-compose ps
+          echo "✅ All services are running"
+
+      - name: Cleanup old docker assets
+        run: |
+          docker system prune -f
+          echo "✅ Cleanup completed"
+
+      - name: Send Slack notification (success)
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: '✅ Dify deployment succeeded'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+      - name: Send Slack notification (failure)
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: '❌ Dify deployment failed'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
