@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { hasConsented } from '@/lib/session';
+import { ChatContainer } from '@/features/chat';
 
 export default function ChatPage() {
   const router = useRouter();
@@ -28,14 +29,5 @@ export default function ChatPage() {
     );
   }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">チャット画面</h1>
-        <p className="text-muted-foreground">
-          この画面は次のステップで実装します
-        </p>
-      </div>
-    </div>
-  );
+  return <ChatContainer />;
 }
