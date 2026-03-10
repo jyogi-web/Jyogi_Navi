@@ -21,11 +21,17 @@ export function ChatContainer() {
   }, [messages]);
 
   const handleSendMessage = async (content: string) => {
+    // 空白のみの入力を防ぐ
+    const trimmed = content.trim();
+    if (!trimmed) {
+      return;
+    }
+
     // ユーザーメッセージを追加
     const userMessage: Message = {
       id: uuidv4(),
       role: 'user',
-      content,
+      content: trimmed,
       timestamp: new Date(),
     };
 
@@ -40,7 +46,7 @@ export function ChatContainer() {
       const assistantMessage: Message = {
         id: uuidv4(),
         role: 'assistant',
-        content: `ご質問ありがとうございます！「${content}」についてですね。\n\nこちらは開発中のダミーレスポンスです。実際のDify APIを統合すると、じょぎに関する詳しい情報をお答えできます。\n\n気軽に他の質問もしてくださいね！`,
+        content: `ご質問ありがとうございます！「${trimmed}」についてですね。\n\nこちらは開発中のダミーレスポンスです。実際のDify APIを統合すると、じょぎに関する詳しい情報をお答えできます。\n\n気軽に他の質問もしてくださいね！`,
         timestamp: new Date(),
       };
 
