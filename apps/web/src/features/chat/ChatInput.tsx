@@ -80,6 +80,7 @@ export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
           size="icon"
           disabled={isLoading || disabled}
           className="h-10 w-10 rounded-xl flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+          aria-label={isLoading ? 'メッセージを送信中' : 'メッセージを送信'}
         >
           {isLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
