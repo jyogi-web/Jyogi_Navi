@@ -35,6 +35,7 @@ export function ChatHeader({ messagesCount }: ChatHeaderProps) {
               size="icon"
               onClick={handleBack}
               className="rounded-full"
+              aria-label="戻る"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -56,7 +57,7 @@ export function ChatHeader({ messagesCount }: ChatHeaderProps) {
           </div>
 
           {/* 右側：メニューボタン */}
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Button variant="ghost" size="icon" className="rounded-full" aria-label="メニュー">
             <MoreVertical className="h-5 w-5" />
           </Button>
         </div>
