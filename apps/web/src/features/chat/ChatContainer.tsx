@@ -21,6 +21,11 @@ export function ChatContainer() {
   }, [messages]);
 
   const handleSendMessage = async (content: string) => {
+    // 送信中の場合は再入を防ぐ
+    if (isLoading) {
+      return;
+    }
+
     // 空白のみの入力を防ぐ
     const trimmed = content.trim();
     if (!trimmed) {
@@ -99,7 +104,8 @@ export function ChatContainer() {
                     <button
                       key={index}
                       onClick={() => handleSendMessage(example.replace(/^[^\s]+ /, ''))}
-                      className="text-left p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm"
+                      disabled={isLoading}
+                      className="text-left p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {example}
                     </button>
