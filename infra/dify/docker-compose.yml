@@ -98,6 +98,8 @@ services:
       # CORS settings
       # =====================================
       CORS_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
+      CONSOLE_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
+      WEB_API_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
 
     networks:
       - dify-network
