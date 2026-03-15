@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from middleware.request_id import RequestIDMiddleware
-from routers import health, consent, feedback
+from routers import consent, feedback, health
 
 app = FastAPI(title="Jyogi Navi API", version="0.1.0")
 
