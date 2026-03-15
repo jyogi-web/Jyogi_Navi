@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-tailwindcss"
+  ],
+  "customSyntax": "postcss-scss",
+  "rules": {
+    "at-rule-no-unknown": null,
+    "function-no-unknown": null,
+    "import-notation": null,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "no-descending-specificity": null,
+    "lightness-notation": null,
+    "hue-degree-notation": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null
+  }
+}

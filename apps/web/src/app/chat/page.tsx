@@ -2,24 +2,24 @@
 
 import { useEffect, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
-import { ConsentScreen } from '@/features/consent';
 import { getConsent } from '@/lib/session';
+import { ChatContainer } from '@/features/chat';
 
 const subscribe = () => () => {};
 
-export default function Home() {
+export default function ChatPage() {
   const router = useRouter();
   const isHydrated = useSyncExternalStore(subscribe, () => true, () => false);
   const consented = isHydrated ? getConsent() : false;
 
   useEffect(() => {
-    // 同意済みかチェックし、済んでいればチャット画面へリダイレクト
-    if (isHydrated && consented) {
-      router.replace('/chat');
+    // 未同意の場合はホームページへリダイレクト
+    if (isHydrated && !consented) {
+      router.replace('/');
     }
   }, [router, isHydrated, consented]);
 
-  if (!isHydrated || consented) {
+  if (!isHydrated || !consented) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -30,5 +30,5 @@ export default function Home() {
     );
   }
 
-  return <ConsentScreen />;
+  return <ChatContainer />;
 }
