@@ -20,7 +20,7 @@ def _build_engine():
     url = URL.create(
         drivername="mysql+aiomysql",
         username=settings.tidb_user,
-        password=settings.tidb_password,
+        password=settings.tidb_password.get_secret_value(),
         host=settings.tidb_host,
         port=settings.tidb_port,
         database=settings.tidb_database,
