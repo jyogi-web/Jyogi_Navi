@@ -11,6 +11,16 @@ class Settings(BaseSettings):
     tidb_database: str = ""
     tidb_ssl_ca: str = ""
 
+    supabase_url: str = ""
+    supabase_secret: str = ""
+
+    dify_api_base_url: str = ""
+    dify_api_key: str = ""
+
+    discord_client_id: str = ""
+    discord_client_secret: str = ""
+    discord_guild_id: str = ""
+
     app_env: str = "development"
     daily_token_limit: int = 10000
 
