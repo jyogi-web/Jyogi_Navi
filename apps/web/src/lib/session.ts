@@ -60,9 +60,3 @@ export function getConsent(): boolean {
   }
 }
 
-/**
- * 同意状態をチェック
- */
-export function hasConsented(): boolean {
-  return getConsent();
-}

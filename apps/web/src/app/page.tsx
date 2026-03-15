@@ -3,14 +3,14 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConsentScreen } from '@/features/consent';
-import { hasConsented } from '@/lib/session';
+import { getConsent } from '@/lib/session';
 
 const subscribe = () => () => {};
 
 export default function Home() {
   const router = useRouter();
   const isHydrated = useSyncExternalStore(subscribe, () => true, () => false);
-  const consented = isHydrated ? hasConsented() : false;
+  const consented = isHydrated ? getConsent() : false;
 
   useEffect(() => {
     // 同意済みかチェックし、済んでいればチャット画面へリダイレクト

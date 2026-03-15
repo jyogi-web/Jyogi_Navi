@@ -2,7 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
-import { hasConsented } from '@/lib/session';
+import { getConsent } from '@/lib/session';
 import { ChatContainer } from '@/features/chat';
 
 const subscribe = () => () => {};
@@ -10,7 +10,7 @@ const subscribe = () => () => {};
 export default function ChatPage() {
   const router = useRouter();
   const isHydrated = useSyncExternalStore(subscribe, () => true, () => false);
-  const consented = isHydrated ? hasConsented() : false;
+  const consented = isHydrated ? getConsent() : false;
 
   useEffect(() => {
     // 未同意の場合はホームページへリダイレクト
