@@ -37,7 +37,7 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_db_session() -> AsyncGenerator[AsyncSession]:
     """FastAPI Depends 用。リクエストスコープでセッションを提供し自動クローズ。"""
     async with AsyncSessionLocal() as session:
         yield session

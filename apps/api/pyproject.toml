@@ -22,4 +22,41 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "httpx>=0.26.0",
+    "ruff>=0.4.0",
 ]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes（未使用import、未定義変数等）
+    "I",    # isort（import順序）
+    "UP",   # pyupgrade（古い構文を新しいPython構文へ）
+    "B",    # flake8-bugbear（バグになりやすいパターン）
+    "S",    # flake8-bandit（セキュリティ）
+    "ARG",  # flake8-unused-arguments（未使用引数）
+    "PTH",  # flake8-use-pathlib
+    "RUF",  # Ruff独自ルール
+]
+ignore = [
+    "S101",   # assert使用（テストで必要）
+    "S105",   # ハードコードされたパスワード（設定読み込みで誤検知）
+    "S106",   # 同上
+    "ARG001", # 未使用引数（FastAPI Dependsパターンで必要）
+    "ARG002", # 未使用引数（middlewareシグネチャ等）
+    "B008",   # 関数呼び出しをデフォルト引数に使用（FastAPI Dependsパターン）
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*.py" = ["S101", "ARG"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "db", "middleware", "models", "routers", "services"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
