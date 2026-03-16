@@ -12,11 +12,11 @@
     "infra:down": "docker compose -f infra/dify/docker-compose.yml down",
     "dev:web": "pnpm --filter web dev",
     "dev:api": "pnpm --filter api dev",
-    "build:web": "pnpm --filter web build",
-    "test:web": "pnpm --filter web test",
-    "test:api": "pnpm --filter api test",
-    "lint:web": "pnpm --filter web lint",
-    "lint:api": "pnpm --filter api lint"
+    "build:web": "turbo run build --filter=web",
+    "test:web": "turbo run test --filter=web",
+    "test:api": "turbo run test --filter=api",
+    "lint:web": "turbo run lint --filter=web",
+    "lint:api": "turbo run lint --filter=api"
   },
   "devDependencies": {
     "turbo": "^2.5.0",
