@@ -1,0 +1,12 @@
+{
+  "name": "admin",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'admin app is not implemented yet (P1)' && exit 0",
+    "build": "echo 'admin app is not implemented yet (P1)' && exit 0",
+    "lint": "echo 'admin app is not implemented yet (P1)' && exit 0",
+    "test": "echo 'admin app is not implemented yet (P1)' && exit 0",
+    "start": "echo 'admin app is not implemented yet (P1)' && exit 0"
+  }
+}
