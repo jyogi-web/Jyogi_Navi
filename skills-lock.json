@@ -11,10 +11,30 @@
       "sourceType": "github",
       "computedHash": "7f793b91a34e2222e54572de0f8c52abdda222d4e06c1cd4ae959117c1c976e2"
     },
+    "pytidb": {
+      "source": "pingcap/agent-rules",
+      "sourceType": "github",
+      "computedHash": "ae57863b64093f6944694ba0700b737f4ee9950b0f9ab5bc406e4d9c8624597d"
+    },
     "supabase-postgres-best-practices": {
       "source": "supabase/agent-skills",
       "sourceType": "github",
       "computedHash": "9c87c315aed143ee3b34bec8117100f5035e0df09e6b23e1ecc772cff434c9ad"
+    },
+    "tidb-sql": {
+      "source": "pingcap/agent-rules",
+      "sourceType": "github",
+      "computedHash": "09181c06736e683fa66e756f62dfca46958332f04aca72a614de8f2b81f43540"
+    },
+    "tidbx": {
+      "source": "pingcap/agent-rules",
+      "sourceType": "github",
+      "computedHash": "707c331f14c259d21fdfd21e9a771a88695167aba0d04b0c34455159b57a7861"
+    },
+    "tidbx-serverless-driver": {
+      "source": "pingcap/agent-rules",
+      "sourceType": "github",
+      "computedHash": "cfcf1e3d80bf4738ba070f493c0a40b56a3df91f5bc9e8039ba6466d158d2384"
     }
   }
 }
