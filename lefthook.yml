@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: true
+  jobs:
+    # FE: eslint
+    - name: lint-fe
+      glob: "apps/web/**/*.{ts,tsx}"
+      run: pnpm --filter web lint
+
+    # FE: stylelint
+    - name: lint-css
+      glob: "apps/web/**/*.css"
+      run: pnpm --filter web lint:css
+
+    # BE: ruff lint
+    - name: lint-be
+      glob: "apps/api/**/*.py"
+      run: uv run --project apps/api ruff check {staged_files}
+
+    # BE: ruff format check
+    - name: format-be
+      glob: "apps/api/**/*.py"
+      run: uv run --project apps/api ruff format --check {staged_files}
