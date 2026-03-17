@@ -1,26 +1,20 @@
 pre-commit:
   parallel: true
   jobs:
-    # FE: eslint (自動修正)
+    # FE: eslint (自動修正 / ステージ済みファイルのみ)
     - name: lint-fe
       glob: "apps/web/**/*.{ts,tsx}"
-      run: pnpm --filter web lint --fix
+      run: pnpm --filter web exec eslint --fix {staged_files}
       stage_fixed: true
 
-    # FE: stylelint (自動修正)
+    # FE: stylelint (自動修正 / ステージ済みファイルのみ)
     - name: lint-css
       glob: "apps/web/**/*.css"
-      run: pnpm --filter web lint:css --fix
+      run: pnpm --filter web exec stylelint --fix {staged_files}
       stage_fixed: true
 
-    # BE: ruff lint (自動修正)
-    - name: lint-be
+    # BE: ruff format → lint の順で逐次実行 (並列書き込み競合を回避)
+    - name: fix-be
       glob: "apps/api/**/*.py"
-      run: uv run --project apps/api ruff check --fix {staged_files}
-      stage_fixed: true
-
-    # BE: ruff format (自動修正)
-    - name: format-be
-      glob: "apps/api/**/*.py"
-      run: uv run --project apps/api ruff format {staged_files}
+      run: uv run --project apps/api ruff format {staged_files} && uv run --project apps/api ruff check --fix {staged_files}
       stage_fixed: true
