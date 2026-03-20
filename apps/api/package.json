@@ -9,6 +9,6 @@
     "lint:fix": "uv run ruff check --fix . && uv run ruff format .",
     "test": "uv run pytest",
     "build": "echo 'Python project: no build step'",
-    "export-openapi": "uv run python scripts/export_openapi.py"
+    "openapi:export": "uv run python scripts/export_openapi.py"
   }
 }

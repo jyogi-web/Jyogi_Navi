@@ -8,9 +8,9 @@ FastAPIのPydanticモデルからOpenAPIスキーマを生成し、TypeScript AP
 
 ```
 apps/api (FastAPI)
-  └─ openapi.json  ←  pnpm --filter api export-openapi で生成
+  └─ openapi.json  ←  pnpm --filter api openapi:export で生成
         ↓
-apps/web/src/client/  ← pnpm --filter web generate:api で生成
+apps/web/src/client/  ← pnpm --filter web openapi:generate で生成
   ├─ types.gen.ts
   ├─ zod.gen.ts
   ├─ sdk.gen.ts
@@ -31,13 +31,13 @@ apps/web/src/client/  ← pnpm --filter web generate:api で生成
 
 ```bash
 # OpenAPIスキーマを生成（apps/api/openapi.json に出力）
-pnpm --filter api export-openapi
+pnpm --filter api openapi:export
 
 # TypeScript APIクライアントを生成（apps/web/src/client/ に出力）
-pnpm --filter web generate:api
+pnpm --filter web openapi:generate
 
 # 上記を一気通貫で実行（ルートから）
-pnpm generate
+pnpm openapi
 ```
 
 ### 生成物の確認

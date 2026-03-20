@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:run": "vitest run",
     "test:watch": "vitest",
-    "generate:api": "openapi-ts"
+    "openapi:generate": "openapi-ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

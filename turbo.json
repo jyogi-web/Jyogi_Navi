@@ -3,7 +3,7 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "generate:api"],
+      "dependsOn": ["^build", "openapi:generate"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
@@ -19,12 +19,12 @@
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": ["coverage/**"]
     },
-    "export-openapi": {
+    "openapi:export": {
       "inputs": ["main.py", "routers/**", "models/**"],
       "outputs": ["openapi.json"]
     },
-    "generate:api": {
-      "dependsOn": ["api#export-openapi"],
+    "openapi:generate": {
+      "dependsOn": ["api#openapi:export"],
       "inputs": ["../api/openapi.json", "openapi-ts.config.ts"],
       "outputs": ["src/client/**"]
     }
