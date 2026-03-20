@@ -16,7 +16,8 @@
     "test:web": "turbo run test --filter=web",
     "test:api": "turbo run test --filter=api",
     "lint:web": "turbo run lint --filter=web",
-    "lint:api": "turbo run lint --filter=api"
+    "lint:api": "turbo run lint --filter=api",
+    "generate": "turbo run generate:api"
   },
   "devDependencies": {
     "turbo": "^2.5.0",
