@@ -8,13 +8,14 @@ FastAPIのPydanticモデルからOpenAPIスキーマを生成し、TypeScript AP
 
 ```
 apps/api (FastAPI)
-  └─ openapi.json  ←  pnpm export-openapi で生成
+  └─ openapi.json  ←  pnpm --filter api export-openapi で生成
         ↓
-apps/web/src/client/  ← pnpm generate:api で生成
+apps/web/src/client/  ← pnpm --filter web generate:api で生成
   ├─ types.gen.ts
-  ├─ schemas.gen.ts
+  ├─ zod.gen.ts
   ├─ sdk.gen.ts
-  └─ client.gen.ts
+  ├─ client.gen.ts
+  └─ @tanstack/react-query.gen.ts
 ```
 
 ## 使用ツール
@@ -79,15 +80,16 @@ import "@/lib/api";
 ### 生成されたSDKの利用例
 
 ```ts
-import { getHealth } from "@/client/sdk.gen";
+// SDK直接呼び出し（index.ts経由）
+import { healthCheckHealthGet } from "@/client";
+
+const response = await healthCheckHealthGet();
+
+// TanStack Query経由（queryOptions パターン）
 import { useQuery } from "@tanstack/react-query";
-import { healthCheckOptions } from "@/client/sdk.gen";  // TanStack Query対応の場合
+import { healthCheckHealthGetOptions } from "@/client/@tanstack/react-query.gen";
 
-// 直接呼び出し
-const response = await getHealth();
-
-// TanStack Query経由
-const { data } = useQuery(healthCheckOptions());
+const { data } = useQuery(healthCheckHealthGetOptions());
 ```
 
 ## 注意事項

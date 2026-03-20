@@ -6,6 +6,10 @@ on:
     paths:
       - "apps/api/**"
       - "apps/web/src/client/**"
+      - "apps/web/openapi-ts.config.ts"
+      - "turbo.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/check-openapi.yml"
 
 jobs:
