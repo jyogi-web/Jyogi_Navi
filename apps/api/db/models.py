@@ -1,8 +1,9 @@
 """SQLAlchemy ORM モデル定義 (TiDB Serverless)."""
 
 import uuid
+from datetime import datetime
 
-from sqlalchemy import ForeignKey, Index, Integer, String, func
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -22,8 +23,8 @@ class Session(Base):
     )
     is_guest: Mapped[bool] = mapped_column(default=True)
     consented: Mapped[bool] = mapped_column(default=False)
-    created_at: Mapped[str] = mapped_column(
-        String(26),
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
         server_default=func.now(),
     )
 
@@ -53,8 +54,8 @@ class UsageLog(Base):
     )
     tokens: Mapped[int] = mapped_column(Integer, default=0)
     category: Mapped[str] = mapped_column(String(50), default="")
-    created_at: Mapped[str] = mapped_column(
-        String(26),
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
         server_default=func.now(),
     )
 
