@@ -16,6 +16,7 @@ export default defineConfig({
     {
       name: "@tanstack/react-query",
       queryOptions: true,
+      includeInEntry: true,
     },
   ],
 });

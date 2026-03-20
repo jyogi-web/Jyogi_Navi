@@ -80,14 +80,14 @@ import "@/lib/api";
 ### 生成されたSDKの利用例
 
 ```ts
-// SDK直接呼び出し（index.ts経由）
+// SDK直接呼び出し
 import { healthCheckHealthGet } from "@/client";
 
 const response = await healthCheckHealthGet();
 
 // TanStack Query経由（queryOptions パターン）
 import { useQuery } from "@tanstack/react-query";
-import { healthCheckHealthGetOptions } from "@/client/@tanstack/react-query.gen";
+import { healthCheckHealthGetOptions } from "@/client";
 
 const { data } = useQuery(healthCheckHealthGetOptions());
 ```
