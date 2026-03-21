@@ -7,6 +7,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "format": "turbo run format",
     "test": "turbo run test",
     "start": "concurrently --kill-others-on-fail \"pnpm infra:up\" \"turbo run dev\"",
     "infra:up": "docker compose -f infra/dify/docker-compose.yml up -d",
