@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prepare": "test -n \"$CI\" || lefthook install",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
@@ -19,8 +20,9 @@
     "lint:api": "turbo run lint --filter=api"
   },
   "devDependencies": {
-    "turbo": "^2.5.0",
-    "concurrently": "^9.0.0"
+    "concurrently": "^9.0.0",
+    "lefthook": "^2.1.4",
+    "turbo": "^2.5.0"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {
