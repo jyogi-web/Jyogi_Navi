@@ -25,7 +25,9 @@ def _build_engine():
         port=settings.tidb_port,
         database=settings.tidb_database,
     )
-    return create_async_engine(url, connect_args=connect_args, pool_pre_ping=True)
+    return create_async_engine(
+        url, connect_args=connect_args, pool_pre_ping=True, pool_recycle=3600
+    )
 
 
 engine = _build_engine()
