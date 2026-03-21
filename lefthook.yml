@@ -1,16 +1,16 @@
 pre-commit:
   parallel: true
   jobs:
-    # FE: eslint (自動修正 / ステージ済みファイルのみ)
-    - name: lint-fe
-      glob: "apps/web/**/*.{ts,tsx}"
-      run: pnpm --filter web exec eslint --fix {staged_files}
+    # FE TS/TSX: prettier → oxlint → eslint の順で逐次実行 (並列書き込み競合を回避)
+    - name: fix-fe-ts
+      glob: "apps/web/**/*.{ts,tsx,json,md}"
+      run: pnpm --filter web exec prettier --write {staged_files} && pnpm --filter web exec oxlint {staged_files} && pnpm --filter web exec eslint --fix {staged_files}
       stage_fixed: true
 
-    # FE: stylelint (自動修正 / ステージ済みファイルのみ)
-    - name: lint-css
+    # FE CSS: prettier → stylelint の順で逐次実行 (並列書き込み競合を回避)
+    - name: fix-fe-css
       glob: "apps/web/**/*.css"
-      run: pnpm --filter web exec stylelint --fix {staged_files}
+      run: pnpm --filter web exec prettier --write {staged_files} && pnpm --filter web exec stylelint --fix {staged_files}
       stage_fixed: true
 
     # BE: ruff format → lint の順で逐次実行 (並列書き込み競合を回避)
