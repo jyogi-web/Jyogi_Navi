@@ -1,0 +1,77 @@
+name: CI (BE)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/ci-BE.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.9.x"
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "apps/api/.python-version"
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Ruff check (lint)
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.9.x"
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "apps/api/.python-version"
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Run tests
+        env:
+          TIDB_HOST: ""
+          TIDB_USER: ""
+          TIDB_PASSWORD: ""
+          TIDB_DATABASE: ""
+          TIDB_PORT: "4000"
+          SUPABASE_URL: "https://placeholder.supabase.co"
+          SUPABASE_SECRET: "placeholder"
+          APP_ENV: "test"
+        run: uv run pytest
