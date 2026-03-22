@@ -4,13 +4,15 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-# db.session モジュールをモックに差し替え（import main より前に実行する必要がある）
+# db.session モジュールをモックに差し替え(import main より前に実行する必要がある)
 _mock_db_module = MagicMock()
 _mock_session = AsyncMock()
 _mock_session.execute = AsyncMock(return_value=MagicMock())
 
+
 async def _mock_get_db_session():
     yield _mock_session
+
 
 _mock_db_module.get_db_session = _mock_get_db_session
 sys.modules["db.session"] = _mock_db_module
@@ -29,6 +31,7 @@ def mock_db_session():
 def app(mock_db_session):
     """モック済み db.session を使う FastAPI アプリ。"""
     from main import app as _app
+
     yield _app
 
 
