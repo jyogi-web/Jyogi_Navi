@@ -9,10 +9,10 @@ services:
     container_name: dify-web
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      - "${DIFY_WEB_PORT:-3101}:3000"
     environment:
       NEXT_PUBLIC_API_URL: "${DIFY_API_URL:-http://localhost:5001}"
-      NEXT_PUBLIC_APP_URL: "${DIFY_APP_URL:-http://localhost:3001}"
+      NEXT_PUBLIC_APP_URL: "${DIFY_APP_URL:-http://localhost:${DIFY_WEB_PORT:-3101}}"
     depends_on:
       - dify-api
     networks:
