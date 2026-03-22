@@ -1,1 +1,1 @@
-export { ConsentScreen } from './ConsentScreen';
+export { ConsentScreen } from "./ConsentScreen";

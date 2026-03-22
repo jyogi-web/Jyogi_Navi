@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prepare": "test -n \"$CI\" || lefthook install",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "format": "turbo run format",
     "test": "turbo run test",
     "start": "concurrently --kill-others-on-fail \"pnpm infra:up\" \"turbo run dev\"",
     "infra:up": "docker compose -f infra/dify/docker-compose.yml up -d",
@@ -20,8 +22,9 @@
     "openapi": "turbo run openapi:generate"
   },
   "devDependencies": {
-    "turbo": "^2.5.0",
-    "concurrently": "^9.0.0"
+    "concurrently": "^9.0.0",
+    "lefthook": "^2.1.4",
+    "turbo": "^2.5.0"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {

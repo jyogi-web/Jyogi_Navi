@@ -2,7 +2,7 @@
  * チャット関連の型定義
  */
 
-export type MessageRole = 'user' | 'assistant';
+export type MessageRole = "user" | "assistant";
 
 export interface Message {
   id: string;

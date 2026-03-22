@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, MoreVertical } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { saveConsent } from '@/lib/session';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, MoreVertical } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { saveConsent } from "@/lib/session";
 
 interface ChatHeaderProps {
   messagesCount: number;
@@ -16,22 +16,22 @@ export function ChatHeader({ messagesCount }: ChatHeaderProps) {
     // 同意をリセットしてホームに戻る（デモ用）
     if (
       confirm(
-        '同意をリセットしてホーム画面に戻りますか？\n（開発中のため、実際はログアウト機能になります）'
+        "同意をリセットしてホーム画面に戻りますか？\n（開発中のため、実際はログアウト機能になります）"
       )
     ) {
       saveConsent(false);
-      router.push('/');
+      router.push("/");
     }
   };
 
   const handleMenuClick = () => {
     // TODO: メニュー機能を実装
-    alert('メニュー機能は開発中です');
+    alert("メニュー機能は開発中です");
   };
 
   return (
-    <header className="border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-10">
-      <div className="max-w-4xl mx-auto px-4 py-3">
+    <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/80">
+      <div className="mx-auto max-w-4xl px-4 py-3">
         <div className="flex items-center justify-between">
           {/* 左側：戻るボタンとタイトル */}
           <div className="flex items-center gap-3">
@@ -45,17 +45,13 @@ export function ChatHeader({ messagesCount }: ChatHeaderProps) {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-600">
                 <span className="text-2xl">🐰</span>
               </div>
               <div>
-                <h1 className="font-bold text-lg leading-tight">
-                  じょぎナビ
-                </h1>
-                <p className="text-xs text-muted-foreground">
-                  {messagesCount > 0
-                    ? `${messagesCount}件の会話`
-                    : 'いつでも質問してください'}
+                <h1 className="text-lg leading-tight font-bold">じょぎナビ</h1>
+                <p className="text-muted-foreground text-xs">
+                  {messagesCount > 0 ? `${messagesCount}件の会話` : "いつでも質問してください"}
                 </p>
               </div>
             </div>

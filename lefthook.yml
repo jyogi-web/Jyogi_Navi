@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: true
+  jobs:
+    # FE TS/TSX: prettier → oxlint → eslint の順で逐次実行 (並列書き込み競合を回避)
+    - name: fix-fe-ts
+      glob: "apps/web/**/*.{ts,tsx,json,md}"
+      root: "apps/web/"
+      run: pnpm exec prettier --write {staged_files} && pnpm exec oxlint {staged_files} && pnpm exec eslint --fix {staged_files}
+      stage_fixed: true
+
+    # FE CSS: prettier → stylelint の順で逐次実行 (並列書き込み競合を回避)
+    - name: fix-fe-css
+      glob: "apps/web/**/*.css"
+      root: "apps/web/"
+      run: pnpm exec prettier --write {staged_files} && pnpm exec stylelint --fix {staged_files}
+      stage_fixed: true
+
+    # BE: ruff format → lint の順で逐次実行 (並列書き込み競合を回避)
+    - name: fix-be
+      glob: "apps/api/**/*.py"
+      run: uv run --project apps/api ruff format {staged_files} && uv run --project apps/api ruff check --fix {staged_files}
+      stage_fixed: true
