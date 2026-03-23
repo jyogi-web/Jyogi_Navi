@@ -13,6 +13,7 @@ Thumbs.db
 !.env.example
 
 .mcp.json
+.claude/worktrees/
 
 # Coverage reports
 coverage.xml
