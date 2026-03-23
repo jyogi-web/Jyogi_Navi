@@ -41,6 +41,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "eslint-plugin-security": "^4.0.0",
     "jsdom": "^26.1.0",
     "oxlint": "^1.56.0",
     "postcss-scss": "^4.0.9",
