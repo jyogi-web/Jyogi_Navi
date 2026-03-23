@@ -1,5 +1,7 @@
 """セッション・usage_log 関連の Pydantic スキーマ。"""
 
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -26,4 +28,4 @@ class UsageLogResponse(BaseModel):
     session_id: str
     tokens: int
     category: str
-    created_at: str
+    created_at: datetime
