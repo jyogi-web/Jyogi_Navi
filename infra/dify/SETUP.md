@@ -86,7 +86,7 @@ DIFY_API_SECRET_KEY=your-api-secret-string
 DIFY_WEB_PORT=3101
 
 # ローカルUIから API(5001) を叩くための CORS 許可
-CORS_ORIGINS=http://localhost:3101,http://127.0.0.1:3101
+CORS_ORIGINS=http://127.0.0.1:3101
 ```
 
 ### ステップ 3: Secret Keys を生成（一度だけ）
@@ -150,8 +150,12 @@ docker-compose ps
 
 ブラウザで開く:
 ```text
-http://localhost:3101
+http://127.0.0.1:3101
 ```
+
+重要:
+- `localhost` と `127.0.0.1` を混在させないでください（ログイン後に `apps` から `signin` へ戻る原因になります）。
+- API/APP は両方とも `127.0.0.1` に統一してください。
 
 初回アクセス時:
 1. **セットアップウィザードが表示される**

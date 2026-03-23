@@ -9,8 +9,8 @@ services:
     ports:
       - "${DIFY_WEB_PORT:-3101}:3000"
     environment:
-      NEXT_PUBLIC_API_URL: "${DIFY_API_URL:-http://localhost:5001}"
-      NEXT_PUBLIC_APP_URL: "${DIFY_APP_URL:-http://localhost:${DIFY_WEB_PORT:-3101}}"
+      NEXT_PUBLIC_API_URL: "${DIFY_API_URL:-http://127.0.0.1:5001}"
+      NEXT_PUBLIC_APP_URL: "${DIFY_APP_URL:-http://127.0.0.1:${DIFY_WEB_PORT:-3101}}"
     depends_on:
       - dify-api
     networks:
@@ -98,6 +98,14 @@ services:
       CORS_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
       CONSOLE_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
       WEB_API_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
+
+      # =====================================
+      # Endpoint URLs (must match actual browser host)
+      # =====================================
+      CONSOLE_API_URL: "${DIFY_API_URL:-http://127.0.0.1:5001}"
+      CONSOLE_WEB_URL: "${DIFY_APP_URL:-http://127.0.0.1:${DIFY_WEB_PORT:-3101}}"
+      SERVICE_API_URL: "${DIFY_API_URL:-http://127.0.0.1:5001}"
+      APP_WEB_URL: "${DIFY_APP_URL:-http://127.0.0.1:${DIFY_WEB_PORT:-3101}}"
 
     networks:
       - dify-network
