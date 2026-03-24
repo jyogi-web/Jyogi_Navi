@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { saveConsent, getOrCreateSessionId } from "@/lib/session";
+import { saveConsent, saveSessionId, getOrCreateSessionId } from "@/lib/session";
 import { createSession } from "@/lib/api";
 
 export function ConsentScreen() {
@@ -23,11 +23,14 @@ export function ConsentScreen() {
   const handleSubmit = async () => {
     if (!agreed) return;
 
-    // セッションIDを生成・取得
-    getOrCreateSessionId();
-
-    // バックエンドにセッションを登録（失敗してもUIに影響させない）
-    await createSession();
+    // バックエンドにセッションを登録し、返却されたIDをlocalStorageに保存
+    // 失敗した場合はローカルでUUIDを生成してフォールバック
+    const session = await createSession();
+    if (session) {
+      saveSessionId(session.id);
+    } else {
+      getOrCreateSessionId();
+    }
 
     // 同意状態を保存
     saveConsent(true);

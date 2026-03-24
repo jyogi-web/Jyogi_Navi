@@ -32,6 +32,19 @@ export function getOrCreateSessionId(): string {
 }
 
 /**
+ * セッションIDを保存
+ */
+export function saveSessionId(id: string): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(SESSION_ID_KEY, id);
+  } catch (error) {
+    console.error("Failed to save session ID to localStorage:", error);
+  }
+}
+
+/**
  * 同意状態を保存
  */
 export function saveConsent(consented: boolean): void {
