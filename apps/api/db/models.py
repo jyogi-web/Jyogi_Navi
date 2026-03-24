@@ -60,3 +60,26 @@ class UsageLog(Base):
     )
 
     session: Mapped["Session"] = relationship(back_populates="usage_logs")
+
+
+class Feedback(Base):
+    """フィードバック(👍👎)。"""
+
+    __tablename__ = "feedbacks"
+    __table_args__ = (Index("ix_feedbacks_session_id", "session_id"),)
+
+    id: Mapped[str] = mapped_column(
+        String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+    )
+    session_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("sessions.id"),
+    )
+    message_id: Mapped[str] = mapped_column(String(36), default="")
+    rating: Mapped[bool] = mapped_column(default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        server_default=func.now(),
+    )

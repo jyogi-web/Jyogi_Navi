@@ -19,6 +19,17 @@ class UsageLogCreate(BaseModel):
     category: str = ""
 
 
+class SessionResponse(BaseModel):
+    """セッション作成レスポンス。"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    is_guest: bool
+    consented: bool
+    created_at: datetime
+
+
 class UsageLogResponse(BaseModel):
     """トークン消費ログレスポンス。"""
 
