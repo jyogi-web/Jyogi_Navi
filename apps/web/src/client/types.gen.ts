@@ -5,6 +5,16 @@ export type ClientOptions = {
 };
 
 /**
+ * HTTPValidationError
+ */
+export type HttpValidationError = {
+  /**
+   * Detail
+   */
+  detail?: Array<ValidationError>;
+};
+
+/**
  * HealthResponse
  */
 export type HealthResponse = {
@@ -16,6 +26,82 @@ export type HealthResponse = {
    * Db
    */
   db: string;
+};
+
+/**
+ * UsageLogCreate
+ *
+ * トークン消費ログ作成リクエスト。
+ */
+export type UsageLogCreate = {
+  /**
+   * Session Id
+   */
+  session_id: string;
+  /**
+   * Tokens
+   */
+  tokens: number;
+  /**
+   * Category
+   */
+  category?: string | null;
+};
+
+/**
+ * UsageLogResponse
+ *
+ * トークン消費ログレスポンス。
+ */
+export type UsageLogResponse = {
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * Session Id
+   */
+  session_id: string;
+  /**
+   * Tokens
+   */
+  tokens: number;
+  /**
+   * Category
+   */
+  category: string | null;
+  /**
+   * Created At
+   */
+  created_at: string;
+};
+
+/**
+ * ValidationError
+ */
+export type ValidationError = {
+  /**
+   * Location
+   */
+  loc: Array<string | number>;
+  /**
+   * Message
+   */
+  msg: string;
+  /**
+   * Error Type
+   */
+  type: string;
+  /**
+   * Input
+   */
+  input?: unknown;
+  /**
+   * Context
+   */
+  ctx?: {
+    [key: string]: unknown;
+  };
 };
 
 export type HealthCheckHealthGetData = {
@@ -34,3 +120,30 @@ export type HealthCheckHealthGetResponses = {
 
 export type HealthCheckHealthGetResponse =
   HealthCheckHealthGetResponses[keyof HealthCheckHealthGetResponses];
+
+export type CreateUsageLogUsageLogsPostData = {
+  body: UsageLogCreate;
+  path?: never;
+  query?: never;
+  url: "/usage-logs";
+};
+
+export type CreateUsageLogUsageLogsPostErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type CreateUsageLogUsageLogsPostError =
+  CreateUsageLogUsageLogsPostErrors[keyof CreateUsageLogUsageLogsPostErrors];
+
+export type CreateUsageLogUsageLogsPostResponses = {
+  /**
+   * Successful Response
+   */
+  201: UsageLogResponse;
+};
+
+export type CreateUsageLogUsageLogsPostResponse =
+  CreateUsageLogUsageLogsPostResponses[keyof CreateUsageLogUsageLogsPostResponses];

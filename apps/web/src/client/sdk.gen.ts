@@ -2,7 +2,13 @@
 
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
-import type { HealthCheckHealthGetData, HealthCheckHealthGetResponses } from "./types.gen";
+import type {
+  CreateUsageLogUsageLogsPostData,
+  CreateUsageLogUsageLogsPostErrors,
+  CreateUsageLogUsageLogsPostResponses,
+  HealthCheckHealthGetData,
+  HealthCheckHealthGetResponses,
+} from "./types.gen";
 
 export type Options<
   TData extends TDataShape = TDataShape,
@@ -32,4 +38,25 @@ export const healthCheckHealthGet = <ThrowOnError extends boolean = false>(
   (options?.client ?? client).get<HealthCheckHealthGetResponses, unknown, ThrowOnError>({
     url: "/health",
     ...options,
+  });
+
+/**
+ * Create Usage Log
+ *
+ * チャットAPIから呼ばれるトークン消費ログ保存エンドポイント。
+ */
+export const createUsageLogUsageLogsPost = <ThrowOnError extends boolean = false>(
+  options: Options<CreateUsageLogUsageLogsPostData, ThrowOnError>
+) =>
+  (options.client ?? client).post<
+    CreateUsageLogUsageLogsPostResponses,
+    CreateUsageLogUsageLogsPostErrors,
+    ThrowOnError
+  >({
+    url: "/usage-logs",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });

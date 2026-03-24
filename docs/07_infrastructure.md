@@ -200,6 +200,13 @@ flowchart LR
 | ログ / 監査 / Vector | TiDB Serverless | usage_logs / audit_logs / faq_embeddings | 12GBまで |
 | ログ管理 | Cloud Logging | FastAPI アプリログ・アクセスログ | Google Cloud標準 |
 
+> ⚠️ **TiDB Serverless タイムゾーン設定（必須）**
+> TiDB Serverless のデフォルトタイムゾーンは SYSTEM（地域依存）のため、クラスター作成後に必ず以下を実行すること：
+> ```sql
+> SET GLOBAL time_zone = 'UTC';
+> ```
+> `usage_logs.created_at` は `UTC_TIMESTAMP()` で記録しており、API 側の日次集計（`get_daily_token_usage`）も UTC 基準で動作する。設定が UTC でない場合、レート制御の日次境界がずれる。
+
 ---
 
 ## 5️⃣ External Services

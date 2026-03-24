@@ -1,8 +1,10 @@
-# TODO: usage_logs を参照した日次トークンレート制限の実装
-# - 1日の上限トークン数は config.py の DAILY_TOKEN_LIMIT を使用
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from config import settings
+from services.log_store import get_daily_token_usage
 
 
-def is_rate_limited(session_id: str) -> bool:
+async def is_rate_limited(session: AsyncSession, session_id: str) -> bool:
     """当日使用量が上限を超えている場合 True を返す。"""
-    # TODO: 実装
-    return False
+    used = await get_daily_token_usage(session, session_id)
+    return used >= settings.daily_token_limit

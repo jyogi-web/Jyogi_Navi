@@ -14,9 +14,9 @@ class SessionCreate(BaseModel):
 class UsageLogCreate(BaseModel):
     """トークン消費ログ作成リクエスト。"""
 
-    session_id: str
-    tokens: int = Field(ge=0)
-    category: str = ""
+    session_id: str = Field(min_length=1)
+    tokens: int = Field(ge=1)
+    category: str | None = None
 
 
 class UsageLogResponse(BaseModel):
@@ -27,5 +27,5 @@ class UsageLogResponse(BaseModel):
     id: str
     session_id: str
     tokens: int
-    category: str
+    category: str | None
     created_at: datetime

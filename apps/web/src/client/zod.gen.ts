@@ -10,6 +10,48 @@ export const zHealthResponse = z.object({
   db: z.string(),
 });
 
+/**
+ * UsageLogCreate
+ *
+ * トークン消費ログ作成リクエスト。
+ */
+export const zUsageLogCreate = z.object({
+  session_id: z.string().min(1),
+  tokens: z.int().gte(1),
+  category: z.string().nullish(),
+});
+
+/**
+ * UsageLogResponse
+ *
+ * トークン消費ログレスポンス。
+ */
+export const zUsageLogResponse = z.object({
+  id: z.string(),
+  session_id: z.string(),
+  tokens: z.int(),
+  category: z.string().nullable(),
+  created_at: z.iso.datetime(),
+});
+
+/**
+ * ValidationError
+ */
+export const zValidationError = z.object({
+  loc: z.array(z.union([z.string(), z.int()])),
+  msg: z.string(),
+  type: z.string(),
+  input: z.unknown().optional(),
+  ctx: z.record(z.string(), z.unknown()).optional(),
+});
+
+/**
+ * HTTPValidationError
+ */
+export const zHttpValidationError = z.object({
+  detail: z.array(zValidationError).optional(),
+});
+
 export const zHealthCheckHealthGetData = z.object({
   body: z.never().optional(),
   path: z.never().optional(),
@@ -20,3 +62,14 @@ export const zHealthCheckHealthGetData = z.object({
  * Successful Response
  */
 export const zHealthCheckHealthGetResponse = zHealthResponse;
+
+export const zCreateUsageLogUsageLogsPostData = z.object({
+  body: zUsageLogCreate,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Successful Response
+ */
+export const zCreateUsageLogUsageLogsPostResponse = zUsageLogResponse;
