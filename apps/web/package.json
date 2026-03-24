@@ -53,6 +53,6 @@
     "stylelint-config-tailwindcss": "^1.0.1",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^3.2.4"
+    "vitest": "^4"
   }
 }
