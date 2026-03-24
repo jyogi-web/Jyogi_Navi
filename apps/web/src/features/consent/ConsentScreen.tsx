@@ -14,16 +14,20 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { saveConsent, getOrCreateSessionId } from "@/lib/session";
+import { createSession } from "@/lib/api";
 
 export function ConsentScreen() {
   const [agreed, setAgreed] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!agreed) return;
 
     // セッションIDを生成・取得
     getOrCreateSessionId();
+
+    // バックエンドにセッションを登録（失敗してもUIに影響させない）
+    await createSession();
 
     // 同意状態を保存
     saveConsent(true);

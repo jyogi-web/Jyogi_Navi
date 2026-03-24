@@ -1,5 +1,6 @@
 import { Message } from "@/types/chat";
 import { cn } from "@/lib/utils";
+import { FeedbackButton } from "@/features/feedback/FeedbackButton";
 
 interface ChatMessageProps {
   message: Message;
@@ -56,6 +57,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               minute: "2-digit",
             })}
           </div>
+          {!isUser && <FeedbackButton messageId={message.id} />}
         </div>
       </div>
     </div>

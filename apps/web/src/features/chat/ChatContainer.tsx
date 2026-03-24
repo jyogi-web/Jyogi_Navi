@@ -8,6 +8,8 @@ import { ChatInput } from "./ChatInput";
 import { ChatHeader } from "./ChatHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
+import { saveUsageLog } from "@/lib/api";
+import { getOrCreateSessionId } from "@/lib/session";
 
 export function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -55,6 +57,10 @@ export function ChatContainer() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // トークン消費ログを保存（失敗してもUIに影響させない）
+      const sessionId = getOrCreateSessionId();
+      await saveUsageLog(sessionId, 0, "chat");
     } catch (error) {
       console.error("Error sending message:", error);
       // エラーメッセージを表示
