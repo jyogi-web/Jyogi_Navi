@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prepare": "test -n \"$CI\" || lefthook install",
+    "prepare": "test -n \"$CI\" || lefthook install --reset-hooks-path",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
