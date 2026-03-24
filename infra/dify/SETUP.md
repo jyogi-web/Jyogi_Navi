@@ -135,7 +135,7 @@ docker-compose ps
 # 出力例:
 # NAME                COMMAND                STATUS              PORTS
 # dify-api            "python  -m dify...."  Up 2 minutes        0.0.0.0:5001->5001/tcp
-# dify-web            "npm run start"        Up 2 minutes        0.0.0.0:3001->3000/tcp
+# dify-web            "npm run start"        Up 2 minutes        0.0.0.0:3101->3000/tcp
 # dify-redis          "redis-server..."      Up 2 minutes        0.0.0.0:6379->6379/tcp
 ```
 
@@ -143,7 +143,7 @@ docker-compose ps
 
 ブラウザで開く:
 ```text
-http://localhost:3001
+http://localhost:3101
 ```
 
 初回アクセス時:
@@ -263,14 +263,14 @@ cat .env | grep GOOGLE_API_KEY
 # 4. Dify UI > Model Provider > Google で キーを再設定
 ```
 
-### 🔴 「ポート 3001 または 5001 が既に使用中」
+### 🔴 「ポート 3101 または 5001 が既に使用中」
 
-症状: `Error: listen EADDRINUSE :::3001`
+症状: `Error: listen EADDRINUSE :::3101`
 
 解決方法:
 ```bash
 # 既存プロセスを確認（Linux/Mac）
-lsof -i :3001
+lsof -i :3101
 lsof -i :5001
 
 # プロセス終了
@@ -278,7 +278,8 @@ kill -9 <PID>
 
 # または docker-compose.yml でポート番号を変更
 nano docker-compose.yml
-# dify-web: ports: ["3001:3000"]  ← 3001 に変更
+# dify-web: ports: ["${DIFY_WEB_PORT:-3101}:3000"]
+# .env の DIFY_WEB_PORT=3201 などに変更して再起動
 ```
 
 ### 🔴 「メモリ不足 (Out of Memory)」
@@ -473,7 +474,7 @@ ingress:
   - hostname: dify.yourdomain.com
     service: http://localhost:5001
   - hostname: yourdomain.com
-    service: http://localhost:3001
+    service: http://localhost:3101
   - service: http_status:404
 ```
 
