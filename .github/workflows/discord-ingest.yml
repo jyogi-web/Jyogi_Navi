@@ -1,0 +1,35 @@
+name: Discord Log Ingest
+
+on:
+  schedule:
+    # 毎週月曜 09:00 JST（= 00:00 UTC）に実行
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+    # 手動実行も可能
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scripts/ingest/discord
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run ingest pipeline
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_IDS: ${{ secrets.DISCORD_CHANNEL_IDS }}
+          DIFY_API_URL: ${{ secrets.DIFY_API_URL }}
+          DIFY_API_KEY: ${{ secrets.DIFY_API_KEY }}
+          DIFY_DATASET_ID: ${{ secrets.DIFY_DATASET_ID }}
+        run: python run.py

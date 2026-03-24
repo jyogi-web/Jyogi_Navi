@@ -1,116 +1,87 @@
-# Discord ログ エクスポート手順
+# Discord ログ取り込み手順
 
-JYOGIのDiscordメンバーチャンネルから直近3ヶ月分のログをエクスポートする手順です。
+JYOGIのDiscordメンバーチャンネルから直近3ヶ月分のログを取得し、Difyへ自動アップロードします。
 
-## 使用ツール
-
-[DiscordChatExporter](https://github.com/Tyrrrz/DiscordChatExporter) の CLI版を使用します。
-
-### インストール
-
-```bash
-# .NET 8 SDK がインストールされている場合
-dotnet tool install -g DiscordChatExporter.Cli
-
-# または GitHub Releases から単体バイナリをダウンロード
-# https://github.com/Tyrrrz/DiscordChatExporter/releases
-```
-
-## 事前準備
-
-### Botトークンの取得
-
-1. [Discord Developer Portal](https://discord.com/developers/applications) にアクセス
-2. 対象のBotアプリを選択 → 「Bot」タブ → 「Token」をコピー
-3. **絶対にトークンをリポジトリにコミットしないこと**
-
-### トークンの設定
-
-```bash
-# .env ファイルに記載（.gitignore 対象）
-echo "DISCORD_TOKEN=your_token_here" > scripts/ingest/discord/.env
-
-# または環境変数として設定
-export DISCORD_TOKEN="your_token_here"
-```
-
-### Channel ID の確認
-
-1. Discord クライアントで「開発者モード」を有効化
-   （設定 → 詳細設定 → 開発者モード）
-2. 対象チャンネルを右クリック → 「IDをコピー」
-
-**対象チャンネル（JYOGIメンバーチャンネル）:**
+## 対象チャンネル
 
 | チャンネル名 | Channel ID |
 |---|---|
 | 雑談 | 1215894284428120170 |
 | 何でも質問 | 1215901602456539146 |
 
-## エクスポート手順
-
-### 単一チャンネルのエクスポート
-
-```bash
-# 直近3ヶ月分をJSON形式でエクスポート
-dce export \
-  --token "$DISCORD_TOKEN" \
-  --channel <CHANNEL_ID> \
-  --format Json \
-  --after "$(date -d '3 months ago' '+%Y-%m-%d')" \
-  --output scripts/ingest/discord/raw/
-```
-
-### 複数チャンネルの一括エクスポート
-
-```bash
-# チャンネルIDをスペース区切りで指定
-CHANNEL_IDS="CHANNEL_ID_1 CHANNEL_ID_2 CHANNEL_ID_3"
-THREE_MONTHS_AGO=$(date -d '3 months ago' '+%Y-%m-%d')
-
-for CHANNEL_ID in $CHANNEL_IDS; do
-  dce export \
-    --token "$DISCORD_TOKEN" \
-    --channel "$CHANNEL_ID" \
-    --format Json \
-    --after "$THREE_MONTHS_AGO" \
-    --output scripts/ingest/discord/raw/
-done
-```
-
-> **macOS の場合**: `date -d` の代わりに `date -v-3m` を使用してください。
-
-### 出力ファイル
-
-エクスポートされたJSONは `scripts/ingest/discord/raw/` 以下に保存されます。
+## スクリプト構成
 
 ```
 scripts/ingest/discord/
-├── raw/                    # エクスポートされたJSONファイル（.gitignore対象）
-│   ├── チャンネル名.json
-│   └── ...
-├── out/                    # normalize.py の出力先（.gitignore対象）
-│   ├── チャンネル名.txt
-│   └── ...
-├── export.md               # このファイル
-└── normalize.py            # 正規化スクリプト
+├── fetch.py         # Discord REST API からメッセージ取得
+├── normalize.py     # 個人情報・ノイズ除去・Dify用フォーマット変換
+├── upload_dify.py   # Dify ナレッジベースへアップロード
+├── run.py           # パイプライン全体を実行するエントリーポイント
+├── requirements.txt # Python 依存パッケージ
+└── export.md        # このファイル
 ```
 
-## 正規化
+## 事前準備
 
-エクスポート後、`normalize.py` で個人情報・ノイズを除去してDify用フォーマットに変換します。
+### 1. Discord Bot の作成とトークン取得
+
+1. [Discord Developer Portal](https://discord.com/developers/applications) にアクセス
+2. 「New Application」でアプリを作成
+3. 「Bot」タブ → 「Add Bot」
+4. 「Privileged Gateway Intents」で **Message Content Intent** を有効化
+5. 「Bot」タブ → 「Token」→「Reset Token」でトークンを取得
+6. **絶対にトークンをリポジトリにコミットしないこと**
+
+### 2. BotをサーバーにInvite
+
+1. 「OAuth2」→「URL Generator」
+2. Scopes: `bot` にチェック
+3. Bot Permissions: `Read Message History`、`View Channels` にチェック
+4. 生成されたURLでBotをJYOGI Discordサーバーに招待
+
+### 3. Dify の情報を確認
+
+| 項目 | 確認場所 |
+|---|---|
+| `DIFY_API_URL` | `infra/dify/.env` の `DIFY_API_URL` |
+| `DIFY_API_KEY` | Dify 管理画面 → Knowledge → API キー |
+| `DIFY_DATASET_ID` | Dify 管理画面 → Knowledge → 対象ナレッジベースのURL末尾のID |
+
+## ローカル実行
 
 ```bash
-# 一括処理
-python scripts/ingest/discord/normalize.py \
-  --input scripts/ingest/discord/raw/ \
-  --output scripts/ingest/discord/out/
+cd scripts/ingest/discord
+pip install -r requirements.txt
+
+export DISCORD_BOT_TOKEN="your_bot_token"
+export DISCORD_CHANNEL_IDS="1215894284428120170,1215901602456539146"
+export DIFY_API_URL="https://your-dify-url"
+export DIFY_API_KEY="your_dify_api_key"
+export DIFY_DATASET_ID="your_dataset_id"
+
+python run.py
 ```
 
-詳細は [normalize.py](normalize.py) を参照してください。
+## GitHub Actions による定期実行
+
+`.github/workflows/discord-ingest.yml` で **毎週月曜 09:00 JST** に自動実行されます。
+
+手動実行も可能です（Actions タブ →「Discord Log Ingest」→「Run workflow」）。
+
+### GitHub Secrets の設定
+
+リポジトリの「Settings → Secrets and variables → Actions」に以下を登録してください。
+
+| Secret 名 | 値 |
+|---|---|
+| `DISCORD_BOT_TOKEN` | Discord Bot のトークン |
+| `DISCORD_CHANNEL_IDS` | `1215894284428120170,1215901602456539146` |
+| `DIFY_API_URL` | Dify の公開URL |
+| `DIFY_API_KEY` | Dify Dataset API キー |
+| `DIFY_DATASET_ID` | 対象ナレッジベースのID |
 
 ## 注意事項
 
-- `raw/` および `out/` ディレクトリは `.gitignore` に登録済みです。Discordログを誤ってコミットしないよう注意してください。
 - Botトークンは秘密情報です。`.env` ファイルや環境変数で管理し、絶対にリポジトリにコミットしないでください。
-- エクスポート対象はJYOGIのメンバーチャンネルのみとし、DM等はエクスポートしないでください。
+- 取り込み対象はJYOGIのメンバーチャンネルのみです。DM等は対象外です。
+- チャンネルを追加する場合は、上記テーブルに追記し `DISCORD_CHANNEL_IDS` の Secret も更新してください。
