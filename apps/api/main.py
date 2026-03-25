@@ -23,12 +23,18 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
     )
     return JSONResponse(
         status_code=exc.status_code,
-        content={"error_code": exc.error_code, "message": exc.message, "trace_id": trace_id},
+        content={
+            "error_code": exc.error_code,
+            "message": exc.message,
+            "trace_id": trace_id,
+        },
     )
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_error_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+async def validation_error_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
     trace_id: str = getattr(request.state, "trace_id", "")
     _emit_structured_log(
         level="WARN",
@@ -38,7 +44,11 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     )
     return JSONResponse(
         status_code=400,
-        content={"error_code": "VALIDATION_ERROR", "message": "入力内容を確認してください", "trace_id": trace_id},
+        content={
+            "error_code": "VALIDATION_ERROR",
+            "message": "入力内容を確認してください",
+            "trace_id": trace_id,
+        },
     )
 
 
@@ -53,7 +63,11 @@ async def unhandled_error_handler(request: Request, exc: Exception) -> JSONRespo
     )
     return JSONResponse(
         status_code=500,
-        content={"error_code": "INTERNAL_ERROR", "message": "エラーが発生しました", "trace_id": trace_id},
+        content={
+            "error_code": "INTERNAL_ERROR",
+            "message": "エラーが発生しました",
+            "trace_id": trace_id,
+        },
     )
 
 app.add_middleware(RequestIDMiddleware)

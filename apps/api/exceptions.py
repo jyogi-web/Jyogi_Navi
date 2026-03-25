@@ -19,7 +19,7 @@ class RateLimitExceeded(AppError):
 
 
 class ExternalServiceError(AppError):
-    """外部サービス（Dify/LLM）障害。"""
+    """外部サービス(Dify/LLM)障害。"""
 
     def __init__(self, error_code: str = "EXTERNAL_SERVICE_ERROR") -> None:
         super().__init__(503, error_code, "現在サービスが混雑しています")
@@ -29,7 +29,9 @@ class ValidationError(AppError):
     """バリデーションエラー。"""
 
     def __init__(self, message: str | None = None) -> None:
-        super().__init__(400, "VALIDATION_ERROR", message or "入力内容を確認してください")
+        super().__init__(
+            400, "VALIDATION_ERROR", message or "入力内容を確認してください"
+        )
 
 
 class InternalError(AppError):
