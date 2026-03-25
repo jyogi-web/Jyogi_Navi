@@ -23,3 +23,9 @@ coverage.xml
 
 # Node.js
 node_modules/
+
+# Dify local runtime data (contains private keys, plugin caches)
+infra/dify/data/
+
+# Local one-off debug scripts
+infra/dify/tmp_*.py

@@ -63,6 +63,10 @@ x-dify-shared-env: &dify-shared-env
   # File Storage
   # =====================================
   STORAGE_TYPE: "${STORAGE_TYPE:-local}"
+  STORAGE_LOCAL_PATH: "${STORAGE_LOCAL_PATH:-/app/storage}"
+  OPENDAL_SCHEME: "${OPENDAL_SCHEME:-fs}"
+  OPENDAL_FS_ROOT: "${OPENDAL_FS_ROOT:-/app/storage}"
+  DIFY_STORAGE_PATH: "${DIFY_STORAGE_PATH:-./data/storage}"
   UPLOAD_FILE_SIZE_LIMIT: "${UPLOAD_FILE_SIZE_LIMIT:-100}"
 
   # =====================================
@@ -90,7 +94,7 @@ services:
   # Dify Web UI
   # =====================================
   dify-web:
-    image: langgenius/dify-web:1.13.0
+    image: langgenius/dify-web:1.13.3
     container_name: dify-web
     restart: unless-stopped
     ports:
@@ -107,7 +111,7 @@ services:
   # Dify API
   # =====================================
   dify-api:
-    image: langgenius/dify-api:1.13.0
+    image: langgenius/dify-api:1.13.3
     container_name: dify-api
     restart: unless-stopped
     ports:
@@ -118,13 +122,15 @@ services:
       <<: *dify-shared-env
       MODE: "api"
       DIFY_API_SECRET_KEY: "${DIFY_API_SECRET_KEY}"
+      PLUGIN_REMOTE_INSTALL_HOST: "${EXPOSE_PLUGIN_DEBUGGING_HOST:-host.docker.internal}"
+      PLUGIN_REMOTE_INSTALL_PORT: "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}"
 
     networks:
       - dify-network
       - dify-ssrf-network
     volumes:
-      # ローカルファイルストレージ用
-      - dify-storage:/app/storage
+      # 永続化した鍵/資格情報（down -v の影響を受けない bind mount）
+      - ${DIFY_STORAGE_PATH:-./data/storage}:/app/storage
       # ログディレクトリ
       - dify-logs:/var/log/dify
     healthcheck:
@@ -138,7 +144,7 @@ services:
   # Dify Worker (Celery)
   # =====================================
   dify-worker:
-    image: langgenius/dify-api:1.13.0
+    image: langgenius/dify-api:1.13.3
     container_name: dify-worker
     restart: unless-stopped
     environment:
@@ -153,14 +159,14 @@ services:
       - dify-network
       - dify-ssrf-network
     volumes:
-      - dify-storage:/app/storage
+      - ${DIFY_STORAGE_PATH:-./data/storage}:/app/storage
       - dify-logs:/var/log/dify
 
   # =====================================
   # Dify Worker Beat (scheduler)
   # =====================================
   dify-worker-beat:
-    image: langgenius/dify-api:1.13.0
+    image: langgenius/dify-api:1.13.3
     container_name: dify-worker-beat
     restart: unless-stopped
     environment:
@@ -173,7 +179,7 @@ services:
       - dify-network
       - dify-ssrf-network
     volumes:
-      - dify-storage:/app/storage
+      - ${DIFY_STORAGE_PATH:-./data/storage}:/app/storage
       - dify-logs:/var/log/dify
 
   # =====================================
@@ -208,13 +214,16 @@ services:
       PLUGIN_MEDIA_CACHE_PATH: "${PLUGIN_MEDIA_CACHE_PATH:-assets}"
     expose:
       - "${PLUGIN_DAEMON_PORT:-5002}"
+    ports:
+      - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
     depends_on:
       dify-api:
         condition: service_healthy
     networks:
       - dify-network
     volumes:
-      - dify-plugin-daemon-storage:/app/storage
+      - ${DIFY_PLUGIN_STORAGE_PATH:-./data/plugin-daemon-storage}:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock
 
   # =====================================
   # Dify Sandbox (code execution)
@@ -295,11 +304,7 @@ networks:
 # Volumes
 # =====================================
 volumes:
-  dify-storage:
-    driver: local
   dify-logs:
     driver: local
   dify-redis-data:
-    driver: local
-  dify-plugin-daemon-storage:
     driver: local

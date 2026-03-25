@@ -19,6 +19,8 @@
 
 - Docker & Docker Compose インストール済み
   - `docker --version` と `docker-compose --version` で確認
+- Docker Desktop / Docker Engine が起動しており、`/var/run/docker.sock` が利用可能
+  - plugin runtime の起動に必要（Model Provider の資格情報検証で使用）
 - **外部サービスアカウント作成済み:**
   - ✅ Supabase プロジェクト（PostgreSQL DB）
   - ✅ TiDB Serverless クラスター（Vector DB）
@@ -27,8 +29,8 @@
 
 ### 使用イメージタグ（固定）
 
-- `langgenius/dify-web:1.13.0`
-- `langgenius/dify-api:1.13.0`
+- `langgenius/dify-api:1.13.3`
+- `langgenius/dify-web:1.13.3`
 
 再現性のため `latest` は使いません。バージョン更新時は `infra/dify/docker-compose.yml` と本ドキュメントを同時更新してください。
 
@@ -84,6 +86,11 @@ DIFY_API_SECRET_KEY=your-api-secret-string
 
 # Dify Web ポート（競合時は変更可）
 DIFY_WEB_PORT=3101
+
+# 永続ストレージ（private key を保持）
+DIFY_STORAGE_PATH=./data/storage
+DIFY_PLUGIN_STORAGE_PATH=./data/plugin-daemon-storage
+STORAGE_LOCAL_PATH=/app/storage
 
 # ローカルUIから API(5001) を叩くための CORS 許可
 CORS_ORIGINS=http://127.0.0.1:3101
@@ -177,7 +184,27 @@ http://127.0.0.1:3101
 docker-compose down
 
 # ボリュームも削除（完全リセット。非推奨）
+# 注意: 過去の named volume 構成では private key も消えるため、
+# provider credentials の復号に失敗して 500 が再発します。
 docker-compose down -v
+```
+
+### 🔁 既存 named volume から bind mount への移行（初回のみ）
+
+`PrivkeyNotFoundError` の再発防止のため、既存データを `./data/storage` へ退避してから再起動します。
+
+```bash
+cd infra/dify
+
+# 1) バックアップ先ディレクトリ作成
+mkdir -p ./data/storage ./data/plugin-daemon-storage
+
+# 2) 旧 named volume からデータをコピー
+docker run --rm -v dify_dify-storage:/from -v "$(pwd)/data/storage:/to" alpine sh -c "cp -a /from/. /to/"
+docker run --rm -v dify_dify-plugin-daemon-storage:/from -v "$(pwd)/data/plugin-daemon-storage:/to" alpine sh -c "cp -a /from/. /to/"
+
+# 3) 反映
+docker-compose up -d --force-recreate
 ```
 
 ---
