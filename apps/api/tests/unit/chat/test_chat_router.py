@@ -64,3 +64,23 @@ async def test_session_idが空の場合は422を返す(client):
         json={"session_id": "", "message": "テスト"},
     )
     assert response.status_code == 422
+
+
+async def test_ログ保存失敗時もチャット応答は返る(client):
+    mock_dify = DifyResponse(answer="回答", tokens_used=10)
+
+    with (
+        patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=False)),
+        patch("routers.chat.send_chat_message", new=AsyncMock(return_value=mock_dify)),
+        patch(
+            "routers.chat.save_usage_log",
+            new=AsyncMock(side_effect=Exception("DB error")),
+        ),
+    ):
+        response = await client.post(
+            "/api/chat",
+            json={"session_id": "session-1", "message": "テスト"},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["answer"] == "回答"
