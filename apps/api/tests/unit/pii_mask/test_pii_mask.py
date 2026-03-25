@@ -26,6 +26,16 @@ def test_PIIがない場合はそのまま返す():
     assert mask(text) == text
 
 
+def test_クレジットカード番号ハイフンありがマスクされる():
+    result = mask("カード番号は1234-5678-9012-3456です")
+    assert "[CREDIT_CARD]" in result
+
+
+def test_クレジットカード番号16桁連続がマスクされる():
+    result = mask("カード番号は1234567890123456です")
+    assert "[CREDIT_CARD]" in result
+
+
 def test_複数のPIIが同時にマスクされる():
     result = mask("メール: foo@bar.com 電話: 080-9876-5432")
     assert "[EMAIL]" in result
