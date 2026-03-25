@@ -29,7 +29,7 @@ def upgrade() -> None:
             "created_at",
             sa.DateTime(),
             nullable=False,
-            server_default=sa.func.now(),
+            server_default=sa.func.utc_timestamp(),
         ),
     )
 

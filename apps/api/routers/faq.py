@@ -22,7 +22,7 @@ async def search_faq(
 ) -> FaqSearchResponse:
     """FAQをキーワードで検索するエンドポイント(P0: LIKE検索)。"""
     trace_id: str = getattr(request.state, "trace_id", "")
-    logger.info("faq_search: q=%s trace_id=%s", q, trace_id)
+    logger.info("faq_search: q_len=%d trace_id=%s", len(q), trace_id)
 
     rows = await search_faq_by_keyword(session, q)
     return FaqSearchResponse(
