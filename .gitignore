@@ -27,6 +27,11 @@ __pycache__/
 *.py[cod]
 .venv/
 
+# Nix / direnv
+.direnv/
+result
+result-*
+
 # Discord ingest (raw logs and processed output must not be committed)
 scripts/ingest/discord/raw/
 scripts/ingest/discord/out/

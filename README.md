@@ -138,7 +138,36 @@ root/
 
 ## セットアップ
 
-### 必要環境
+### Nix による自動セットアップ（推奨）
+
+Nix と direnv を使用すると、プロジェクトディレクトリに `cd` するだけで開発環境が自動的にセットアップされます。
+
+```bash
+# 1. Nix をインストール（未インストールの場合）
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+
+# 2. direnv をインストール（未インストールの場合）
+brew install direnv  # macOS
+# または: sudo apt install direnv  # Linux
+
+# 3. シェル設定に direnv フックを追加（~/.zshrc または ~/.bashrc）
+eval "$(direnv hook zsh)"  # zsh の場合
+# または: eval "$(direnv hook bash)"  # bash の場合
+
+# 4. プロジェクトディレクトリで direnv を許可
+cd /path/to/Jyogi_navi
+direnv allow
+```
+
+これで Node.js、pnpm、Python、uv などが自動的に利用可能になります。
+
+詳細なセットアップ手順は [docs/nix-setup.md](docs/nix-setup.md) を参照してください。
+
+### 手動セットアップ
+
+Nix を使用しない場合は、以下を手動でインストールしてください。
+
+#### 必要環境
 
 - Node.js 20+
 - Python 3.13+
@@ -256,6 +285,7 @@ TIDB_SSL_CA=/path/to/tidb-ca.pem
 | [docs/07_infrastructure.md](docs/07_infrastructure.md) | インフラ構成 |
 | [docs/08_logging.md](docs/08_logging.md) | ログ設計 |
 | [docs/09_schedule_and_issues.md](docs/09_schedule_and_issues.md) | スケジュールと課題 |
+| [docs/10_nix-setup.md](docs/10_nix-setup.md) | Nix 開発環境セットアップ |
 
 ---
 
