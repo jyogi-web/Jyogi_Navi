@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: scripts/ingest/discord
+        working-directory: scripts/ingest
 
     steps:
       - uses: actions/checkout@v4
@@ -37,4 +37,4 @@ jobs:
           DIFY_API_URL: ${{ secrets.DIFY_API_URL }}
           DIFY_API_KEY: ${{ secrets.DIFY_API_KEY }}
           DIFY_DATASET_ID: ${{ secrets.DIFY_DATASET_ID }}
-        run: uv run run.py
+        run: uv run discord/run.py

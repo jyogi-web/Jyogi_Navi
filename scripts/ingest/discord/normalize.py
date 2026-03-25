@@ -24,9 +24,12 @@ EMOJI_ONLY_PATTERN = re.compile(
     r"\U0001F600-\U0001F64F"  # Emoticons
     r"\U0001F300-\U0001F5FF"  # Misc Symbols and Pictographs
     r"\U0001F680-\U0001F6FF"  # Transport and Map
+    r"\U0001F900-\U0001F9FF"  # Supplemental Symbols and Pictographs
+    r"\U0001FA00-\U0001FAFF"  # Symbols and Pictographs Extended-A
     r"\U0001F1E0-\U0001F1FF"  # Flags
-    r"\U00002702-\U000027B0"
-    r"\U000024C2-\U0001F251"
+    r"\U00002600-\U000026FF"  # Miscellaneous Symbols (☀️ ⭐ ❤️ など)
+    r"\U00002702-\U000027BF"  # Dingbats
+    r"\U0000FE00-\U0000FE0F"  # Variation Selectors (絵文字修飾子)
     r"]*$"
 )
 MENTION_PATTERN = re.compile(r"<@!?\d+>|<#\d+>|<@&\d+>")

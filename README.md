@@ -283,5 +283,5 @@ TIDB_SSL_CA=/path/to/tidb-ca.pem
   - `apps/api/` → @KOU050223 / @NazonoKansatugata
   - `infra/`, `.github/workflows/` → @KOU050223
   - `docs/` → @NazonoKansatugata
-- **最低 1 名**の承認を得てからマージする
+- **最低 1 名**の承認を得てからマージする。
 - レビュアーへのメモ欄に、特に見てほしい点・背景情報を記載する。

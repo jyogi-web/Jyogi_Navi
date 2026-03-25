@@ -50,7 +50,7 @@ scripts/ingest/discord/
 ## ローカル実行
 
 ```bash
-cd scripts/ingest/discord
+cd scripts/ingest
 uv sync
 
 export DISCORD_BOT_TOKEN="your_bot_token"
@@ -59,7 +59,7 @@ export DIFY_API_URL="https://your-dify-url"
 export DIFY_API_KEY="your_dify_api_key"
 export DIFY_DATASET_ID="your_dataset_id"
 
-uv run run.py
+uv run discord/run.py
 ```
 
 ## GitHub Actions による定期実行
