@@ -142,9 +142,17 @@ docker-compose ps
 # NAME                COMMAND                STATUS              PORTS
 # dify-api            "python  -m dify...."  Up 2 minutes        0.0.0.0:5001->5001/tcp
 # dify-web            "npm run start"        Up 2 minutes        0.0.0.0:3101->3000/tcp
+# dify-worker         "python -m celery..."   Up 2 minutes        5001/tcp
+# dify-worker-beat    "python -m celery..."   Up 2 minutes        5001/tcp
 # dify-plugin-daemon  "./main"               Up 2 minutes        5002/tcp
 # dify-redis          "redis-server..."      Up 2 minutes        0.0.0.0:6379->6379/tcp
+# dify-sandbox        "./entrypoint.sh"      Up 2 minutes        8194/tcp
+# dify-ssrf-proxy     "squid ..."            Up 2 minutes        3128/tcp
 ```
+
+必須確認:
+- `dify-worker` / `dify-worker-beat` が起動していること（非同期ジョブ）
+- `dify-sandbox` / `dify-ssrf-proxy` が起動していること（ツール実行系）
 
 ### 🌐 Dify UI にアクセス
 
@@ -335,6 +343,9 @@ docker-compose restart dify-api
 
 # 3. .env で GOOGLE_API_KEY を確認
 cat .env | grep GOOGLE_API_KEY
+
+# 3.1 プレースホルダのままになっていないか確認
+# NG例: GOOGLE_API_KEY=AIzaSy...(your-gemini-api-key)
 
 # 4. Dify UI > Model Provider > Google で キーを再設定
 ```

@@ -1,3 +1,90 @@
+x-dify-shared-env: &dify-shared-env
+  # =====================================
+  # Basic settings
+  # =====================================
+  SECRET_KEY: "${SECRET_KEY}"
+  LOG_LEVEL: "${LOG_LEVEL:-INFO}"
+  EDITION: "SELF_HOSTED"
+  DEPLOY_ENV: "${DEPLOY_ENV:-docker}"
+
+  # =====================================
+  # Plugin daemon
+  # =====================================
+  PLUGIN_DAEMON_URL: "${PLUGIN_DAEMON_URL:-http://dify-plugin-daemon:5002}"
+  PLUGIN_DAEMON_KEY: "${PLUGIN_DAEMON_KEY:?PLUGIN_DAEMON_KEY must be set}"
+  INNER_API_KEY_FOR_PLUGIN: "${PLUGIN_DIFY_INNER_API_KEY:?PLUGIN_DIFY_INNER_API_KEY must be set}"
+
+  # =====================================
+  # Database: Supabase (PostgreSQL)
+  # =====================================
+  DB_HOST: "${SUPABASE_DB_HOST}"
+  DB_PORT: "${SUPABASE_DB_PORT:-5432}"
+  DB_USERNAME: "${SUPABASE_DB_USER}"
+  DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
+  DB_DATABASE: "${SUPABASE_DB_NAME:-postgres}"
+  SQLALCHEMY_DATABASE_URI: "postgresql://${SUPABASE_DB_USER}:${SUPABASE_DB_PASSWORD}@${SUPABASE_DB_HOST}:${SUPABASE_DB_PORT:-5432}/${SUPABASE_DB_NAME:-postgres}"
+
+  # =====================================
+  # Cache & Task Queue: Upstash Redis
+  # =====================================
+  REDIS_URL: "${UPSTASH_REDIS_URL:-redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}@dify-redis:6379}"
+  REDIS_HOST: "${UPSTASH_REDIS_HOST:-dify-redis}"
+  REDIS_PORT: "${UPSTASH_REDIS_PORT:-6379}"
+  REDIS_USERNAME: "${UPSTASH_REDIS_USERNAME:-}"
+  REDIS_PASSWORD: "${UPSTASH_REDIS_PASSWORD:-${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}}"
+  REDIS_USE_SSL: "${UPSTASH_REDIS_USE_SSL:-false}"
+  RATELIMIT_STORAGE_URI: "${UPSTASH_REDIS_URL:-redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}@dify-redis:6379/0}"
+  CELERY_BROKER_URL: "${UPSTASH_REDIS_URL:-redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}@dify-redis:6379/1}"
+  CELERY_BACKEND: "redis"
+
+  # =====================================
+  # Vector DB: TiDB Serverless
+  # =====================================
+  VECTOR_STORE: "tidb_vector"
+  TIDB_VECTOR_HOST: "${TIDB_HOST}"
+  TIDB_VECTOR_PORT: "${TIDB_PORT:-4000}"
+  TIDB_VECTOR_USER: "${TIDB_USER}"
+  TIDB_VECTOR_PASSWORD: "${TIDB_PASSWORD}"
+  TIDB_VECTOR_DATABASE: "${TIDB_DATABASE:-dify}"
+
+  # =====================================
+  # LLM: Gemini
+  # =====================================
+  LLM_PROVIDER: "google"
+  GOOGLE_API_KEY: "${GOOGLE_API_KEY}"
+
+  # =====================================
+  # Embedding: Gemini
+  # =====================================
+  EMBEDDINGS_PROVIDER: "${EMBEDDINGS_PROVIDER:-google}"
+  EMBEDDING_MODEL: "${EMBEDDING_MODEL:-models/embedding-001}"
+
+  # =====================================
+  # File Storage
+  # =====================================
+  STORAGE_TYPE: "${STORAGE_TYPE:-local}"
+  UPLOAD_FILE_SIZE_LIMIT: "${UPLOAD_FILE_SIZE_LIMIT:-100}"
+
+  # =====================================
+  # CORS and app URLs
+  # =====================================
+  CORS_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
+  CONSOLE_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
+  WEB_API_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
+  CONSOLE_API_URL: "${DIFY_API_URL:-http://127.0.0.1:5001}"
+  CONSOLE_WEB_URL: "${DIFY_APP_URL:-http://127.0.0.1:${DIFY_WEB_PORT:-3101}}"
+  SERVICE_API_URL: "${DIFY_API_URL:-http://127.0.0.1:5001}"
+  APP_WEB_URL: "${DIFY_APP_URL:-http://127.0.0.1:${DIFY_WEB_PORT:-3101}}"
+
+  # =====================================
+  # Sandbox / SSRF proxy
+  # =====================================
+  CODE_EXECUTION_ENDPOINT: "http://dify-sandbox:8194"
+  CODE_EXECUTION_API_KEY: "${SANDBOX_API_KEY:-dify-sandbox}"
+  CODE_EXECUTION_SSL_VERIFY: "false"
+  SSRF_PROXY_HTTP_URL: "http://dify-ssrf-proxy:3128"
+  SSRF_PROXY_HTTPS_URL: "http://dify-ssrf-proxy:3128"
+
 services:
   # =====================================
   # Dify Web UI
@@ -28,98 +115,13 @@ services:
     expose:
       - 5001
     environment:
-      # =====================================
-      # Basic settings
-      # =====================================
-      SECRET_KEY: "${SECRET_KEY}"
-      LOG_LEVEL: "${LOG_LEVEL:-INFO}"
-      EDITION: "SELF_HOSTED"
-      DEPLOY_ENV: "${DEPLOY_ENV:-docker}"
-
-      # =====================================
-      # Plugin daemon
-      # =====================================
-      PLUGIN_DAEMON_URL: "${PLUGIN_DAEMON_URL:-http://dify-plugin-daemon:5002}"
-      PLUGIN_DAEMON_KEY: "${PLUGIN_DAEMON_KEY:?PLUGIN_DAEMON_KEY must be set}"
-      INNER_API_KEY_FOR_PLUGIN: "${PLUGIN_DIFY_INNER_API_KEY:?PLUGIN_DIFY_INNER_API_KEY must be set}"
-
-      # =====================================
-      # Database: Supabase (PostgreSQL)
-      # =====================================
-      DB_HOST: "${SUPABASE_DB_HOST}"
-      DB_PORT: "${SUPABASE_DB_PORT:-5432}"
-      DB_USERNAME: "${SUPABASE_DB_USER}"
-      DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
-      DB_DATABASE: "${SUPABASE_DB_NAME:-postgres}"
-      SQLALCHEMY_DATABASE_URI: "postgresql://${SUPABASE_DB_USER}:${SUPABASE_DB_PASSWORD}@${SUPABASE_DB_HOST}:${SUPABASE_DB_PORT:-5432}/${SUPABASE_DB_NAME:-postgres}"
-
-      # =====================================
-      # Cache & Task Queue: Upstash Redis（未設定時はローカルRedisへフォールバック）
-      # =====================================
-      REDIS_URL: "${UPSTASH_REDIS_URL:-redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}@dify-redis:6379}"
-      REDIS_HOST: "${UPSTASH_REDIS_HOST:-dify-redis}"
-      REDIS_PORT: "${UPSTASH_REDIS_PORT:-6379}"
-      REDIS_USERNAME: "${UPSTASH_REDIS_USERNAME:-}"
-      REDIS_PASSWORD: "${UPSTASH_REDIS_PASSWORD:-${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}}"
-      REDIS_USE_SSL: "${UPSTASH_REDIS_USE_SSL:-false}"
-      RATELIMIT_STORAGE_URI: "${UPSTASH_REDIS_URL:-redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}@dify-redis:6379/0}"
-      CELERY_BROKER_URL: "${UPSTASH_REDIS_URL:-redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}@dify-redis:6379}"
-      CELERY_RESULT_BACKEND: "${UPSTASH_REDIS_URL:-redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set for local redis}@dify-redis:6379}"
-
-      # =====================================
-      # Vector DB: TiDB Serverless
-      # =====================================
-      VECTOR_STORE: "tidb_vector"
-      TIDB_HOST: "${TIDB_HOST}"
-      TIDB_PORT: "${TIDB_PORT:-4000}"
-      TIDB_USER: "${TIDB_USER}"
-      TIDB_PASSWORD: "${TIDB_PASSWORD}"
-      TIDB_DATABASE: "${TIDB_DATABASE:-dify}"
-
-      # =====================================
-      # LLM: Gemini
-      # =====================================
-      LLM_PROVIDER: "google"
-      GOOGLE_API_KEY: "${GOOGLE_API_KEY}"
-
-      # =====================================
-      # Embedding: Gemini
-      # =====================================
-      EMBEDDINGS_PROVIDER: "${EMBEDDINGS_PROVIDER:-google}"
-      EMBEDDING_MODEL: "${EMBEDDING_MODEL:-models/embedding-001}"
-
-      # =====================================
-      # File Storage: local（デフォルト）
-      # =====================================
-      STORAGE_TYPE: "${STORAGE_TYPE:-local}"
-      UPLOAD_FILE_SIZE_LIMIT: "${UPLOAD_FILE_SIZE_LIMIT:-100}"
-
-      # =====================================
-      # Auth settings
-      # =====================================
+      <<: *dify-shared-env
+      MODE: "api"
       DIFY_API_SECRET_KEY: "${DIFY_API_SECRET_KEY}"
-
-      # =====================================
-      # CORS settings
-      # =====================================
-      # NOTE:
-      # - The fallback URL below is only a placeholder for non-local environments.
-      # - For local development, set CORS_ORIGINS in .env (e.g. http://127.0.0.1:3101).
-      # - Keep the ${CORS_ORIGINS:-...} pattern so explicit .env values still override defaults.
-      CORS_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
-      CONSOLE_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
-      WEB_API_CORS_ALLOW_ORIGINS: "${CORS_ORIGINS:-https://yourfrontend.domain}"
-
-      # =====================================
-      # Endpoint URLs (must match actual browser host)
-      # =====================================
-      CONSOLE_API_URL: "${DIFY_API_URL:-http://127.0.0.1:5001}"
-      CONSOLE_WEB_URL: "${DIFY_APP_URL:-http://127.0.0.1:${DIFY_WEB_PORT:-3101}}"
-      SERVICE_API_URL: "${DIFY_API_URL:-http://127.0.0.1:5001}"
-      APP_WEB_URL: "${DIFY_APP_URL:-http://127.0.0.1:${DIFY_WEB_PORT:-3101}}"
 
     networks:
       - dify-network
+      - dify-ssrf-network
     volumes:
       # ローカルファイルストレージ用
       - dify-storage:/app/storage
@@ -131,6 +133,48 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # =====================================
+  # Dify Worker (Celery)
+  # =====================================
+  dify-worker:
+    image: langgenius/dify-api:1.13.0
+    container_name: dify-worker
+    restart: unless-stopped
+    environment:
+      <<: *dify-shared-env
+      MODE: "worker"
+    depends_on:
+      - dify-api
+      - dify-redis
+      - dify-sandbox
+      - dify-ssrf-proxy
+    networks:
+      - dify-network
+      - dify-ssrf-network
+    volumes:
+      - dify-storage:/app/storage
+      - dify-logs:/var/log/dify
+
+  # =====================================
+  # Dify Worker Beat (scheduler)
+  # =====================================
+  dify-worker-beat:
+    image: langgenius/dify-api:1.13.0
+    container_name: dify-worker-beat
+    restart: unless-stopped
+    environment:
+      <<: *dify-shared-env
+      MODE: "beat"
+    depends_on:
+      - dify-api
+      - dify-redis
+    networks:
+      - dify-network
+      - dify-ssrf-network
+    volumes:
+      - dify-storage:/app/storage
+      - dify-logs:/var/log/dify
 
   # =====================================
   # Dify Plugin Daemon
@@ -173,6 +217,48 @@ services:
       - dify-plugin-daemon-storage:/app/storage
 
   # =====================================
+  # Dify Sandbox (code execution)
+  # =====================================
+  dify-sandbox:
+    image: langgenius/dify-sandbox:0.2.14
+    container_name: dify-sandbox
+    restart: unless-stopped
+    environment:
+      API_KEY: "${SANDBOX_API_KEY:-dify-sandbox}"
+      GIN_MODE: "${SANDBOX_GIN_MODE:-release}"
+      WORKER_TIMEOUT: "${SANDBOX_WORKER_TIMEOUT:-15}"
+      ENABLE_NETWORK: "${SANDBOX_ENABLE_NETWORK:-true}"
+      HTTP_PROXY: "http://dify-ssrf-proxy:3128"
+      HTTPS_PROXY: "http://dify-ssrf-proxy:3128"
+      SANDBOX_PORT: "8194"
+    expose:
+      - "8194"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8194/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - dify-ssrf-network
+
+  # =====================================
+  # Dify SSRF Proxy (required by sandbox)
+  # =====================================
+  dify-ssrf-proxy:
+    image: ubuntu/squid:latest
+    container_name: dify-ssrf-proxy
+    restart: unless-stopped
+    environment:
+      HTTP_PORT: "3128"
+      COREDUMP_DIR: "/var/spool/squid"
+      REVERSE_PROXY_PORT: "8194"
+      SANDBOX_HOST: "dify-sandbox"
+      SANDBOX_PORT: "8194"
+    networks:
+      - dify-ssrf-network
+      - dify-network
+
+  # =====================================
   # Redis: Upstash 経由での代替
   # キャッシュ・タスク管理用（ローカルテスト用）
   # =====================================
@@ -201,6 +287,9 @@ services:
 networks:
   dify-network:
     driver: bridge
+  dify-ssrf-network:
+    driver: bridge
+    internal: true
 
 # =====================================
 # Volumes
