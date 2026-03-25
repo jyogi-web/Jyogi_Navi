@@ -22,10 +22,20 @@ coverage.xml
 # Turborepo
 .turbo/
 
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
 # Discord ingest (raw logs and processed output must not be committed)
 scripts/ingest/discord/raw/
 scripts/ingest/discord/out/
 scripts/ingest/discord/tests/out/
+
+# Notion ingest (raw pages and processed output must not be committed)
+scripts/ingest/notion/raw/
+scripts/ingest/notion/out/
+scripts/ingest/notion/tests/out/
 
 # Node.js
 node_modules/

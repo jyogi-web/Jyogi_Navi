@@ -1,0 +1,77 @@
+{
+  "page": {
+    "id": "abc12345-0000-0000-0000-000000000001",
+    "properties": {
+      "title": {
+        "type": "title",
+        "title": [{"plain_text": "活動記録 2024年1月"}]
+      }
+    }
+  },
+  "blocks": [
+    {
+      "object": "block",
+      "type": "heading_1",
+      "heading_1": {
+        "rich_text": [{"plain_text": "今月の活動内容"}]
+      }
+    },
+    {
+      "object": "block",
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [{"plain_text": "1月は勉強会を3回開催しました。参加者は延べ30名でした。"}]
+      }
+    },
+    {
+      "object": "block",
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [{"plain_text": "問い合わせ担当: admin@example.com"}]
+      }
+    },
+    {
+      "object": "block",
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [{"plain_text": "勉強会: 毎週水曜 19:00〜"}]
+      }
+    },
+    {
+      "object": "block",
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [{"plain_text": "詳細は https://example.com/schedule を確認"}]
+      }
+    },
+    {
+      "object": "block",
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": []
+      }
+    },
+    {
+      "object": "block",
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [{"plain_text": "次月の予定"}]
+      }
+    },
+    {
+      "object": "block",
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [{"plain_text": "2月は新入部員向けオリエンテーションを実施予定です。"}]
+      }
+    },
+    {
+      "object": "block",
+      "type": "image",
+      "image": {
+        "type": "external",
+        "external": {"url": "https://example.com/image.png"}
+      }
+    }
+  ]
+}
