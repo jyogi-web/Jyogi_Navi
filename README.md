@@ -141,7 +141,7 @@ root/
 ### 必要環境
 
 - Node.js 20+
-- Python 3.12+
+- Python 3.13+
 - Docker / Docker Compose
 - [uv](https://github.com/astral-sh/uv)（Python パッケージ管理）
 
