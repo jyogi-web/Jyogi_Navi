@@ -51,9 +51,11 @@ async def test_create_usage_log_without_category(client, mock_usage_log):
 
 
 async def test_create_usage_log_missing_required_field(client):
-    """必須フィールド欠如で 422 を返すことを確認。"""
+    """必須フィールド欠如で 400 を返すことを確認。"""
     response = await client.post(
         "/usage-logs",
         json={"session_id": "sess-abc"},  # tokens が欠如
     )
-    assert response.status_code == 422
+    assert response.status_code == 400
+    data = response.json()
+    assert data["error_code"] == "VALIDATION_ERROR"

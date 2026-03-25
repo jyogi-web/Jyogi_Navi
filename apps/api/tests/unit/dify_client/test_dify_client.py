@@ -37,8 +37,8 @@ async def test_正常応答でDifyResponseを返す(mock_settings):
     assert result.tokens_used == 120
 
 
-async def test_タイムアウト時は504エラー(mock_settings):
-    from fastapi import HTTPException
+async def test_タイムアウト時はExternalServiceError(mock_settings):
+    from exceptions import ExternalServiceError
 
     with patch("services.dify_client.httpx.AsyncClient") as mock_client_cls:
         mock_client = AsyncMock()
@@ -47,14 +47,15 @@ async def test_タイムアウト時は504エラー(mock_settings):
         mock_client.post = AsyncMock(side_effect=httpx.TimeoutException("timeout"))
         mock_client_cls.return_value = mock_client
 
-        with pytest.raises(HTTPException) as exc_info:
+        with pytest.raises(ExternalServiceError) as exc_info:
             await send_chat_message("session-1", "test")
 
-    assert exc_info.value.status_code == 504
+    assert exc_info.value.error_code == "DIFY_CONN_TIMEOUT"
+    assert exc_info.value.status_code == 503
 
 
-async def test_APIエラー時は502エラー(mock_settings):
-    from fastapi import HTTPException
+async def test_APIエラー時はExternalServiceError(mock_settings):
+    from exceptions import ExternalServiceError
 
     mock_response = MagicMock()
     mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
@@ -68,14 +69,15 @@ async def test_APIエラー時は502エラー(mock_settings):
         mock_client.post = AsyncMock(return_value=mock_response)
         mock_client_cls.return_value = mock_client
 
-        with pytest.raises(HTTPException) as exc_info:
+        with pytest.raises(ExternalServiceError) as exc_info:
             await send_chat_message("session-1", "test")
 
-    assert exc_info.value.status_code == 502
+    assert exc_info.value.error_code == "DIFY_HTTP_ERROR"
+    assert exc_info.value.status_code == 503
 
 
-async def test_接続失敗時は502エラー(mock_settings):
-    from fastapi import HTTPException
+async def test_接続失敗時はExternalServiceError(mock_settings):
+    from exceptions import ExternalServiceError
 
     with patch("services.dify_client.httpx.AsyncClient") as mock_client_cls:
         mock_client = AsyncMock()
@@ -86,10 +88,11 @@ async def test_接続失敗時は502エラー(mock_settings):
         )
         mock_client_cls.return_value = mock_client
 
-        with pytest.raises(HTTPException) as exc_info:
+        with pytest.raises(ExternalServiceError) as exc_info:
             await send_chat_message("session-1", "test")
 
-    assert exc_info.value.status_code == 502
+    assert exc_info.value.error_code == "DIFY_UNREACHABLE"
+    assert exc_info.value.status_code == 503
 
 
 async def test_trace_idがヘッダに付与される(mock_settings):
@@ -134,8 +137,8 @@ async def test_trace_idが空の場合ヘッダに付与されない(mock_settin
         assert "X-Request-ID" not in kwargs["headers"]
 
 
-async def test_レスポンスがdictでない場合は502エラー(mock_settings):
-    from fastapi import HTTPException
+async def test_レスポンスがdictでない場合はExternalServiceError(mock_settings):
+    from exceptions import ExternalServiceError
 
     mock_response = MagicMock()
     mock_response.raise_for_status = MagicMock()
@@ -148,7 +151,7 @@ async def test_レスポンスがdictでない場合は502エラー(mock_setting
         mock_client.post = AsyncMock(return_value=mock_response)
         mock_client_cls.return_value = mock_client
 
-        with pytest.raises(HTTPException) as exc_info:
+        with pytest.raises(ExternalServiceError) as exc_info:
             await send_chat_message("session-1", "test")
 
-    assert exc_info.value.status_code == 502
+    assert exc_info.value.error_code == "DIFY_INVALID_RESPONSE"

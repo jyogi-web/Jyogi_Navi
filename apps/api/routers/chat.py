@@ -1,9 +1,10 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import get_db_session
+from exceptions import RateLimitExceeded
 from schemas.chat import ChatRequest, ChatResponse
 from services.dify_client import send_chat_message
 from services.log_store import save_usage_log
@@ -25,7 +26,7 @@ async def chat(
     trace_id: str = getattr(request.state, "trace_id", "")
 
     if await is_rate_limited(session, body.session_id):
-        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+        raise RateLimitExceeded()
 
     masked_message = mask(body.message)
     dify_response = await send_chat_message(body.session_id, masked_message, trace_id)

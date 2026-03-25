@@ -31,4 +31,6 @@ async def test_レート制限超過時に429を返す(client):
         )
 
     assert response.status_code == 429
-    assert response.json()["detail"] == "Rate limit exceeded"
+    data = response.json()
+    assert data["error_code"] == "RATE_LIMIT_EXCEEDED"
+    assert data["message"] == "本日の質問上限に達しました"

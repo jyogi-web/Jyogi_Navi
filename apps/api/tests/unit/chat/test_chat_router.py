@@ -1,5 +1,6 @@
 from unittest.mock import AsyncMock, patch
 
+from exceptions import ExternalServiceError
 from services.dify_client import DifyResponse
 
 
@@ -30,16 +31,18 @@ async def test_レート制限超過で429を返す(client):
         )
 
     assert response.status_code == 429
+    data = response.json()
+    assert data["error_code"] == "RATE_LIMIT_EXCEEDED"
+    assert data["message"] == "本日の質問上限に達しました"
+    assert "trace_id" in data
 
 
-async def test_Difyエラー時に502を返す(client):
-    from fastapi import HTTPException
-
+async def test_Difyエラー時に503を返す(client):
     with (
         patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=False)),
         patch(
             "routers.chat.send_chat_message",
-            new=AsyncMock(side_effect=HTTPException(status_code=502)),
+            new=AsyncMock(side_effect=ExternalServiceError("DIFY_CONN_TIMEOUT")),
         ),
     ):
         response = await client.post(
@@ -47,23 +50,31 @@ async def test_Difyエラー時に502を返す(client):
             json={"session_id": "session-1", "message": "テスト"},
         )
 
-    assert response.status_code == 502
+    assert response.status_code == 503
+    data = response.json()
+    assert data["error_code"] == "DIFY_CONN_TIMEOUT"
+    assert data["message"] == "現在サービスが混雑しています"
 
 
-async def test_メッセージが空の場合は422を返す(client):
+async def test_メッセージが空の場合は400を返す(client):
     response = await client.post(
         "/api/chat",
         json={"session_id": "session-1", "message": ""},
     )
-    assert response.status_code == 422
+    assert response.status_code == 400
+    data = response.json()
+    assert data["error_code"] == "VALIDATION_ERROR"
+    assert data["message"] == "入力内容を確認してください"
 
 
-async def test_session_idが空の場合は422を返す(client):
+async def test_session_idが空の場合は400を返す(client):
     response = await client.post(
         "/api/chat",
         json={"session_id": "", "message": "テスト"},
     )
-    assert response.status_code == 422
+    assert response.status_code == 400
+    data = response.json()
+    assert data["error_code"] == "VALIDATION_ERROR"
 
 
 async def test_ログ保存失敗時もチャット応答は返る(client):
