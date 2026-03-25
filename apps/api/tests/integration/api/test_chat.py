@@ -12,7 +12,7 @@ async def test_チャットエンドポイントが正常に応答する(client)
         patch("routers.chat.save_usage_log", new=AsyncMock()),
     ):
         response = await client.post(
-            "/chat",
+            "/api/chat",
             json={"session_id": "integration-session-1", "message": "じょぎとは"},
         )
 
@@ -26,7 +26,7 @@ async def test_チャットエンドポイントが正常に応答する(client)
 async def test_レート制限超過時に429を返す(client):
     with patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=True)):
         response = await client.post(
-            "/chat",
+            "/api/chat",
             json={"session_id": "limited-session", "message": "テスト"},
         )
 

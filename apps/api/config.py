@@ -26,6 +26,7 @@ class Settings(BaseSettings):
 
     app_env: str = "development"
     daily_token_limit: int = 10000
+    dify_timeout_seconds: float = 30.0
 
 
 settings = Settings()

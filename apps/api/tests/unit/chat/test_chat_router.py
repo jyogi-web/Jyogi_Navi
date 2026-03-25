@@ -12,7 +12,7 @@ async def test_正常なチャットリクエストで200を返す(client):
         patch("routers.chat.save_usage_log", new=AsyncMock()),
     ):
         response = await client.post(
-            "/chat",
+            "/api/chat",
             json={"session_id": "session-1", "message": "じょぎについて教えて"},
         )
 
@@ -25,7 +25,7 @@ async def test_正常なチャットリクエストで200を返す(client):
 async def test_レート制限超過で429を返す(client):
     with patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=True)):
         response = await client.post(
-            "/chat",
+            "/api/chat",
             json={"session_id": "session-1", "message": "テスト"},
         )
 
@@ -43,7 +43,7 @@ async def test_Difyエラー時に502を返す(client):
         ),
     ):
         response = await client.post(
-            "/chat",
+            "/api/chat",
             json={"session_id": "session-1", "message": "テスト"},
         )
 
@@ -52,7 +52,7 @@ async def test_Difyエラー時に502を返す(client):
 
 async def test_メッセージが空の場合は422を返す(client):
     response = await client.post(
-        "/chat",
+        "/api/chat",
         json={"session_id": "session-1", "message": ""},
     )
     assert response.status_code == 422
@@ -60,7 +60,7 @@ async def test_メッセージが空の場合は422を返す(client):
 
 async def test_session_idが空の場合は422を返す(client):
     response = await client.post(
-        "/chat",
+        "/api/chat",
         json={"session_id": "", "message": "テスト"},
     )
     assert response.status_code == 422

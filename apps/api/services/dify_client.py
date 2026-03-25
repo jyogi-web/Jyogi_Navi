@@ -19,6 +19,9 @@ class DifyResponse:
 
 async def send_chat_message(session_id: str, message: str) -> DifyResponse:
     """Dify Chat API にメッセージを送信して回答を返す。"""
+    if not settings.dify_api_base_url or not settings.dify_api_key.get_secret_value():
+        raise HTTPException(status_code=500, detail="Dify API configuration missing")
+
     base = settings.dify_api_base_url.rstrip("/")
     url = (
         f"{base}/chat-messages" if base.endswith("/v1") else f"{base}/v1/chat-messages"
@@ -35,24 +38,30 @@ async def send_chat_message(session_id: str, message: str) -> DifyResponse:
     }
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=settings.dify_timeout_seconds) as client:
             response = await client.post(url, headers=headers, json=payload)
             response.raise_for_status()
     except httpx.TimeoutException as exc:
-        raise HTTPException(status_code=504, detail="Dify API timeout") from exc
+        raise HTTPException(status_code=504, detail="upstream timeout") from exc
     except httpx.HTTPStatusError as exc:
-        raise HTTPException(status_code=502, detail="Dify API error") from exc
+        raise HTTPException(status_code=502, detail="upstream error") from exc
     except httpx.RequestError as exc:
-        raise HTTPException(status_code=502, detail="Dify API unreachable") from exc
+        raise HTTPException(status_code=502, detail="upstream unreachable") from exc
 
     try:
         data = response.json()
     except (json.JSONDecodeError, ValueError) as exc:
         raise HTTPException(
-            status_code=502, detail="Dify API returned invalid JSON"
+            status_code=502, detail="upstream returned invalid response"
         ) from exc
 
     answer = data.get("answer", "")
-    tokens_used = data.get("metadata", {}).get("usage", {}).get("total_tokens", 0)
+    raw_tokens = data.get("metadata", {}).get("usage", {}).get("total_tokens", 0)
+    try:
+        tokens_used = max(0, int(raw_tokens))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(
+            status_code=502, detail="upstream returned invalid token usage"
+        ) from exc
 
     return DifyResponse(answer=answer, tokens_used=tokens_used)

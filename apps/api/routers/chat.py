@@ -8,7 +8,7 @@ from services.log_store import save_usage_log
 from services.pii_mask import mask
 from services.rate_limit import is_rate_limited
 
-router = APIRouter(prefix="/chat", tags=["chat"])
+router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 
 @router.post("", response_model=ChatResponse)
