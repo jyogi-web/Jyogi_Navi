@@ -51,7 +51,7 @@ scripts/ingest/discord/
 
 ```bash
 cd scripts/ingest/discord
-uv pip install -r requirements.txt
+uv sync
 
 export DISCORD_BOT_TOKEN="your_bot_token"
 export DISCORD_CHANNEL_IDS="1215894284428120170,1215901602456539146"
