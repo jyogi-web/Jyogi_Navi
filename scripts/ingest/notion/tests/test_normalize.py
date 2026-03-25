@@ -250,8 +250,8 @@ class TestProcessFile:
         output_file = tmp_path / "output.txt"
         process_file(SAMPLE_JSON, output_file)
         result = output_file.read_text(encoding="utf-8").splitlines()
-        # 空の paragraph は出力されない
-        assert "" not in [line for line in result if result.index(line) > 1]
+        # タイトル行・空行（先頭2行）を除いたコンテンツ部分に空行がない
+        assert "" not in result[2:]
 
     def test_page_title_in_output(self, tmp_path):
         output_file = tmp_path / "output.txt"
