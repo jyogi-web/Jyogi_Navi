@@ -256,3 +256,32 @@ TIDB_SSL_CA=/path/to/tidb-ca.pem
 | [docs/07_infrastructure.md](docs/07_infrastructure.md) | インフラ構成 |
 | [docs/08_logging.md](docs/08_logging.md) | ログ設計 |
 | [docs/09_schedule_and_issues.md](docs/09_schedule_and_issues.md) | スケジュールと課題 |
+
+---
+
+## コントリビュートガイド
+
+### ブランチ命名規則
+
+- `<GitHubユーザー名>/<type>/<issue番号>-<概要>` の形式を推奨
+  - 例：`alice/feat/60-create-readme`、`kou/fix/92-rate-limit-bug`
+- `type` は `feat` / `fix` / `hotfix` / `chore` / `docs` / `refactor` のいずれか
+- Issue 番号は必ず含める
+
+### PR ルール
+
+- タイトル：`<type>(<scope>): <概要>` の形式（例：`feat(chat): メッセージ送信を react-query で管理`）
+- 本文は [.github/pull_request_template.md](.github/pull_request_template.md) のチェックリストをすべて記入してから提出
+- `closes #<issue番号>` を「関連 Issue」欄に必ず記載
+- マージ前に CI（lint / typecheck / test / build）がすべてグリーンであること
+- マージ方式は **Squash merge** を使用し、コミット履歴を整理する
+
+### レビュー・承認フロー
+
+- レビュアーは [CODEOWNERS](.github/CODEOWNERS) に基づき PR 作成時に自動アサインされる
+  - `apps/web/`, `apps/admin/` → @AliceWonerfulWorld
+  - `apps/api/` → @KOU050223 / @NazonoKansatugata
+  - `infra/`, `.github/workflows/` → @KOU050223
+  - `docs/` → @NazonoKansatugata
+- **最低 1 名**の承認を得てからマージする
+- レビュアーへのメモ欄に、特に見てほしい点・背景情報を記載する
