@@ -69,6 +69,53 @@
         }
       }
     },
+    "/api/faq/search": {
+      "get": {
+        "tags": [
+          "faq"
+        ],
+        "summary": "Search Faq",
+        "description": "FAQをキーワードで検索するエンドポイント(P0: LIKE検索)。",
+        "operationId": "search_faq_api_faq_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "検索キーワード",
+              "title": "Q"
+            },
+            "description": "検索キーワード"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/usage-logs": {
       "post": {
         "tags": [
@@ -155,6 +202,37 @@
         ],
         "title": "ChatResponse",
         "description": "チャットレスポンス。"
+      },
+      "FaqSearchResponse": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/FaqSearchResult"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "results"
+        ],
+        "title": "FaqSearchResponse",
+        "description": "FAQ検索レスポンス。"
+      },
+      "FaqSearchResult": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "FaqSearchResult",
+        "description": "FAQ検索結果の1件。"
       },
       "HTTPValidationError": {
         "properties": {

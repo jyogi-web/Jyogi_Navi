@@ -8,6 +8,7 @@ import {
   createUsageLogUsageLogsPost,
   healthCheckHealthGet,
   type Options,
+  searchFaqApiFaqSearchGet,
 } from "../sdk.gen";
 import type {
   ChatApiChatPostData,
@@ -18,6 +19,9 @@ import type {
   CreateUsageLogUsageLogsPostResponse,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponse,
+  SearchFaqApiFaqSearchGetData,
+  SearchFaqApiFaqSearchGetError,
+  SearchFaqApiFaqSearchGetResponse,
 } from "../types.gen";
 
 export type QueryKey<TOptions extends Options> = [
@@ -114,6 +118,33 @@ export const chatApiChatPostMutation = (
   };
   return mutationOptions;
 };
+
+export const searchFaqApiFaqSearchGetQueryKey = (options: Options<SearchFaqApiFaqSearchGetData>) =>
+  createQueryKey("searchFaqApiFaqSearchGet", options);
+
+/**
+ * Search Faq
+ *
+ * FAQをキーワードで検索するエンドポイント(P0: LIKE検索)。
+ */
+export const searchFaqApiFaqSearchGetOptions = (options: Options<SearchFaqApiFaqSearchGetData>) =>
+  queryOptions<
+    SearchFaqApiFaqSearchGetResponse,
+    SearchFaqApiFaqSearchGetError,
+    SearchFaqApiFaqSearchGetResponse,
+    ReturnType<typeof searchFaqApiFaqSearchGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await searchFaqApiFaqSearchGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: searchFaqApiFaqSearchGetQueryKey(options),
+  });
 
 /**
  * Create Usage Log

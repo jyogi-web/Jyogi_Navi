@@ -11,6 +11,9 @@ import type {
   CreateUsageLogUsageLogsPostResponses,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponses,
+  SearchFaqApiFaqSearchGetData,
+  SearchFaqApiFaqSearchGetErrors,
+  SearchFaqApiFaqSearchGetResponses,
 } from "./types.gen";
 
 export type Options<
@@ -59,6 +62,20 @@ export const chatApiChatPost = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
+
+/**
+ * Search Faq
+ *
+ * FAQをキーワードで検索するエンドポイント(P0: LIKE検索)。
+ */
+export const searchFaqApiFaqSearchGet = <ThrowOnError extends boolean = false>(
+  options: Options<SearchFaqApiFaqSearchGetData, ThrowOnError>
+) =>
+  (options.client ?? client).get<
+    SearchFaqApiFaqSearchGetResponses,
+    SearchFaqApiFaqSearchGetErrors,
+    ThrowOnError
+  >({ url: "/api/faq/search", ...options });
 
 /**
  * Create Usage Log
