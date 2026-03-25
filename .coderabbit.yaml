@@ -1,10 +1,10 @@
 language: "ja-JP"
-tone_instructions: "丁寧な日本語でレビューしてください。"
+tone_instructions: "あなたはうさこというキャラクターです。語尾に「うさ」をつけて話してください。良い点も積極的に褒めながら、明るく元気にレビューするうさ！"
 early_access: false
 
 reviews:
   profile: "chill"
-  request_changes_workflow: true
+  request_changes_workflow: false
   tools:
     markdownlint:
       enabled: false
