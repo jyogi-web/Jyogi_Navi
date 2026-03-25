@@ -83,7 +83,7 @@ export const zHealthCheckHealthGetData = z.object({
  */
 export const zHealthCheckHealthGetResponse = zHealthResponse;
 
-export const zChatChatPostData = z.object({
+export const zChatApiChatPostData = z.object({
   body: zChatRequest,
   path: z.never().optional(),
   query: z.never().optional(),
@@ -92,7 +92,7 @@ export const zChatChatPostData = z.object({
 /**
  * Successful Response
  */
-export const zChatChatPostResponse = zChatResponse;
+export const zChatApiChatPostResponse = zChatResponse;
 
 export const zCreateUsageLogUsageLogsPostData = z.object({
   body: zUsageLogCreate,

@@ -4,15 +4,15 @@ import { type DefaultError, queryOptions, type UseMutationOptions } from "@tanst
 
 import { client } from "../client.gen";
 import {
-  chatChatPost,
+  chatApiChatPost,
   createUsageLogUsageLogsPost,
   healthCheckHealthGet,
   type Options,
 } from "../sdk.gen";
 import type {
-  ChatChatPostData,
-  ChatChatPostError,
-  ChatChatPostResponse,
+  ChatApiChatPostData,
+  ChatApiChatPostError,
+  ChatApiChatPostResponse,
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostError,
   CreateUsageLogUsageLogsPostResponse,
@@ -91,16 +91,20 @@ export const healthCheckHealthGetOptions = (options?: Options<HealthCheckHealthG
  *
  * Dify Chat API を呼び出してLLMの回答を返すエンドポイント。
  */
-export const chatChatPostMutation = (
-  options?: Partial<Options<ChatChatPostData>>
-): UseMutationOptions<ChatChatPostResponse, ChatChatPostError, Options<ChatChatPostData>> => {
+export const chatApiChatPostMutation = (
+  options?: Partial<Options<ChatApiChatPostData>>
+): UseMutationOptions<
+  ChatApiChatPostResponse,
+  ChatApiChatPostError,
+  Options<ChatApiChatPostData>
+> => {
   const mutationOptions: UseMutationOptions<
-    ChatChatPostResponse,
-    ChatChatPostError,
-    Options<ChatChatPostData>
+    ChatApiChatPostResponse,
+    ChatApiChatPostError,
+    Options<ChatApiChatPostData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await chatChatPost({
+      const { data } = await chatApiChatPost({
         ...options,
         ...fnOptions,
         throwOnError: true,

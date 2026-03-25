@@ -27,14 +27,14 @@
         }
       }
     },
-    "/chat": {
+    "/api/chat": {
       "post": {
         "tags": [
           "chat"
         ],
         "summary": "Chat",
         "description": "Dify Chat API を呼び出してLLMの回答を返すエンドポイント。",
-        "operationId": "chat_chat_post",
+        "operationId": "chat_api_chat_post",
         "requestBody": {
           "content": {
             "application/json": {

@@ -153,30 +153,30 @@ export type HealthCheckHealthGetResponses = {
 export type HealthCheckHealthGetResponse =
   HealthCheckHealthGetResponses[keyof HealthCheckHealthGetResponses];
 
-export type ChatChatPostData = {
+export type ChatApiChatPostData = {
   body: ChatRequest;
   path?: never;
   query?: never;
-  url: "/chat";
+  url: "/api/chat";
 };
 
-export type ChatChatPostErrors = {
+export type ChatApiChatPostErrors = {
   /**
    * Validation Error
    */
   422: HttpValidationError;
 };
 
-export type ChatChatPostError = ChatChatPostErrors[keyof ChatChatPostErrors];
+export type ChatApiChatPostError = ChatApiChatPostErrors[keyof ChatApiChatPostErrors];
 
-export type ChatChatPostResponses = {
+export type ChatApiChatPostResponses = {
   /**
    * Successful Response
    */
   200: ChatResponse;
 };
 
-export type ChatChatPostResponse = ChatChatPostResponses[keyof ChatChatPostResponses];
+export type ChatApiChatPostResponse = ChatApiChatPostResponses[keyof ChatApiChatPostResponses];
 
 export type CreateUsageLogUsageLogsPostData = {
   body: UsageLogCreate;
