@@ -87,9 +87,8 @@ DIFY_API_SECRET_KEY=your-api-secret-string
 # Dify Web ポート（競合時は変更可）
 DIFY_WEB_PORT=3101
 
-# 永続ストレージ（private key を保持）
-DIFY_STORAGE_PATH=./data/storage
-DIFY_PLUGIN_STORAGE_PATH=./data/plugin-daemon-storage
+# 永続ストレージ参照先（コンテナ内）
+# 実データは named volume(dify-storage) に保持
 STORAGE_LOCAL_PATH=/app/storage
 
 # ローカルUIから API(5001) を叩くための CORS 許可
@@ -189,21 +188,20 @@ docker-compose down
 docker-compose down -v
 ```
 
-### 🔁 既存 named volume から bind mount への移行（初回のみ）
+### 🔁 既存 bind mount(/data) から named volume への移行（必要時のみ）
 
-`PrivkeyNotFoundError` の再発防止のため、既存データを `./data/storage` へ退避してから再起動します。
+ローカル `./data` 運用をやめる場合、既存データを named volume に取り込んでから再起動します。
 
 ```bash
 cd infra/dify
 
-# 1) バックアップ先ディレクトリ作成
-mkdir -p ./data/storage ./data/plugin-daemon-storage
+# 1) API/Worker データを named volume へコピー
+docker run --rm -v dify_dify-storage:/to -v "$(pwd)/data/storage:/from" alpine sh -c "cp -a /from/. /to/"
 
-# 2) 旧 named volume からデータをコピー
-docker run --rm -v dify_dify-storage:/from -v "$(pwd)/data/storage:/to" alpine sh -c "cp -a /from/. /to/"
-docker run --rm -v dify_dify-plugin-daemon-storage:/from -v "$(pwd)/data/plugin-daemon-storage:/to" alpine sh -c "cp -a /from/. /to/"
+# 2) plugin-daemon データを named volume へコピー（./data 側にある場合のみ）
+docker run --rm -v dify_dify-plugin-daemon-storage:/to -v "$(pwd)/data/plugin-daemon-storage:/from" alpine sh -c "cp -a /from/. /to/"
 
-# 3) 反映
+# 3) 反映（API/Worker/Plugin を再作成）
 docker-compose up -d --force-recreate
 ```
 

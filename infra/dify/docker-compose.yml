@@ -66,7 +66,6 @@ x-dify-shared-env: &dify-shared-env
   STORAGE_LOCAL_PATH: "${STORAGE_LOCAL_PATH:-/app/storage}"
   OPENDAL_SCHEME: "${OPENDAL_SCHEME:-fs}"
   OPENDAL_FS_ROOT: "${OPENDAL_FS_ROOT:-/app/storage}"
-  DIFY_STORAGE_PATH: "${DIFY_STORAGE_PATH:-./data/storage}"
   UPLOAD_FILE_SIZE_LIMIT: "${UPLOAD_FILE_SIZE_LIMIT:-100}"
 
   # =====================================
@@ -129,8 +128,8 @@ services:
       - dify-network
       - dify-ssrf-network
     volumes:
-      # 永続化した鍵/資格情報（down -v の影響を受けない bind mount）
-      - ${DIFY_STORAGE_PATH:-./data/storage}:/app/storage
+      # 永続化した鍵/資格情報（named volume）
+      - dify-storage:/app/storage
       # ログディレクトリ
       - dify-logs:/var/log/dify
     healthcheck:
@@ -159,7 +158,7 @@ services:
       - dify-network
       - dify-ssrf-network
     volumes:
-      - ${DIFY_STORAGE_PATH:-./data/storage}:/app/storage
+      - dify-storage:/app/storage
       - dify-logs:/var/log/dify
 
   # =====================================
@@ -179,7 +178,7 @@ services:
       - dify-network
       - dify-ssrf-network
     volumes:
-      - ${DIFY_STORAGE_PATH:-./data/storage}:/app/storage
+      - dify-storage:/app/storage
       - dify-logs:/var/log/dify
 
   # =====================================
@@ -222,7 +221,7 @@ services:
     networks:
       - dify-network
     volumes:
-      - ${DIFY_PLUGIN_STORAGE_PATH:-./data/plugin-daemon-storage}:/app/storage
+      - dify-plugin-daemon-storage:/app/storage
       - /var/run/docker.sock:/var/run/docker.sock
 
   # =====================================
@@ -304,7 +303,11 @@ networks:
 # Volumes
 # =====================================
 volumes:
+  dify-storage:
+    driver: local
   dify-logs:
     driver: local
   dify-redis-data:
+    driver: local
+  dify-plugin-daemon-storage:
     driver: local
