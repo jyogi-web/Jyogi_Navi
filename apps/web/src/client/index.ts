@@ -8,6 +8,8 @@ export {
   healthCheckHealthGetOptions,
   healthCheckHealthGetQueryKey,
   type QueryKey,
+  searchFaqApiFaqSearchGetOptions,
+  searchFaqApiFaqSearchGetQueryKey,
 } from "./@tanstack/react-query.gen";
 export {
   chatApiChatPost,
@@ -15,6 +17,7 @@ export {
   getAdminStatsApiAdminStatsGet,
   healthCheckHealthGet,
   type Options,
+  searchFaqApiFaqSearchGet,
 } from "./sdk.gen";
 export type {
   AdminStatsResponse,
@@ -32,6 +35,8 @@ export type {
   CreateUsageLogUsageLogsPostResponse,
   CreateUsageLogUsageLogsPostResponses,
   DailyCount,
+  FaqSearchResponse,
+  FaqSearchResult,
   GetAdminStatsApiAdminStatsGetData,
   GetAdminStatsApiAdminStatsGetResponse,
   GetAdminStatsApiAdminStatsGetResponses,
@@ -40,6 +45,11 @@ export type {
   HealthCheckHealthGetResponses,
   HealthResponse,
   HttpValidationError,
+  SearchFaqApiFaqSearchGetData,
+  SearchFaqApiFaqSearchGetError,
+  SearchFaqApiFaqSearchGetErrors,
+  SearchFaqApiFaqSearchGetResponse,
+  SearchFaqApiFaqSearchGetResponses,
   UsageLogCreate,
   UsageLogResponse,
   ValidationError,

@@ -65,6 +65,30 @@ export type DailyCount = {
 };
 
 /**
+ * FaqSearchResponse
+ *
+ * FAQ検索レスポンス。
+ */
+export type FaqSearchResponse = {
+  /**
+   * Results
+   */
+  results: Array<FaqSearchResult>;
+};
+
+/**
+ * FaqSearchResult
+ *
+ * FAQ検索結果の1件。
+ */
+export type FaqSearchResult = {
+  /**
+   * Content
+   */
+  content: string;
+};
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -205,6 +229,40 @@ export type ChatApiChatPostResponses = {
 };
 
 export type ChatApiChatPostResponse = ChatApiChatPostResponses[keyof ChatApiChatPostResponses];
+
+export type SearchFaqApiFaqSearchGetData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Q
+     *
+     * 検索キーワード
+     */
+    q: string;
+  };
+  url: "/api/faq/search";
+};
+
+export type SearchFaqApiFaqSearchGetErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type SearchFaqApiFaqSearchGetError =
+  SearchFaqApiFaqSearchGetErrors[keyof SearchFaqApiFaqSearchGetErrors];
+
+export type SearchFaqApiFaqSearchGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: FaqSearchResponse;
+};
+
+export type SearchFaqApiFaqSearchGetResponse =
+  SearchFaqApiFaqSearchGetResponses[keyof SearchFaqApiFaqSearchGetResponses];
 
 export type CreateUsageLogUsageLogsPostData = {
   body: UsageLogCreate;

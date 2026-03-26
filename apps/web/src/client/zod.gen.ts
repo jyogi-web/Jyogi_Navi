@@ -39,6 +39,24 @@ export const zAdminStatsResponse = z.object({
 });
 
 /**
+ * FaqSearchResult
+ *
+ * FAQ検索結果の1件。
+ */
+export const zFaqSearchResult = z.object({
+  content: z.string(),
+});
+
+/**
+ * FaqSearchResponse
+ *
+ * FAQ検索レスポンス。
+ */
+export const zFaqSearchResponse = z.object({
+  results: z.array(zFaqSearchResult),
+});
+
+/**
  * HealthResponse
  */
 export const zHealthResponse = z.object({
@@ -109,6 +127,19 @@ export const zChatApiChatPostData = z.object({
  * Successful Response
  */
 export const zChatApiChatPostResponse = zChatResponse;
+
+export const zSearchFaqApiFaqSearchGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    q: z.string().min(1).max(200),
+  }),
+});
+
+/**
+ * Successful Response
+ */
+export const zSearchFaqApiFaqSearchGetResponse = zFaqSearchResponse;
 
 export const zCreateUsageLogUsageLogsPostData = z.object({
   body: zUsageLogCreate,
