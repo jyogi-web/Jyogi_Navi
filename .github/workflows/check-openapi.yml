@@ -5,8 +5,7 @@ on:
     branches: [main]
     paths:
       - "apps/api/**"
-      - "apps/web/src/client/**"
-      - "apps/web/openapi-ts.config.ts"
+      - "packages/openapi/**"
       - "turbo.json"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -60,14 +59,14 @@ jobs:
 
       - name: Check for schema drift
         run: |
-          if git diff --exit-code apps/api/openapi.json apps/web/src/client/; then
+          if git diff --exit-code apps/api/openapi.json packages/openapi/src/client/; then
             echo "No schema drift detected."
           else
             echo ""
             echo "ERROR: Schema drift detected!"
             echo "The following files are out of sync:"
-            git diff --name-only apps/api/openapi.json apps/web/src/client/
+            git diff --name-only apps/api/openapi.json packages/openapi/src/client/
             echo ""
-            echo "Run 'pnpm generate' locally and commit the generated files."
+            echo "Run 'pnpm --filter @jyogi-navi/openapi run openapi:generate' locally and commit the generated files."
             exit 1
           fi
