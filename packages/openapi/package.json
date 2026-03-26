@@ -18,7 +18,7 @@
     "@hey-api/openapi-ts": "^0.94.2"
   },
   "dependencies": {
-    "@hey-api/client-fetch": "*",
+    "@hey-api/client-fetch": "^0.13.1",
     "@tanstack/react-query": "^5.90.21",
     "zod": "^4.3.6"
   }

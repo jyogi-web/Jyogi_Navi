@@ -196,7 +196,7 @@ importers:
   packages/openapi:
     dependencies:
       '@hey-api/client-fetch':
-        specifier: '*'
+        specifier: ^0.13.1
         version: 0.13.1(@hey-api/openapi-ts@0.94.3(typescript@5.9.3))
       '@tanstack/react-query':
         specifier: ^5.90.21
