@@ -3,7 +3,7 @@ import type { DailyCount, AdminStatsResponse } from "@jyogi-navi/openapi/types";
 export type { DailyCount };
 export type AdminStats = AdminStatsResponse;
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 function generateMockStats(): AdminStats {
   const days: DailyCount[] = [];
