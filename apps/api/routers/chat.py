@@ -7,7 +7,7 @@ from db.session import get_db_session
 from exceptions import RateLimitExceeded
 from schemas.chat import ChatRequest, ChatResponse
 from services.dify_client import send_chat_message
-from services.log_store import save_usage_log
+from services.log_store import check_and_save_usage_log
 from services.pii_mask import mask
 from services.rate_limit import is_rate_limited
 
@@ -33,12 +33,14 @@ async def chat(
     masked_answer = mask(dify_response.answer)
 
     try:
-        await save_usage_log(
+        await check_and_save_usage_log(
             session=session,
             session_id=body.session_id,
             tokens=dify_response.tokens_used,
             trace_id=trace_id,
         )
+    except RateLimitExceeded:
+        raise
     except Exception:
         logger.exception(
             "usage_log save failed: session_id=%s trace_id=%s",

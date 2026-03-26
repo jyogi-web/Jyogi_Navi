@@ -3,7 +3,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from services.log_store import get_daily_token_usage, save_usage_log
+from exceptions import RateLimitExceeded
+from services.log_store import (
+    check_and_save_usage_log,
+    get_daily_token_usage,
+    save_usage_log,
+)
 
 
 @pytest.fixture
@@ -76,3 +81,77 @@ async def test_get_daily_token_usage_returns_int(mock_session):
     result = await get_daily_token_usage(mock_session, "sess-1")
     assert result == 300
     assert isinstance(result, int)
+
+
+# --- check_and_save_usage_log ---
+
+
+@pytest.fixture
+def mock_session_for_check():
+    """check_and_save_usage_log 用: execute を2回呼ぶシナリオに対応したモック。"""
+    session = AsyncMock()
+    session.add = MagicMock()
+    session.commit = AsyncMock()
+    session.refresh = AsyncMock()
+    return session
+
+
+async def test_check_and_save_usage_log_under_limit(mock_session_for_check):
+    """上限未満のとき UsageLog が保存されることを確認。"""
+    # 1回目: SELECT FOR UPDATE (session行ロック)、2回目: SUM クエリ
+    lock_result = MagicMock()
+    sum_result = MagicMock()
+    sum_result.scalar.return_value = 0
+    mock_session_for_check.execute = AsyncMock(side_effect=[lock_result, sum_result])
+
+    with patch("services.log_store.settings") as mock_settings:
+        mock_settings.daily_token_limit = 1000
+        await check_and_save_usage_log(
+            session=mock_session_for_check,
+            session_id="sess-1",
+            tokens=200,
+            trace_id="trace-1",
+        )
+
+    mock_session_for_check.add.assert_called_once()
+    mock_session_for_check.commit.assert_awaited_once()
+
+
+async def test_check_and_save_usage_log_at_limit_raises(mock_session_for_check):
+    """使用量が上限に達しているとき RateLimitExceeded が送出されることを確認。"""
+    lock_result = MagicMock()
+    sum_result = MagicMock()
+    sum_result.scalar.return_value = 1000
+    mock_session_for_check.execute = AsyncMock(side_effect=[lock_result, sum_result])
+
+    with patch("services.log_store.settings") as mock_settings:
+        mock_settings.daily_token_limit = 1000
+        with pytest.raises(RateLimitExceeded):
+            await check_and_save_usage_log(
+                session=mock_session_for_check,
+                session_id="sess-1",
+                tokens=100,
+                trace_id="trace-1",
+            )
+
+    mock_session_for_check.add.assert_not_called()
+    mock_session_for_check.commit.assert_not_awaited()
+
+
+async def test_check_and_save_usage_log_acquires_lock(mock_session_for_check):
+    """SELECT FOR UPDATE が実行される(execute が最低2回呼ばれる)ことを確認。"""
+    lock_result = MagicMock()
+    sum_result = MagicMock()
+    sum_result.scalar.return_value = 0
+    mock_session_for_check.execute = AsyncMock(side_effect=[lock_result, sum_result])
+
+    with patch("services.log_store.settings") as mock_settings:
+        mock_settings.daily_token_limit = 1000
+        await check_and_save_usage_log(
+            session=mock_session_for_check,
+            session_id="sess-1",
+            tokens=100,
+            trace_id="trace-1",
+        )
+
+    assert mock_session_for_check.execute.await_count == 2
