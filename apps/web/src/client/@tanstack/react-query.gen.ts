@@ -5,6 +5,7 @@ import { type DefaultError, queryOptions, type UseMutationOptions } from "@tanst
 import { client } from "../client.gen";
 import {
   chatApiChatPost,
+  createFeedbackFeedbackPost,
   createUsageLogUsageLogsPost,
   getAdminStatsApiAdminStatsGet,
   healthCheckHealthGet,
@@ -15,6 +16,9 @@ import type {
   ChatApiChatPostData,
   ChatApiChatPostError,
   ChatApiChatPostResponse,
+  CreateFeedbackFeedbackPostData,
+  CreateFeedbackFeedbackPostError,
+  CreateFeedbackFeedbackPostResponse,
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostError,
   CreateUsageLogUsageLogsPostResponse,
@@ -148,6 +152,35 @@ export const searchFaqApiFaqSearchGetOptions = (options: Options<SearchFaqApiFaq
     },
     queryKey: searchFaqApiFaqSearchGetQueryKey(options),
   });
+
+/**
+ * Create Feedback
+ *
+ * チャット回答への👍/👎フィードバックを保存するエンドポイント。
+ */
+export const createFeedbackFeedbackPostMutation = (
+  options?: Partial<Options<CreateFeedbackFeedbackPostData>>
+): UseMutationOptions<
+  CreateFeedbackFeedbackPostResponse,
+  CreateFeedbackFeedbackPostError,
+  Options<CreateFeedbackFeedbackPostData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    CreateFeedbackFeedbackPostResponse,
+    CreateFeedbackFeedbackPostError,
+    Options<CreateFeedbackFeedbackPostData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await createFeedbackFeedbackPost({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
 
 /**
  * Create Usage Log

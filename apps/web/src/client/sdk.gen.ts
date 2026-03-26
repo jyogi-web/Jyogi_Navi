@@ -6,6 +6,9 @@ import type {
   ChatApiChatPostData,
   ChatApiChatPostErrors,
   ChatApiChatPostResponses,
+  CreateFeedbackFeedbackPostData,
+  CreateFeedbackFeedbackPostErrors,
+  CreateFeedbackFeedbackPostResponses,
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostErrors,
   CreateUsageLogUsageLogsPostResponses,
@@ -78,6 +81,27 @@ export const searchFaqApiFaqSearchGet = <ThrowOnError extends boolean = false>(
     SearchFaqApiFaqSearchGetErrors,
     ThrowOnError
   >({ url: "/api/faq/search", ...options });
+
+/**
+ * Create Feedback
+ *
+ * チャット回答への👍/👎フィードバックを保存するエンドポイント。
+ */
+export const createFeedbackFeedbackPost = <ThrowOnError extends boolean = false>(
+  options: Options<CreateFeedbackFeedbackPostData, ThrowOnError>
+) =>
+  (options.client ?? client).post<
+    CreateFeedbackFeedbackPostResponses,
+    CreateFeedbackFeedbackPostErrors,
+    ThrowOnError
+  >({
+    url: "/feedback",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
 
 /**
  * Create Usage Log
