@@ -9,6 +9,7 @@ import {
 import { client } from "../client.gen";
 import {
   chatApiChatPost,
+  createFeedbackApiFeedbackPost,
   createUsageLogUsageLogsPost,
   getAdminStatsApiAdminStatsGet,
   healthCheckHealthGet,
@@ -19,6 +20,9 @@ import type {
   ChatApiChatPostData,
   ChatApiChatPostError,
   ChatApiChatPostResponse,
+  CreateFeedbackApiFeedbackPostData,
+  CreateFeedbackApiFeedbackPostError,
+  CreateFeedbackApiFeedbackPostResponse,
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostError,
   CreateUsageLogUsageLogsPostResponse,
@@ -159,6 +163,35 @@ export const searchFaqApiFaqSearchGetOptions = (
     },
     queryKey: searchFaqApiFaqSearchGetQueryKey(options),
   });
+
+/**
+ * Create Feedback
+ *
+ * チャット回答への👍/👎フィードバックを保存するエンドポイント。
+ */
+export const createFeedbackApiFeedbackPostMutation = (
+  options?: Partial<Options<CreateFeedbackApiFeedbackPostData>>,
+): UseMutationOptions<
+  CreateFeedbackApiFeedbackPostResponse,
+  CreateFeedbackApiFeedbackPostError,
+  Options<CreateFeedbackApiFeedbackPostData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    CreateFeedbackApiFeedbackPostResponse,
+    CreateFeedbackApiFeedbackPostError,
+    Options<CreateFeedbackApiFeedbackPostData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await createFeedbackApiFeedbackPost({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
 
 /**
  * Create Usage Log

@@ -57,6 +57,30 @@ export const zFaqSearchResponse = z.object({
 });
 
 /**
+ * FeedbackCreate
+ *
+ * フィードバック作成リクエスト。
+ */
+export const zFeedbackCreate = z.object({
+  session_id: z.string().min(1).max(128),
+  rating: z.enum(["good", "bad"]),
+  comment: z.string().max(500).nullish(),
+});
+
+/**
+ * FeedbackResponse
+ *
+ * フィードバックレスポンス。
+ */
+export const zFeedbackResponse = z.object({
+  id: z.string(),
+  session_id: z.string(),
+  rating: z.string(),
+  comment: z.string().nullable(),
+  created_at: z.iso.datetime(),
+});
+
+/**
  * HealthResponse
  */
 export const zHealthResponse = z.object({
@@ -140,6 +164,17 @@ export const zSearchFaqApiFaqSearchGetData = z.object({
  * Successful Response
  */
 export const zSearchFaqApiFaqSearchGetResponse = zFaqSearchResponse;
+
+export const zCreateFeedbackApiFeedbackPostData = z.object({
+  body: zFeedbackCreate,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Successful Response
+ */
+export const zCreateFeedbackApiFeedbackPostResponse = zFeedbackResponse;
 
 export const zCreateUsageLogUsageLogsPostData = z.object({
   body: zUsageLogCreate,

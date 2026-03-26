@@ -89,6 +89,54 @@ export type FaqSearchResult = {
 };
 
 /**
+ * FeedbackCreate
+ *
+ * フィードバック作成リクエスト。
+ */
+export type FeedbackCreate = {
+  /**
+   * Session Id
+   */
+  session_id: string;
+  /**
+   * Rating
+   */
+  rating: "good" | "bad";
+  /**
+   * Comment
+   */
+  comment?: string | null;
+};
+
+/**
+ * FeedbackResponse
+ *
+ * フィードバックレスポンス。
+ */
+export type FeedbackResponse = {
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * Session Id
+   */
+  session_id: string;
+  /**
+   * Rating
+   */
+  rating: string;
+  /**
+   * Comment
+   */
+  comment: string | null;
+  /**
+   * Created At
+   */
+  created_at: string;
+};
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -265,6 +313,33 @@ export type SearchFaqApiFaqSearchGetResponses = {
 
 export type SearchFaqApiFaqSearchGetResponse =
   SearchFaqApiFaqSearchGetResponses[keyof SearchFaqApiFaqSearchGetResponses];
+
+export type CreateFeedbackApiFeedbackPostData = {
+  body: FeedbackCreate;
+  path?: never;
+  query?: never;
+  url: "/api/feedback";
+};
+
+export type CreateFeedbackApiFeedbackPostErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type CreateFeedbackApiFeedbackPostError =
+  CreateFeedbackApiFeedbackPostErrors[keyof CreateFeedbackApiFeedbackPostErrors];
+
+export type CreateFeedbackApiFeedbackPostResponses = {
+  /**
+   * Successful Response
+   */
+  201: FeedbackResponse;
+};
+
+export type CreateFeedbackApiFeedbackPostResponse =
+  CreateFeedbackApiFeedbackPostResponses[keyof CreateFeedbackApiFeedbackPostResponses];
 
 export type CreateUsageLogUsageLogsPostData = {
   body: UsageLogCreate;

@@ -18,6 +18,7 @@ async function sendChatMessage(content: string): Promise<string> {
 
 export function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [sessionId] = useState<string>(() => uuidv4());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 新しいメッセージが追加されたら自動スクロール
@@ -116,7 +117,7 @@ export function ChatContainer() {
               // メッセージ一覧
               <>
                 {messages.map((message) => (
-                  <ChatMessage key={message.id} message={message} />
+                  <ChatMessage key={message.id} message={message} sessionId={sessionId} />
                 ))}
                 {isPending && (
                   <div className="mb-4 flex items-center gap-3" role="status">
