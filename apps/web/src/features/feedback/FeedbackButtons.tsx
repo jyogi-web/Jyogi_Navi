@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
-import { createFeedbackFeedbackPost } from "@jyogi-navi/openapi/sdk";
+import { createFeedbackApiFeedbackPost } from "@jyogi-navi/openapi/sdk";
 import { cn } from "@/lib/utils";
 
 interface FeedbackButtonsProps {
@@ -15,7 +15,7 @@ export function FeedbackButtons({ sessionId }: FeedbackButtonsProps) {
 
   const { mutate } = useMutation({
     mutationFn: (rating: "good" | "bad") =>
-      createFeedbackFeedbackPost({
+      createFeedbackApiFeedbackPost({
         body: { session_id: sessionId, rating },
       }),
   });

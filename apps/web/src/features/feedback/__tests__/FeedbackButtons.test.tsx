@@ -5,10 +5,10 @@ import { FeedbackButtons } from "../FeedbackButtons";
 
 // API クライアントをモック
 vi.mock("@jyogi-navi/openapi/sdk", () => ({
-  createFeedbackFeedbackPost: vi.fn(),
+  createFeedbackApiFeedbackPost: vi.fn(),
 }));
 
-import { createFeedbackFeedbackPost } from "@jyogi-navi/openapi/sdk";
+import { createFeedbackApiFeedbackPost } from "@jyogi-navi/openapi/sdk";
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({
@@ -31,7 +31,7 @@ describe("FeedbackButtons", () => {
   });
 
   it("👍ボタンクリックで selected 状態になること", async () => {
-    vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
+    vi.mocked(createFeedbackApiFeedbackPost).mockResolvedValue({} as never);
     render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
@@ -45,7 +45,7 @@ describe("FeedbackButtons", () => {
   });
 
   it("👎ボタンクリックで selected 状態になること", async () => {
-    vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
+    vi.mocked(createFeedbackApiFeedbackPost).mockResolvedValue({} as never);
     render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
@@ -59,7 +59,7 @@ describe("FeedbackButtons", () => {
   });
 
   it("👍クリック後に再クリックで選択解除されること", async () => {
-    vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
+    vi.mocked(createFeedbackApiFeedbackPost).mockResolvedValue({} as never);
     render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
@@ -78,7 +78,7 @@ describe("FeedbackButtons", () => {
   });
 
   it("👍クリック時にAPIが呼び出されること", async () => {
-    vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
+    vi.mocked(createFeedbackApiFeedbackPost).mockResolvedValue({} as never);
     render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
@@ -86,7 +86,7 @@ describe("FeedbackButtons", () => {
     fireEvent.click(screen.getByRole("button", { name: /good/i }));
 
     await waitFor(() => {
-      expect(createFeedbackFeedbackPost).toHaveBeenCalledWith(
+      expect(createFeedbackApiFeedbackPost).toHaveBeenCalledWith(
         expect.objectContaining({
           body: expect.objectContaining({
             session_id: "sess-abc",
