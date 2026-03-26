@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 
 interface FeedbackButtonsProps {
   sessionId: string;
-  messageId: string;
 }
 
 export function FeedbackButtons({ sessionId }: FeedbackButtonsProps) {

@@ -23,7 +23,7 @@ describe("FeedbackButtons", () => {
   });
 
   it("👍と👎ボタンが描画されること", () => {
-    render(<FeedbackButtons sessionId="sess-abc" messageId="msg-1" />, {
+    render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
     expect(screen.getByRole("button", { name: /good/i })).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe("FeedbackButtons", () => {
 
   it("👍ボタンクリックで selected 状態になること", async () => {
     vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
-    render(<FeedbackButtons sessionId="sess-abc" messageId="msg-1" />, {
+    render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
 
@@ -46,7 +46,7 @@ describe("FeedbackButtons", () => {
 
   it("👎ボタンクリックで selected 状態になること", async () => {
     vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
-    render(<FeedbackButtons sessionId="sess-abc" messageId="msg-1" />, {
+    render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
 
@@ -60,7 +60,7 @@ describe("FeedbackButtons", () => {
 
   it("👍クリック後に再クリックで選択解除されること", async () => {
     vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
-    render(<FeedbackButtons sessionId="sess-abc" messageId="msg-1" />, {
+    render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
 
@@ -79,7 +79,7 @@ describe("FeedbackButtons", () => {
 
   it("👍クリック時にAPIが呼び出されること", async () => {
     vi.mocked(createFeedbackFeedbackPost).mockResolvedValue({} as never);
-    render(<FeedbackButtons sessionId="sess-abc" messageId="msg-1" />, {
+    render(<FeedbackButtons sessionId="sess-abc" />, {
       wrapper,
     });
 

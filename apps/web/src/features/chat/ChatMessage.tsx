@@ -58,7 +58,7 @@ export function ChatMessage({ message, sessionId }: ChatMessageProps) {
               minute: "2-digit",
             })}
           </div>
-          {!isUser && <FeedbackButtons sessionId={sessionId} messageId={message.id} />}
+          {!isUser && <FeedbackButtons sessionId={sessionId} />}
         </div>
       </div>
     </div>
