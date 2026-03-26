@@ -26,7 +26,7 @@ export const zChatResponse = z.object({
  * DailyCount
  */
 export const zDailyCount = z.object({
-  day: z.iso.date(),
+  date: z.iso.date(),
   count: z.int(),
 });
 
@@ -34,8 +34,9 @@ export const zDailyCount = z.object({
  * AdminStatsResponse
  */
 export const zAdminStatsResponse = z.object({
-  daily_questions: z.array(zDailyCount),
+  daily_counts: z.array(zDailyCount),
   total_tokens: z.int(),
+  good_rate: z.number(),
 });
 
 /**
@@ -187,7 +188,7 @@ export const zCreateUsageLogUsageLogsPostData = z.object({
  */
 export const zCreateUsageLogUsageLogsPostResponse = zUsageLogResponse;
 
-export const zGetAdminStatsApiAdminStatsGetData = z.object({
+export const zAdminStatsApiAdminStatsGetData = z.object({
   body: z.never().optional(),
   path: z.never().optional(),
   query: z.never().optional(),
@@ -196,4 +197,4 @@ export const zGetAdminStatsApiAdminStatsGetData = z.object({
 /**
  * Successful Response
  */
-export const zGetAdminStatsApiAdminStatsGetResponse = zAdminStatsResponse;
+export const zAdminStatsApiAdminStatsGetResponse = zAdminStatsResponse;

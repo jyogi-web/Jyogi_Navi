@@ -8,15 +8,17 @@ import {
 
 import { client } from "../client.gen";
 import {
+  adminStatsApiAdminStatsGet,
   chatApiChatPost,
   createFeedbackApiFeedbackPost,
   createUsageLogUsageLogsPost,
-  getAdminStatsApiAdminStatsGet,
   healthCheckHealthGet,
   type Options,
   searchFaqApiFaqSearchGet,
 } from "../sdk.gen";
 import type {
+  AdminStatsApiAdminStatsGetData,
+  AdminStatsApiAdminStatsGetResponse,
   ChatApiChatPostData,
   ChatApiChatPostError,
   ChatApiChatPostResponse,
@@ -26,8 +28,6 @@ import type {
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostError,
   CreateUsageLogUsageLogsPostResponse,
-  GetAdminStatsApiAdminStatsGetData,
-  GetAdminStatsApiAdminStatsGetResponse,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponse,
   SearchFaqApiFaqSearchGetData,
@@ -222,26 +222,26 @@ export const createUsageLogUsageLogsPostMutation = (
   return mutationOptions;
 };
 
-export const getAdminStatsApiAdminStatsGetQueryKey = (
-  options?: Options<GetAdminStatsApiAdminStatsGetData>,
-) => createQueryKey("getAdminStatsApiAdminStatsGet", options);
+export const adminStatsApiAdminStatsGetQueryKey = (
+  options?: Options<AdminStatsApiAdminStatsGetData>,
+) => createQueryKey("adminStatsApiAdminStatsGet", options);
 
 /**
- * Get Admin Stats
+ * Admin Stats
  *
  * 管理ダッシュボード用KPI集計エンドポイント。
  */
-export const getAdminStatsApiAdminStatsGetOptions = (
-  options?: Options<GetAdminStatsApiAdminStatsGetData>,
+export const adminStatsApiAdminStatsGetOptions = (
+  options?: Options<AdminStatsApiAdminStatsGetData>,
 ) =>
   queryOptions<
-    GetAdminStatsApiAdminStatsGetResponse,
+    AdminStatsApiAdminStatsGetResponse,
     DefaultError,
-    GetAdminStatsApiAdminStatsGetResponse,
-    ReturnType<typeof getAdminStatsApiAdminStatsGetQueryKey>
+    AdminStatsApiAdminStatsGetResponse,
+    ReturnType<typeof adminStatsApiAdminStatsGetQueryKey>
   >({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getAdminStatsApiAdminStatsGet({
+      const { data } = await adminStatsApiAdminStatsGet({
         ...options,
         ...queryKey[0],
         signal,
@@ -249,5 +249,5 @@ export const getAdminStatsApiAdminStatsGetOptions = (
       });
       return data;
     },
-    queryKey: getAdminStatsApiAdminStatsGetQueryKey(options),
+    queryKey: adminStatsApiAdminStatsGetQueryKey(options),
   });

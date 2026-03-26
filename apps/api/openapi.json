@@ -205,9 +205,9 @@
         "tags": [
           "admin"
         ],
-        "summary": "Get Admin Stats",
+        "summary": "Admin Stats",
         "description": "管理ダッシュボード用KPI集計エンドポイント。",
-        "operationId": "get_admin_stats_api_admin_stats_get",
+        "operationId": "admin_stats_api_admin_stats_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -227,22 +227,27 @@
     "schemas": {
       "AdminStatsResponse": {
         "properties": {
-          "daily_questions": {
+          "daily_counts": {
             "items": {
               "$ref": "#/components/schemas/DailyCount"
             },
             "type": "array",
-            "title": "Daily Questions"
+            "title": "Daily Counts"
           },
           "total_tokens": {
             "type": "integer",
             "title": "Total Tokens"
+          },
+          "good_rate": {
+            "type": "number",
+            "title": "Good Rate"
           }
         },
         "type": "object",
         "required": [
-          "daily_questions",
-          "total_tokens"
+          "daily_counts",
+          "total_tokens",
+          "good_rate"
         ],
         "title": "AdminStatsResponse"
       },
@@ -290,10 +295,10 @@
       },
       "DailyCount": {
         "properties": {
-          "day": {
+          "date": {
             "type": "string",
             "format": "date",
-            "title": "Day"
+            "title": "Date"
           },
           "count": {
             "type": "integer",
@@ -302,7 +307,7 @@
         },
         "type": "object",
         "required": [
-          "day",
+          "date",
           "count"
         ],
         "title": "DailyCount"

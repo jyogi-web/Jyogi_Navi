@@ -9,13 +9,17 @@ export type ClientOptions = {
  */
 export type AdminStatsResponse = {
   /**
-   * Daily Questions
+   * Daily Counts
    */
-  daily_questions: Array<DailyCount>;
+  daily_counts: Array<DailyCount>;
   /**
    * Total Tokens
    */
   total_tokens: number;
+  /**
+   * Good Rate
+   */
+  good_rate: number;
 };
 
 /**
@@ -55,9 +59,9 @@ export type ChatResponse = {
  */
 export type DailyCount = {
   /**
-   * Day
+   * Date
    */
-  day: string;
+  date: string;
   /**
    * Count
    */
@@ -368,19 +372,19 @@ export type CreateUsageLogUsageLogsPostResponses = {
 export type CreateUsageLogUsageLogsPostResponse =
   CreateUsageLogUsageLogsPostResponses[keyof CreateUsageLogUsageLogsPostResponses];
 
-export type GetAdminStatsApiAdminStatsGetData = {
+export type AdminStatsApiAdminStatsGetData = {
   body?: never;
   path?: never;
   query?: never;
   url: "/api/admin/stats";
 };
 
-export type GetAdminStatsApiAdminStatsGetResponses = {
+export type AdminStatsApiAdminStatsGetResponses = {
   /**
    * Successful Response
    */
   200: AdminStatsResponse;
 };
 
-export type GetAdminStatsApiAdminStatsGetResponse =
-  GetAdminStatsApiAdminStatsGetResponses[keyof GetAdminStatsApiAdminStatsGetResponses];
+export type AdminStatsApiAdminStatsGetResponse =
+  AdminStatsApiAdminStatsGetResponses[keyof AdminStatsApiAdminStatsGetResponses];

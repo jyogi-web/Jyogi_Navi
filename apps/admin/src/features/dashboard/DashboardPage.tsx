@@ -42,6 +42,24 @@ export function DashboardPage() {
           </CardContent>
         </Card>
 
+        {/* 👍率 */}
+        <Card>
+          <CardHeader>
+            <CardTitle>👍 率</CardTitle>
+            <CardDescription>フィードバックに占める「良い」の割合</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="h-10 w-40 animate-pulse rounded bg-muted" />
+            ) : (
+              <p className="text-4xl font-bold tabular-nums">
+                {data?.good_rate != null ? `${data.good_rate.toFixed(1)}` : "—"}
+                <span className="ml-2 text-lg font-normal text-muted-foreground">%</span>
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
         {/* 日別質問数 */}
         <Card>
           <CardHeader>
@@ -55,7 +73,7 @@ export function DashboardPage() {
                   <div key={i} className="h-8 animate-pulse rounded bg-muted" />
                 ))}
               </div>
-            ) : !data || data.daily_questions.length === 0 ? (
+            ) : !data || data.daily_counts.length === 0 ? (
               <p className="text-sm text-muted-foreground">データがありません</p>
             ) : (
               <div className="overflow-x-auto">
@@ -68,12 +86,13 @@ export function DashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y">
-                    {data.daily_questions.map(({ day, count }) => {
-                      const maxCount = Math.max(...data.daily_questions.map((d) => d.count));
+                    {(() => {
+                      const maxCount = Math.max(...data.daily_counts.map((d) => d.count));
+                      return data.daily_counts.map(({ date, count }) => {
                       const pct = maxCount > 0 ? (count / maxCount) * 100 : 0;
                       return (
-                        <tr key={day}>
-                          <td className="py-2 font-mono text-xs">{day}</td>
+                        <tr key={date}>
+                          <td className="py-2 font-mono text-xs">{date}</td>
                           <td className="py-2 text-right tabular-nums">{count.toLocaleString("ja-JP")}</td>
                           <td className="py-2 pl-4">
                             <div className="h-4 w-48 rounded bg-muted">
@@ -85,7 +104,8 @@ export function DashboardPage() {
                           </td>
                         </tr>
                       );
-                    })}
+                    });
+                    })()}
                   </tbody>
                 </table>
               </div>

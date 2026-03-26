@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text, func
+from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -25,7 +25,7 @@ class Session(Base):
     consented: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        server_default=func.utc_timestamp(),
+        server_default=text("CURRENT_TIMESTAMP"),
     )
 
     usage_logs: Mapped[list["UsageLog"]] = relationship(
@@ -60,7 +60,7 @@ class UsageLog(Base):
     category: Mapped[str] = mapped_column(String(50), default="")
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        server_default=func.utc_timestamp(),
+        server_default=text("CURRENT_TIMESTAMP"),
     )
 
     session: Mapped["Session"] = relationship(back_populates="usage_logs")
@@ -85,7 +85,7 @@ class Feedback(Base):
     comment: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        server_default=func.utc_timestamp(),
+        server_default=text("CURRENT_TIMESTAMP"),
     )
 
     session: Mapped["Session"] = relationship(back_populates="feedbacks")
@@ -106,5 +106,5 @@ class FaqEmbedding(Base):
     metadata_: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        server_default=func.utc_timestamp(),
+        server_default=text("CURRENT_TIMESTAMP"),
     )

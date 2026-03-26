@@ -3,6 +3,8 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
+  AdminStatsApiAdminStatsGetData,
+  AdminStatsApiAdminStatsGetResponses,
   ChatApiChatPostData,
   ChatApiChatPostErrors,
   ChatApiChatPostResponses,
@@ -12,8 +14,6 @@ import type {
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostErrors,
   CreateUsageLogUsageLogsPostResponses,
-  GetAdminStatsApiAdminStatsGetData,
-  GetAdminStatsApiAdminStatsGetResponses,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponses,
   SearchFaqApiFaqSearchGetData,
@@ -134,17 +134,17 @@ export const createUsageLogUsageLogsPost = <
   });
 
 /**
- * Get Admin Stats
+ * Admin Stats
  *
  * 管理ダッシュボード用KPI集計エンドポイント。
  */
-export const getAdminStatsApiAdminStatsGet = <
+export const adminStatsApiAdminStatsGet = <
   ThrowOnError extends boolean = false,
 >(
-  options?: Options<GetAdminStatsApiAdminStatsGetData, ThrowOnError>,
+  options?: Options<AdminStatsApiAdminStatsGetData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetAdminStatsApiAdminStatsGetResponses,
+    AdminStatsApiAdminStatsGetResponses,
     unknown,
     ThrowOnError
   >({ url: "/api/admin/stats", ...options });
