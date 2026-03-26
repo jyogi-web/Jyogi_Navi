@@ -11,7 +11,7 @@ interface FeedbackButtonsProps {
   messageId: string;
 }
 
-export function FeedbackButtons({ sessionId, messageId: _messageId }: FeedbackButtonsProps) {
+export function FeedbackButtons({ sessionId }: FeedbackButtonsProps) {
   const [selected, setSelected] = useState<"good" | "bad" | null>(null);
 
   const { mutate } = useMutation({
