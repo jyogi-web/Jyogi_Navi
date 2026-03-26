@@ -34,7 +34,7 @@ def upgrade() -> None:
             "created_at",
             sa.DateTime(),
             nullable=False,
-            server_default=sa.func.utc_timestamp(),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
     )
     op.create_index("ix_feedbacks_session_id", "feedbacks", ["session_id"])
