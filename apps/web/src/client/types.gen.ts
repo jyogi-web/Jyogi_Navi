@@ -5,6 +5,20 @@ export type ClientOptions = {
 };
 
 /**
+ * AdminStatsResponse
+ */
+export type AdminStatsResponse = {
+  /**
+   * Daily Questions
+   */
+  daily_questions: Array<DailyCount>;
+  /**
+   * Total Tokens
+   */
+  total_tokens: number;
+};
+
+/**
  * ChatRequest
  *
  * チャットリクエスト。
@@ -34,6 +48,20 @@ export type ChatResponse = {
    * Tokens Used
    */
   tokens_used: number;
+};
+
+/**
+ * DailyCount
+ */
+export type DailyCount = {
+  /**
+   * Day
+   */
+  day: string;
+  /**
+   * Count
+   */
+  count: number;
 };
 
 /**
@@ -204,3 +232,20 @@ export type CreateUsageLogUsageLogsPostResponses = {
 
 export type CreateUsageLogUsageLogsPostResponse =
   CreateUsageLogUsageLogsPostResponses[keyof CreateUsageLogUsageLogsPostResponses];
+
+export type GetAdminStatsApiAdminStatsGetData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/admin/stats";
+};
+
+export type GetAdminStatsApiAdminStatsGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: AdminStatsResponse;
+};
+
+export type GetAdminStatsApiAdminStatsGetResponse =
+  GetAdminStatsApiAdminStatsGetResponses[keyof GetAdminStatsApiAdminStatsGetResponses];

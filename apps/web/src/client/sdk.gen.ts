@@ -9,6 +9,8 @@ import type {
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostErrors,
   CreateUsageLogUsageLogsPostResponses,
+  GetAdminStatsApiAdminStatsGetData,
+  GetAdminStatsApiAdminStatsGetResponses,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponses,
 } from "./types.gen";
@@ -79,4 +81,17 @@ export const createUsageLogUsageLogsPost = <ThrowOnError extends boolean = false
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+
+/**
+ * Get Admin Stats
+ *
+ * 管理ダッシュボード用KPI集計エンドポイント。
+ */
+export const getAdminStatsApiAdminStatsGet = <ThrowOnError extends boolean = false>(
+  options?: Options<GetAdminStatsApiAdminStatsGetData, ThrowOnError>
+) =>
+  (options?.client ?? client).get<GetAdminStatsApiAdminStatsGetResponses, unknown, ThrowOnError>({
+    url: "/api/admin/stats",
+    ...options,
   });

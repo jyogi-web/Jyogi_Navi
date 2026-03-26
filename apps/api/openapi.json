@@ -110,10 +110,53 @@
           }
         }
       }
+    },
+    "/api/admin/stats": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Get Admin Stats",
+        "description": "管理ダッシュボード用KPI集計エンドポイント。",
+        "operationId": "get_admin_stats_api_admin_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AdminStatsResponse": {
+        "properties": {
+          "daily_questions": {
+            "items": {
+              "$ref": "#/components/schemas/DailyCount"
+            },
+            "type": "array",
+            "title": "Daily Questions"
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens"
+          }
+        },
+        "type": "object",
+        "required": [
+          "daily_questions",
+          "total_tokens"
+        ],
+        "title": "AdminStatsResponse"
+      },
       "ChatRequest": {
         "properties": {
           "session_id": {
@@ -155,6 +198,24 @@
         ],
         "title": "ChatResponse",
         "description": "チャットレスポンス。"
+      },
+      "DailyCount": {
+        "properties": {
+          "day": {
+            "type": "string",
+            "title": "Day"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "day",
+          "count"
+        ],
+        "title": "DailyCount"
       },
       "HTTPValidationError": {
         "properties": {

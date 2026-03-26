@@ -3,6 +3,8 @@
 export {
   chatApiChatPostMutation,
   createUsageLogUsageLogsPostMutation,
+  getAdminStatsApiAdminStatsGetOptions,
+  getAdminStatsApiAdminStatsGetQueryKey,
   healthCheckHealthGetOptions,
   healthCheckHealthGetQueryKey,
   type QueryKey,
@@ -10,10 +12,12 @@ export {
 export {
   chatApiChatPost,
   createUsageLogUsageLogsPost,
+  getAdminStatsApiAdminStatsGet,
   healthCheckHealthGet,
   type Options,
 } from "./sdk.gen";
 export type {
+  AdminStatsResponse,
   ChatApiChatPostData,
   ChatApiChatPostError,
   ChatApiChatPostErrors,
@@ -27,6 +31,10 @@ export type {
   CreateUsageLogUsageLogsPostErrors,
   CreateUsageLogUsageLogsPostResponse,
   CreateUsageLogUsageLogsPostResponses,
+  DailyCount,
+  GetAdminStatsApiAdminStatsGetData,
+  GetAdminStatsApiAdminStatsGetResponse,
+  GetAdminStatsApiAdminStatsGetResponses,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponse,
   HealthCheckHealthGetResponses,
