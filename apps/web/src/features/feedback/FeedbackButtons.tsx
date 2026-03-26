@@ -22,6 +22,8 @@ export function FeedbackButtons({ sessionId }: FeedbackButtonsProps) {
 
   const handleClick = (rating: "good" | "bad") => {
     if (selected === rating) {
+      // TODO: 選択解除時のサーバー同期（DELETE or UPDATE with null rating）
+      // 対応には feedback DELETE API エンドポイントの実装が必要
       setSelected(null);
     } else {
       setSelected(rating);
