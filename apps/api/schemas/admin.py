@@ -1,8 +1,10 @@
+from datetime import date
+
 from pydantic import BaseModel
 
 
 class DailyCount(BaseModel):
-    day: str  # "YYYY-MM-DD"
+    day: date
     count: int
 
 

@@ -24,7 +24,7 @@ async def get_admin_stats(
         .order_by(func.date(UsageLog.created_at).desc())
     )
     daily_questions = [
-        DailyCount(day=str(row.day), count=row.count) for row in daily_result.all()
+        DailyCount(day=row.day, count=row.count) for row in daily_result.all()
     ]
 
     # 総トークン消費量

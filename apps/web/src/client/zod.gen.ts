@@ -26,7 +26,7 @@ export const zChatResponse = z.object({
  * DailyCount
  */
 export const zDailyCount = z.object({
-  day: z.string(),
+  day: z.iso.date(),
   count: z.int(),
 });
 
