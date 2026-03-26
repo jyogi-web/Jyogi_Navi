@@ -1,5 +1,7 @@
 import ssl
+import warnings
 from collections.abc import AsyncGenerator
+from pathlib import Path
 
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import (
@@ -13,8 +15,17 @@ from config import settings
 
 def _build_engine():
     connect_args: dict = {}
-    if settings.tidb_ssl_ca:
-        ssl_ctx = ssl.create_default_context(cafile=settings.tidb_ssl_ca)
+    tidb_ssl_ca = settings.tidb_ssl_ca.strip()
+    if tidb_ssl_ca:
+        ca = tidb_ssl_ca if Path(tidb_ssl_ca).is_file() else None
+        if ca is None:
+            warnings.warn(
+                f"TIDB_SSL_CA '{tidb_ssl_ca}' not found. "
+                "Falling back to the system default CA bundle.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+        ssl_ctx = ssl.create_default_context(cafile=ca)
         connect_args["ssl"] = ssl_ctx
 
     url = URL.create(

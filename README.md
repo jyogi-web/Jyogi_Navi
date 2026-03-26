@@ -243,16 +243,28 @@ SET GLOBAL time_zone = 'UTC';
 
 **TLS/SSL を使用する場合（`TIDB_SSL_CA`）**
 
-`TIDB_SSL_CA` には CA 証明書の**ファイルパス**を指定します。コードは `ssl.create_default_context(cafile=<path>)` でそのパスを直接読み込みます。
+`TIDB_SSL_CA` には CA 証明書の**ファイルパス**を指定します。パスが存在しない場合は起動時に `RuntimeWarning` を出力し、システムデフォルト CA にフォールバックします。
 
-```dotenv
-# 例：TiDB Serverless の CA ファイルをダウンロードしてパスを指定
-TIDB_SSL_CA=/path/to/tidb-ca.pem
+| OS | 設定例 |
+|---|---|
+| macOS / Linux | `TIDB_SSL_CA=/etc/ssl/cert.pem` |
+| Windows | `python -c "import certifi; print(certifi.where())"` の出力を使用 |
+| ローカル開発（TiDB なし） | 空のままでOK |
+
+**Windows での設定手順：**
+
+```powershell
+# 1. certifi のパスを確認
+python -c "import certifi; print(certifi.where())"
+# 出力例: C:/Python311/lib/site-packages/certifi/cacert.pem
+
+# 2. .env に設定
+# TIDB_SSL_CA=C:/Python311/lib/site-packages/certifi/cacert.pem
 ```
 
-- ファイルパスに空白が含まれる場合はクォートは不要ですが、パスは絶対パスを推奨します
+- パスは絶対パスを推奨します
 - Docker コンテナで実行する場合はコンテナ内のパスを指定し、ファイルをマウントしてください
-- TiDB Serverless の CA 証明書は TiDB Cloud コンソールからダウンロードできます
+- TiDB Serverless の CA 証明書は TiDB Cloud コンソールからもダウンロードできます
 
 **Alembic マイグレーション**
 
