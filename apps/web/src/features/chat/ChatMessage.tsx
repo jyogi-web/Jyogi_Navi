@@ -1,11 +1,13 @@
 import { Message } from "@/types/chat";
 import { cn } from "@/lib/utils";
+import { FeedbackButtons } from "@/features/feedback";
 
 interface ChatMessageProps {
   message: Message;
+  sessionId: string;
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, sessionId }: ChatMessageProps) {
   const isUser = message.role === "user";
 
   return (
@@ -56,6 +58,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               minute: "2-digit",
             })}
           </div>
+          {!isUser && <FeedbackButtons sessionId={sessionId} messageId={message.id} />}
         </div>
       </div>
     </div>
