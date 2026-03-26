@@ -116,14 +116,14 @@
         }
       }
     },
-    "/feedback": {
+    "/api/feedback": {
       "post": {
         "tags": [
           "feedback"
         ],
         "summary": "Create Feedback",
         "description": "チャット回答への👍/👎フィードバックを保存するエンドポイント。",
-        "operationId": "create_feedback_feedback_post",
+        "operationId": "create_feedback_api_feedback_post",
         "requestBody": {
           "content": {
             "application/json": {

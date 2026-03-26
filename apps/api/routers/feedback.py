@@ -9,7 +9,7 @@ from services.feedback_store import save_feedback
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/feedback", tags=["feedback"])
+router = APIRouter(prefix="/api/feedback", tags=["feedback"])
 
 
 @router.post("", response_model=FeedbackResponse, status_code=status.HTTP_201_CREATED)

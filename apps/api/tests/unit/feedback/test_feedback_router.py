@@ -24,7 +24,7 @@ async def test_正常なフィードバック_goodで201を返す(client, mock_f
         return_value=mock_feedback,
     ):
         response = await client.post(
-            "/feedback",
+            "/api/feedback",
             json={"session_id": "sess-abc", "rating": "good"},
         )
     assert response.status_code == 201
@@ -43,7 +43,7 @@ async def test_正常なフィードバック_badで201を返す(client, mock_fe
         return_value=mock_feedback,
     ):
         response = await client.post(
-            "/feedback",
+            "/api/feedback",
             json={"session_id": "sess-abc", "rating": "bad"},
         )
     assert response.status_code == 201
@@ -60,7 +60,7 @@ async def test_コメント付きフィードバックで201を返す(client, mo
         return_value=mock_feedback,
     ):
         response = await client.post(
-            "/feedback",
+            "/api/feedback",
             json={
                 "session_id": "sess-abc",
                 "rating": "good",
@@ -75,7 +75,7 @@ async def test_コメント付きフィードバックで201を返す(client, mo
 async def test_ratingが不正値で400を返す(client):
     """rating が "good"/"bad" 以外の場合は 400 を返すことを確認。"""
     response = await client.post(
-        "/feedback",
+        "/api/feedback",
         json={"session_id": "sess-abc", "rating": "neutral"},
     )
     assert response.status_code == 400
@@ -86,7 +86,7 @@ async def test_ratingが不正値で400を返す(client):
 async def test_session_idが空で400を返す(client):
     """session_id が空の場合は 400 を返すことを確認。"""
     response = await client.post(
-        "/feedback",
+        "/api/feedback",
         json={"session_id": "", "rating": "good"},
     )
     assert response.status_code == 400
@@ -97,7 +97,7 @@ async def test_session_idが空で400を返す(client):
 async def test_ratingが欠如で400を返す(client):
     """rating が欠如した場合は 400 を返すことを確認。"""
     response = await client.post(
-        "/feedback",
+        "/api/feedback",
         json={"session_id": "sess-abc"},
     )
     assert response.status_code == 400

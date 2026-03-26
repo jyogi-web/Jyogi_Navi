@@ -314,32 +314,32 @@ export type SearchFaqApiFaqSearchGetResponses = {
 export type SearchFaqApiFaqSearchGetResponse =
   SearchFaqApiFaqSearchGetResponses[keyof SearchFaqApiFaqSearchGetResponses];
 
-export type CreateFeedbackFeedbackPostData = {
+export type CreateFeedbackApiFeedbackPostData = {
   body: FeedbackCreate;
   path?: never;
   query?: never;
-  url: "/feedback";
+  url: "/api/feedback";
 };
 
-export type CreateFeedbackFeedbackPostErrors = {
+export type CreateFeedbackApiFeedbackPostErrors = {
   /**
    * Validation Error
    */
   422: HttpValidationError;
 };
 
-export type CreateFeedbackFeedbackPostError =
-  CreateFeedbackFeedbackPostErrors[keyof CreateFeedbackFeedbackPostErrors];
+export type CreateFeedbackApiFeedbackPostError =
+  CreateFeedbackApiFeedbackPostErrors[keyof CreateFeedbackApiFeedbackPostErrors];
 
-export type CreateFeedbackFeedbackPostResponses = {
+export type CreateFeedbackApiFeedbackPostResponses = {
   /**
    * Successful Response
    */
   201: FeedbackResponse;
 };
 
-export type CreateFeedbackFeedbackPostResponse =
-  CreateFeedbackFeedbackPostResponses[keyof CreateFeedbackFeedbackPostResponses];
+export type CreateFeedbackApiFeedbackPostResponse =
+  CreateFeedbackApiFeedbackPostResponses[keyof CreateFeedbackApiFeedbackPostResponses];
 
 export type CreateUsageLogUsageLogsPostData = {
   body: UsageLogCreate;

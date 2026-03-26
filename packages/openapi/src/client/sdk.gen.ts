@@ -6,9 +6,9 @@ import type {
   ChatApiChatPostData,
   ChatApiChatPostErrors,
   ChatApiChatPostResponses,
-  CreateFeedbackFeedbackPostData,
-  CreateFeedbackFeedbackPostErrors,
-  CreateFeedbackFeedbackPostResponses,
+  CreateFeedbackApiFeedbackPostData,
+  CreateFeedbackApiFeedbackPostErrors,
+  CreateFeedbackApiFeedbackPostResponses,
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostErrors,
   CreateUsageLogUsageLogsPostResponses,
@@ -92,17 +92,17 @@ export const searchFaqApiFaqSearchGet = <ThrowOnError extends boolean = false>(
  *
  * チャット回答への👍/👎フィードバックを保存するエンドポイント。
  */
-export const createFeedbackFeedbackPost = <
+export const createFeedbackApiFeedbackPost = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<CreateFeedbackFeedbackPostData, ThrowOnError>,
+  options: Options<CreateFeedbackApiFeedbackPostData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    CreateFeedbackFeedbackPostResponses,
-    CreateFeedbackFeedbackPostErrors,
+    CreateFeedbackApiFeedbackPostResponses,
+    CreateFeedbackApiFeedbackPostErrors,
     ThrowOnError
   >({
-    url: "/feedback",
+    url: "/api/feedback",
     ...options,
     headers: {
       "Content-Type": "application/json",

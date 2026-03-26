@@ -2,7 +2,7 @@
 
 export {
   chatApiChatPostMutation,
-  createFeedbackFeedbackPostMutation,
+  createFeedbackApiFeedbackPostMutation,
   createUsageLogUsageLogsPostMutation,
   getAdminStatsApiAdminStatsGetOptions,
   getAdminStatsApiAdminStatsGetQueryKey,
@@ -14,7 +14,7 @@ export {
 } from "./@tanstack/react-query.gen";
 export {
   chatApiChatPost,
-  createFeedbackFeedbackPost,
+  createFeedbackApiFeedbackPost,
   createUsageLogUsageLogsPost,
   getAdminStatsApiAdminStatsGet,
   healthCheckHealthGet,
@@ -31,11 +31,11 @@ export type {
   ChatRequest,
   ChatResponse,
   ClientOptions,
-  CreateFeedbackFeedbackPostData,
-  CreateFeedbackFeedbackPostError,
-  CreateFeedbackFeedbackPostErrors,
-  CreateFeedbackFeedbackPostResponse,
-  CreateFeedbackFeedbackPostResponses,
+  CreateFeedbackApiFeedbackPostData,
+  CreateFeedbackApiFeedbackPostError,
+  CreateFeedbackApiFeedbackPostErrors,
+  CreateFeedbackApiFeedbackPostResponse,
+  CreateFeedbackApiFeedbackPostResponses,
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostError,
   CreateUsageLogUsageLogsPostErrors,

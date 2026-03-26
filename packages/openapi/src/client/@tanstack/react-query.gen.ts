@@ -9,7 +9,7 @@ import {
 import { client } from "../client.gen";
 import {
   chatApiChatPost,
-  createFeedbackFeedbackPost,
+  createFeedbackApiFeedbackPost,
   createUsageLogUsageLogsPost,
   getAdminStatsApiAdminStatsGet,
   healthCheckHealthGet,
@@ -20,9 +20,9 @@ import type {
   ChatApiChatPostData,
   ChatApiChatPostError,
   ChatApiChatPostResponse,
-  CreateFeedbackFeedbackPostData,
-  CreateFeedbackFeedbackPostError,
-  CreateFeedbackFeedbackPostResponse,
+  CreateFeedbackApiFeedbackPostData,
+  CreateFeedbackApiFeedbackPostError,
+  CreateFeedbackApiFeedbackPostResponse,
   CreateUsageLogUsageLogsPostData,
   CreateUsageLogUsageLogsPostError,
   CreateUsageLogUsageLogsPostResponse,
@@ -169,20 +169,20 @@ export const searchFaqApiFaqSearchGetOptions = (
  *
  * チャット回答への👍/👎フィードバックを保存するエンドポイント。
  */
-export const createFeedbackFeedbackPostMutation = (
-  options?: Partial<Options<CreateFeedbackFeedbackPostData>>,
+export const createFeedbackApiFeedbackPostMutation = (
+  options?: Partial<Options<CreateFeedbackApiFeedbackPostData>>,
 ): UseMutationOptions<
-  CreateFeedbackFeedbackPostResponse,
-  CreateFeedbackFeedbackPostError,
-  Options<CreateFeedbackFeedbackPostData>
+  CreateFeedbackApiFeedbackPostResponse,
+  CreateFeedbackApiFeedbackPostError,
+  Options<CreateFeedbackApiFeedbackPostData>
 > => {
   const mutationOptions: UseMutationOptions<
-    CreateFeedbackFeedbackPostResponse,
-    CreateFeedbackFeedbackPostError,
-    Options<CreateFeedbackFeedbackPostData>
+    CreateFeedbackApiFeedbackPostResponse,
+    CreateFeedbackApiFeedbackPostError,
+    Options<CreateFeedbackApiFeedbackPostData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await createFeedbackFeedbackPost({
+      const { data } = await createFeedbackApiFeedbackPost({
         ...options,
         ...fnOptions,
         throwOnError: true,
