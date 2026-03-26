@@ -4,10 +4,11 @@ from pydantic import BaseModel
 
 
 class DailyCount(BaseModel):
-    day: date
+    date: date
     count: int
 
 
 class AdminStatsResponse(BaseModel):
-    daily_questions: list[DailyCount]
+    daily_counts: list[DailyCount]
     total_tokens: int
+    good_rate: float
