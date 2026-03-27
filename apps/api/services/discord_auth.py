@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 DISCORD_API_BASE = "https://discord.com/api/v10"
 DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token"
+_DISCORD_TIMEOUT = httpx.Timeout(10.0)
 
 
 async def exchange_code(code: str) -> str:
@@ -25,7 +26,7 @@ async def exchange_code(code: str) -> str:
         "client_id": settings.discord_client_id,
         "client_secret": settings.discord_client_secret.get_secret_value(),
     }
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=_DISCORD_TIMEOUT) as client:
         response = await client.post(
             DISCORD_TOKEN_URL,
             data=data,
@@ -39,7 +40,7 @@ async def exchange_code(code: str) -> str:
 
 async def get_discord_user(access_token: str) -> dict:
     """Discord ユーザー情報 (id, username) を取得する。"""
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=_DISCORD_TIMEOUT) as client:
         response = await client.get(
             f"{DISCORD_API_BASE}/users/@me",
             headers={"Authorization": f"Bearer {access_token}"},
@@ -55,7 +56,7 @@ async def get_discord_user(access_token: str) -> dict:
 async def check_guild_member(access_token: str) -> bool:
     """じょぎ Discord サーバーのメンバーかどうかを確認する。"""
     guild_id = settings.discord_guild_id
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=_DISCORD_TIMEOUT) as client:
         response = await client.get(
             f"{DISCORD_API_BASE}/users/@me/guilds/{guild_id}/member",
             headers={"Authorization": f"Bearer {access_token}"},
