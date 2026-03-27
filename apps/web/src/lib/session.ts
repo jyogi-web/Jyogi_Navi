@@ -25,9 +25,9 @@ export function getOrCreateSessionId(): string {
     return sessionId;
   } catch (error) {
     // SecurityError や QuotaExceededError などでストレージアクセスが失敗した場合
-    // 生成したセッションIDを返すが永続化はしない
+    // 空文字を返して呼び出し側に SESSION_ERROR として処理させる
     console.error("Failed to access localStorage:", error);
-    return uuidv4();
+    return "";
   }
 }
 
