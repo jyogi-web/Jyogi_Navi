@@ -43,7 +43,7 @@ async def chat(
         if result.scalar_one_or_none() is None:
             try:
                 session.add(
-                    SessionModel(id=body.session_id, is_guest=True, consented=True)
+                    SessionModel(id=body.session_id, is_guest=True, consented=False)
                 )
                 await session.flush()
             except IntegrityError:
