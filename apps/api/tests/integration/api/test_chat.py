@@ -1,5 +1,6 @@
 from unittest.mock import AsyncMock, patch
 
+from exceptions import RateLimitExceeded
 from services.dify_client import DifyResponse
 
 
@@ -9,7 +10,7 @@ async def test_チャットエンドポイントが正常に応答する(client)
     with (
         patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=False)),
         patch("routers.chat.send_chat_message", new=AsyncMock(return_value=mock_dify)),
-        patch("routers.chat.save_usage_log", new=AsyncMock()),
+        patch("routers.chat.check_and_save_usage_log", new=AsyncMock()),
     ):
         response = await client.post(
             "/api/chat",
@@ -25,6 +26,31 @@ async def test_チャットエンドポイントが正常に応答する(client)
 
 async def test_レート制限超過時に429を返す(client):
     with patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=True)):
+        response = await client.post(
+            "/api/chat",
+            json={"session_id": "limited-session", "message": "テスト"},
+        )
+
+    assert response.status_code == 429
+    data = response.json()
+    assert data["error_code"] == "RATE_LIMIT_EXCEEDED"
+    assert data["message"] == "本日の質問上限に達しました"
+
+
+async def test_アトミックチェックでレート制限超過時に429を返す(client):
+    """check_and_save_usage_log が RateLimitExceeded を送出した場合に
+    429 を返すことを確認。
+    """
+    mock_dify = DifyResponse(answer="回答", tokens_used=200)
+
+    with (
+        patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=False)),
+        patch("routers.chat.send_chat_message", new=AsyncMock(return_value=mock_dify)),
+        patch(
+            "routers.chat.check_and_save_usage_log",
+            new=AsyncMock(side_effect=RateLimitExceeded()),
+        ),
+    ):
         response = await client.post(
             "/api/chat",
             json={"session_id": "limited-session", "message": "テスト"},
