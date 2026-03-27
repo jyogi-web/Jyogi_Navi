@@ -2,6 +2,7 @@ name: Deploy Frontend
 
 on:
   push:
+    branches: [main]
     paths:
       - "apps/web/**"
       - "apps/admin/**"
