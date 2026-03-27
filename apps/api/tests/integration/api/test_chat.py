@@ -9,7 +9,7 @@ async def test_チャットエンドポイントが正常に応答する(client)
     with (
         patch("routers.chat.is_rate_limited", new=AsyncMock(return_value=False)),
         patch("routers.chat.send_chat_message", new=AsyncMock(return_value=mock_dify)),
-        patch("routers.chat.save_usage_log", new=AsyncMock()),
+        patch("routers.chat.check_and_save_usage_log", new=AsyncMock()),
     ):
         response = await client.post(
             "/api/chat",
