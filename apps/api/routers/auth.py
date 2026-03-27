@@ -25,7 +25,9 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 DISCORD_OAUTH_URL = "https://discord.com/oauth2/authorize"
-# guilds.members.read は guilds に内包されるため guilds のみで OK
+# guilds: ユーザーが参加しているギルド一覧を取得する
+# guilds.members.read: 特定ギルドのメンバー詳細 (ロール・ニックネーム等) を取得する
+# 両スコープは独立しており、いずれも必要
 SCOPES = "identify guilds guilds.members.read"
 
 ADMIN_FRONTEND_URL = "http://localhost:3001"
