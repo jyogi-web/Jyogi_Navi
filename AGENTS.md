@@ -17,5 +17,6 @@
 | `docs/07_infrastructure.md` | インフラ構成 |
 | `docs/08_logging.md` | ログ設計 |
 | `docs/09_schedule_and_issues.md` | スケジュールと課題 |
+| `docs/iac.md` | IaC（Infrastructure as Code） |
 
 これらのドキュメントはプロジェクトの仕様・設計の唯一の情報源です。実装方針や設計判断は必ずこれらのドキュメントに基づいてください。
