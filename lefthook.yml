@@ -27,7 +27,7 @@ pre-commit:
       run: terraform fmt -write=true {staged_files}
       stage_fixed: true
 
-    # Infra: tflint で Lint (ディレクトリ単位で実行)
+    # Infra: tflint で Lint (変更があった infra/* サブディレクトリを動的に検出して実行)
     - name: lint-infra
-      glob: "infra/cloudflare/**/*.tf"
-      run: tflint --chdir=infra/cloudflare
+      glob: "infra/**/*.tf"
+      run: echo {staged_files} | tr ' ' '\n' | sed 's|/[^/]*$||' | sort -u | xargs -I{} tflint --chdir={}
