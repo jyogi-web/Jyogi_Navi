@@ -113,6 +113,50 @@ export type FeedbackCreate = {
 };
 
 /**
+ * FeedbackItem
+ *
+ * フィードバック一覧の1件。
+ */
+export type FeedbackItem = {
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * Session Id
+   */
+  session_id: string;
+  /**
+   * Rating
+   */
+  rating: string;
+  /**
+   * Comment
+   */
+  comment: string | null;
+  /**
+   * Created At
+   */
+  created_at: string;
+};
+
+/**
+ * FeedbackListResponse
+ *
+ * フィードバック一覧レスポンス。
+ */
+export type FeedbackListResponse = {
+  /**
+   * Feedbacks
+   */
+  feedbacks: Array<FeedbackItem>;
+  /**
+   * Total
+   */
+  total: number;
+};
+
+/**
  * FeedbackResponse
  *
  * フィードバックレスポンス。
@@ -213,6 +257,26 @@ export type UsageLogResponse = {
 };
 
 /**
+ * UserResponse
+ *
+ * 管理ユーザー情報レスポンス。
+ */
+export type UserResponse = {
+  /**
+   * Id
+   */
+  id: string;
+  /**
+   * Discord User Id
+   */
+  discord_user_id: string;
+  /**
+   * Role
+   */
+  role: string;
+};
+
+/**
  * ValidationError
  */
 export type ValidationError = {
@@ -256,6 +320,80 @@ export type HealthCheckHealthGetResponses = {
 
 export type HealthCheckHealthGetResponse =
   HealthCheckHealthGetResponses[keyof HealthCheckHealthGetResponses];
+
+export type LoginApiAuthLoginGetData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/auth/login";
+};
+
+export type LoginApiAuthLoginGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: unknown;
+};
+
+export type CallbackApiAuthCallbackGetData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Code
+     */
+    code: string;
+  };
+  url: "/api/auth/callback";
+};
+
+export type CallbackApiAuthCallbackGetErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type CallbackApiAuthCallbackGetError =
+  CallbackApiAuthCallbackGetErrors[keyof CallbackApiAuthCallbackGetErrors];
+
+export type CallbackApiAuthCallbackGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: unknown;
+};
+
+export type MeApiAuthMeGetData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/auth/me";
+};
+
+export type MeApiAuthMeGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: UserResponse;
+};
+
+export type MeApiAuthMeGetResponse =
+  MeApiAuthMeGetResponses[keyof MeApiAuthMeGetResponses];
+
+export type LogoutApiAuthLogoutPostData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/auth/logout";
+};
+
+export type LogoutApiAuthLogoutPostResponses = {
+  /**
+   * Successful Response
+   */
+  200: unknown;
+};
 
 export type ChatApiChatPostData = {
   body: ChatRequest;
@@ -388,3 +526,39 @@ export type AdminStatsApiAdminStatsGetResponses = {
 
 export type AdminStatsApiAdminStatsGetResponse =
   AdminStatsApiAdminStatsGetResponses[keyof AdminStatsApiAdminStatsGetResponses];
+
+export type FeedbackListApiAdminFeedbacksGetData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Limit
+     */
+    limit?: number;
+    /**
+     * Offset
+     */
+    offset?: number;
+  };
+  url: "/api/admin/feedbacks";
+};
+
+export type FeedbackListApiAdminFeedbacksGetErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type FeedbackListApiAdminFeedbacksGetError =
+  FeedbackListApiAdminFeedbacksGetErrors[keyof FeedbackListApiAdminFeedbacksGetErrors];
+
+export type FeedbackListApiAdminFeedbacksGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: FeedbackListResponse;
+};
+
+export type FeedbackListApiAdminFeedbacksGetResponse =
+  FeedbackListApiAdminFeedbacksGetResponses[keyof FeedbackListApiAdminFeedbacksGetResponses];
