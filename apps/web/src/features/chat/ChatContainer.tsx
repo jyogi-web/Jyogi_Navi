@@ -27,7 +27,7 @@ function getErrorMessage(error: unknown): string {
 
 export function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const sessionId = getOrCreateSessionId();
+  const [sessionId] = useState(() => getOrCreateSessionId());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 新しいメッセージが追加されたら自動スクロール
