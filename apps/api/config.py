@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     jwt_secret: SecretStr = SecretStr("change-me-in-production")
     jwt_expire_minutes: int = 60 * 24  # 24時間
 
+    admin_frontend_url: str = "http://localhost:3001"
+
     allowed_origins: list[str] = [
         "http://localhost:3000",  # apps/web
         "http://localhost:3001",  # apps/admin

@@ -30,7 +30,7 @@ DISCORD_OAUTH_URL = "https://discord.com/oauth2/authorize"
 # 両スコープは独立しており、いずれも必要
 SCOPES = "identify guilds guilds.members.read"
 
-ADMIN_FRONTEND_URL = "http://localhost:3001"
+ADMIN_FRONTEND_URL = settings.admin_frontend_url
 
 
 @router.get("/login")
