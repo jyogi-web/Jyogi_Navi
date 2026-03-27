@@ -29,5 +29,5 @@ pre-commit:
 
     # Infra: tflint で Lint (ディレクトリ単位で実行)
     - name: lint-infra
-      glob: "infra/**/*.tf"
+      glob: "infra/cloudflare/**/*.tf"
       run: tflint --chdir=infra/cloudflare
