@@ -1,9 +1,7 @@
-# iac
+# IaC（Infrastructure as Code）ガイド
 
 作成日時: 2026年3月27日
 最終更新日時: 2026年3月27日
-
-# IaC（Infrastructure as Code）ガイド
 
 ---
 
@@ -51,21 +49,10 @@ infra/
 
 ### Provider バージョン
 
-```hcl
-terraform {
-  required_version = ">= 1.0"
-  required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 5.0"
-    }
-    github = {
-      source  = "integrations/github"
-      version = "~> 6.0"
-    }
-  }
-}
-```
+| Provider | バージョン制約 | 実際のインストール済みバージョン |
+|---|---|---|
+| `cloudflare/cloudflare` | `~> 5.0` | v5.18.0 |
+| `integrations/github` | `~> 6.0` | v6.11.1 |
 
 ### 変数一覧
 
@@ -73,7 +60,7 @@ terraform {
 |---|---|---|---|
 | `cloudflare_account_id` | string | false | Cloudflare Account ID |
 | `cloudflare_api_token` | string | **true** | Cloudflare API Token（Workers 編集権限） |
-| `github_token` | string | **true** | GitHub PAT（repo の secrets 書き込み権限） |
+| `github_token` | string | **true** | GitHub PAT。Fine-grained PAT の場合は `Secrets: Read and write` 権限が必要。Classic PAT の場合は `repo` スコープ |
 | `github_owner` | string | false | GitHub org / user 名（default: `jyogi-web`） |
 | `github_repo` | string | false | リポジトリ名（default: `Jyogi_Navi`） |
 
@@ -185,7 +172,7 @@ Cloud Run へのデプロイは `.github/workflows/ci-BE.yml` で管理します
 | Dify 関連（DB・Redis・API キー等） | `infra/dify/.env`（ローカル管理、Git 非コミット） |
 | Google Cloud 認証情報 | GitHub Actions Secrets（手動設定） |
 
-> `infra/dify/.env` は `.gitignore` 対象です。`infra/dify/.env.example` をコピーして使用してください。
+> `infra/dify/.env` は `.gitignore` 対象です。必要な環境変数の詳細は [`infra/dify/SETUP.md`](../infra/dify/SETUP.md) を参照してください。
 
 ---
 
