@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
+import { chatApiChatPost } from "@jyogi-navi/openapi/sdk";
+import { getOrCreateSessionId } from "@/lib/session";
 import { Message } from "@/types/chat";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
@@ -10,15 +12,25 @@ import { ChatHeader } from "./ChatHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
 
-async function sendChatMessage(content: string): Promise<string> {
-  // TODO: Dify API呼び出しに置き換える
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  return `ご質問ありがとうございます！「${content}」についてですね。\n\nこちらは開発中のダミーレスポンスです。実際のDify APIを統合すると、じょぎに関する詳しい情報をお答えできます。\n\n気軽に他の質問もしてくださいね！`;
+type ApiError = { errorCode?: string };
+
+function getErrorMessage(error: unknown): string {
+  const errorCode = (error as ApiError)?.errorCode;
+  if (errorCode === "RATE_LIMIT_EXCEEDED") {
+    return "本日の質問上限に達しました。また明日お試しください。";
+  }
+  if (errorCode === "EXTERNAL_SERVICE_ERROR") {
+    return "現在サービスが混雑しています。しばらくお待ちください。";
+  }
+  if (errorCode === "SESSION_ERROR") {
+    return "セッションの初期化に失敗しました。ページを再読み込みしてください。";
+  }
+  return "申し訳ございません。エラーが発生しました。もう一度お試しください。";
 }
 
 export function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [sessionId] = useState<string>(() => uuidv4());
+  const [sessionId] = useState<string>(() => getOrCreateSessionId());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 新しいメッセージが追加されたら自動スクロール
@@ -27,7 +39,19 @@ export function ChatContainer() {
   }, [messages]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: sendChatMessage,
+    mutationFn: async (content: string): Promise<string> => {
+      if (sessionId === "") {
+        throw { errorCode: "SESSION_ERROR" } satisfies ApiError;
+      }
+      const { data, error } = await chatApiChatPost({
+        body: { session_id: sessionId, message: content },
+      });
+      if (!data) {
+        const errorCode = (error as { error_code?: string } | undefined)?.error_code;
+        throw { errorCode } satisfies ApiError;
+      }
+      return data.answer;
+    },
     onSuccess: (responseContent) => {
       const assistantMessage: Message = {
         id: uuidv4(),
@@ -37,11 +61,11 @@ export function ChatContainer() {
       };
       setMessages((prev) => [...prev, assistantMessage]);
     },
-    onError: () => {
+    onError: (error) => {
       const errorMessage: Message = {
         id: uuidv4(),
         role: "assistant",
-        content: "申し訳ございません。エラーが発生しました。もう一度お試しください。",
+        content: getErrorMessage(error),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);

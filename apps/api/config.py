@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     discord_client_secret: SecretStr = SecretStr("")
     discord_guild_id: str = ""
 
+    allowed_origins: list[str] = [
+        "http://localhost:3000",  # apps/web
+        "http://localhost:3001",  # apps/admin
+        "http://localhost:3101",  # Dify Web UI
+        "http://127.0.0.1:3101",  # Dify Web UI (127.0.0.1)
+    ]
+
     app_env: str = "development"
     daily_token_limit: int = 10000
     dify_timeout_seconds: float = 30.0

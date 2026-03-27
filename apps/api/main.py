@@ -1,8 +1,16 @@
+import os
+
+# Windows workaround: aiomysql がインポート時に getpass.getuser() を呼ぶ。
+# Git Bash 等では USERNAME 未設定のため OSError になるので USERPROFILE から補完する。
+if os.name == "nt" and "USERNAME" not in os.environ:
+    os.environ["USERNAME"] = os.environ.get("USERPROFILE", "").split("\\")[-1] or "user"
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from config import settings
 from exceptions import AppError
 from middleware.request_id import RequestIDMiddleware
 from routers import admin, chat, consent, faq, feedback, health, usage_logs
@@ -74,8 +82,8 @@ async def unhandled_error_handler(request: Request, exc: Exception) -> JSONRespo
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=settings.allowed_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

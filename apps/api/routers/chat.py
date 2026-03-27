@@ -1,8 +1,11 @@
 import logging
 
 from fastapi import APIRouter, Depends, Request
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from db.models import Session as SessionModel
 from db.session import get_db_session
 from exceptions import RateLimitExceeded
 from schemas.chat import ChatRequest, ChatResponse
@@ -33,6 +36,23 @@ async def chat(
     masked_answer = mask(dify_response.answer)
 
     try:
+        # sessions テーブルに該当行がなければ作成(consentエンドポイント実装前の暫定対応)
+        result = await session.execute(
+            select(SessionModel).where(SessionModel.id == body.session_id)
+        )
+        if result.scalar_one_or_none() is None:
+            try:
+                session.add(
+                    SessionModel(id=body.session_id, is_guest=True, consented=False)
+                )
+                await session.flush()
+            except IntegrityError:
+                # 同一 session_id の並列リクエストによる競合は無害
+                logger.debug(
+                    "session already exists (race): session_id=%s", body.session_id
+                )
+                await session.rollback()
+
         await check_and_save_usage_log(
             session=session,
             session_id=body.session_id,
