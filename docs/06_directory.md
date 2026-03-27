@@ -14,7 +14,7 @@
 | --- | --- |
 | リポジトリ構成 | Monorepo |
 | アーキテクチャ | Layered（P0は薄く、P1で分離強化） |
-| デプロイ単位 | Web（Cloudflare Pages） + API（Cloud Run） + Dify（自宅PC） |
+| デプロイ単位 | Web（Cloudflare Workers） + API（Cloud Run） + Dify（自宅PC） |
 | 言語 | FE: TypeScript / API: Python |
 | MVP方針 | **P0は新入生向けWeb + 軽量API + Dify + scripts** |
 
@@ -34,6 +34,7 @@ root/
 │   ├── ingest/              # 手動エクスポート整形（P0）
 │   └── ops/                 # KPI集計/バックアップ（P0）
 ├── infra/
+│   ├── cloudflare/          # Terraform: Cloudflare 周辺リソース（GitHub Secrets 等）
 │   ├── dify/                # Dify起動設定（docker-compose）
 │   ├── docker/              # API用Dockerfile
 │   └── env/                 # 環境変数テンプレート
@@ -163,14 +164,19 @@ apps/admin/
 ```
 .github/
 └── workflows/
-    ├── deploy-fe.yml             # Cloudflare Pages へ FEデプロイ
+    ├── deploy-fe.yml             # Cloudflare Workers へ FEデプロイ（Wrangler）
     ├── deploy-api.yml            # Cloud Run へ FastAPIデプロイ
     └── deploy-dify.yml           # self-hosted runner で Dify再起動
 
 infra/
+├── cloudflare/                   # Terraform: Cloudflare 周辺リソース
+│   ├── main.tf                   # GitHub Actions Secrets 等のリソース定義
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── versions.tf               # Provider バージョン固定
 ├── dify/
 │   ├── docker-compose.yml        # Dify公式compose（自宅PC上で実行）
-│   └── .env.example              # Supabase / TiDB / Gemini キー等
+│   └── SETUP.md                  # セットアップ手順
 ├── docker/
 │   └── api.Dockerfile            # FastAPI用（Cloud Run へデプロイ）
 └── env/
@@ -184,7 +190,7 @@ infra/
 ```
 git push (main)
 ├── deploy-fe.yml    (cloud-hosted runner)
-│   └── Cloudflare Pages へ自動デプロイ
+│   └── Cloudflare Workers へ自動デプロイ（Wrangler）
 │
 ├── deploy-api.yml   (cloud-hosted runner)
 │   └── Cloud Run へ FastAPI自動デプロイ
