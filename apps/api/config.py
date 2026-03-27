@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     discord_client_secret: SecretStr = SecretStr("")
     discord_guild_id: str = ""
 
-    allowed_origins: list[str] = ["http://localhost:3000"]
+    allowed_origins: list[str] = ["http://localhost:3000", "http://localhost:3001"]
 
     app_env: str = "development"
     daily_token_limit: int = 10000
