@@ -87,5 +87,10 @@ async def me(user: User = Depends(require_member)) -> User:
 async def logout() -> JSONResponse:
     """Cookie を削除してログアウトする。"""
     response = JSONResponse(content={"ok": True})
-    response.delete_cookie(key=COOKIE_NAME)
+    response.delete_cookie(
+        key=COOKIE_NAME,
+        httponly=True,
+        samesite="lax",
+        secure=settings.jwt_cookie_secure,
+    )
     return response
