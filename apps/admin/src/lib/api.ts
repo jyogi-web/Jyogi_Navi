@@ -23,6 +23,7 @@ export async function fetchAdminStats(): Promise<AdminStats> {
   }
   const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
     cache: "no-store",
+    credentials: "include",
   });
   if (!res.ok) {
     throw new Error(`Failed to fetch admin stats: ${res.status}`);
