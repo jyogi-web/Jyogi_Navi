@@ -117,11 +117,11 @@ async def test_check_and_save_usage_log_under_limit(mock_session_for_check):
     mock_session_for_check.commit.assert_awaited_once()
 
 
-async def test_check_and_save_usage_log_at_limit_raises(mock_session_for_check):
-    """使用量が上限に達しているとき RateLimitExceeded が送出されることを確認。"""
+async def test_check_and_save_usage_log_over_limit_raises(mock_session_for_check):
+    """used + tokens が上限を超えるとき RateLimitExceeded が送出されることを確認。"""
     lock_result = MagicMock()
     sum_result = MagicMock()
-    sum_result.scalar.return_value = 1000
+    sum_result.scalar.return_value = 900  # 900 + 200 > 1000 → 超過
     mock_session_for_check.execute = AsyncMock(side_effect=[lock_result, sum_result])
 
     with patch("services.log_store.settings") as mock_settings:
@@ -130,7 +130,7 @@ async def test_check_and_save_usage_log_at_limit_raises(mock_session_for_check):
             await check_and_save_usage_log(
                 session=mock_session_for_check,
                 session_id="sess-1",
-                tokens=100,
+                tokens=200,
                 trace_id="trace-1",
             )
 

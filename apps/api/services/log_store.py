@@ -85,7 +85,7 @@ async def check_and_save_usage_log(
     )
 
     used = await get_daily_token_usage(session, session_id)
-    if used >= settings.daily_token_limit:
+    if used + tokens > settings.daily_token_limit:
         raise RateLimitExceeded()
 
     log = UsageLog(
