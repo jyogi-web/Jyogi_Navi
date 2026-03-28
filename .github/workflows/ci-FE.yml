@@ -46,9 +46,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
     defaults:
       run:
         working-directory: apps/web
@@ -70,12 +67,6 @@ jobs:
 
       - name: Run tests with coverage
         run: pnpm test:coverage
-
-      - name: Report coverage
-        uses: davelosert/vitest-coverage-report-action@v2
-        if: always()
-        with:
-          working-directory: apps/web
 
   build:
     name: Build
