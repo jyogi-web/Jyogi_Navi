@@ -177,7 +177,7 @@ export const zCreateFeedbackApiFeedbackPostData = z.object({
  */
 export const zCreateFeedbackApiFeedbackPostResponse = zFeedbackResponse;
 
-export const zCreateUsageLogUsageLogsPostData = z.object({
+export const zCreateUsageLogApiUsageLogsPostData = z.object({
   body: zUsageLogCreate,
   path: z.never().optional(),
   query: z.never().optional(),
@@ -186,7 +186,7 @@ export const zCreateUsageLogUsageLogsPostData = z.object({
 /**
  * Successful Response
  */
-export const zCreateUsageLogUsageLogsPostResponse = zUsageLogResponse;
+export const zCreateUsageLogApiUsageLogsPostResponse = zUsageLogResponse;
 
 export const zAdminStatsApiAdminStatsGetData = z.object({
   body: z.never().optional(),

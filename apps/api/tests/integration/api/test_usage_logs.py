@@ -18,14 +18,14 @@ def mock_usage_log():
 
 
 async def test_create_usage_log_success(client, mock_usage_log):
-    """POST /usage-logs が 201 を返し正しいレスポンスを持つことを確認。"""
+    """POST /api/usage-logs が 201 を返し正しいレスポンスを持つことを確認。"""
     with patch(
         "routers.usage_logs.save_usage_log",
         new_callable=AsyncMock,
         return_value=mock_usage_log,
     ):
         response = await client.post(
-            "/usage-logs",
+            "/api/usage-logs",
             json={"session_id": "sess-abc", "tokens": 120, "category": "general"},
         )
     assert response.status_code == 201
@@ -36,7 +36,7 @@ async def test_create_usage_log_success(client, mock_usage_log):
 
 
 async def test_create_usage_log_without_category(client, mock_usage_log):
-    """category なしで POST /usage-logs が 201 を返すことを確認。"""
+    """category なしで POST /api/usage-logs が 201 を返すことを確認。"""
     mock_usage_log.category = None
     with patch(
         "routers.usage_logs.save_usage_log",
@@ -44,7 +44,7 @@ async def test_create_usage_log_without_category(client, mock_usage_log):
         return_value=mock_usage_log,
     ):
         response = await client.post(
-            "/usage-logs",
+            "/api/usage-logs",
             json={"session_id": "sess-abc", "tokens": 50},
         )
     assert response.status_code == 201
@@ -53,7 +53,7 @@ async def test_create_usage_log_without_category(client, mock_usage_log):
 async def test_create_usage_log_missing_required_field(client):
     """必須フィールド欠如で 400 を返すことを確認。"""
     response = await client.post(
-        "/usage-logs",
+        "/api/usage-logs",
         json={"session_id": "sess-abc"},  # tokens が欠如
     )
     assert response.status_code == 400

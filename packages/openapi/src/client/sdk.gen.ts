@@ -11,9 +11,9 @@ import type {
   CreateFeedbackApiFeedbackPostData,
   CreateFeedbackApiFeedbackPostErrors,
   CreateFeedbackApiFeedbackPostResponses,
-  CreateUsageLogUsageLogsPostData,
-  CreateUsageLogUsageLogsPostErrors,
-  CreateUsageLogUsageLogsPostResponses,
+  CreateUsageLogApiUsageLogsPostData,
+  CreateUsageLogApiUsageLogsPostErrors,
+  CreateUsageLogApiUsageLogsPostResponses,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponses,
   SearchFaqApiFaqSearchGetData,
@@ -115,17 +115,17 @@ export const createFeedbackApiFeedbackPost = <
  *
  * チャットAPIから呼ばれるトークン消費ログ保存エンドポイント。
  */
-export const createUsageLogUsageLogsPost = <
+export const createUsageLogApiUsageLogsPost = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<CreateUsageLogUsageLogsPostData, ThrowOnError>,
+  options: Options<CreateUsageLogApiUsageLogsPostData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    CreateUsageLogUsageLogsPostResponses,
-    CreateUsageLogUsageLogsPostErrors,
+    CreateUsageLogApiUsageLogsPostResponses,
+    CreateUsageLogApiUsageLogsPostErrors,
     ThrowOnError
   >({
-    url: "/usage-logs",
+    url: "/api/usage-logs",
     ...options,
     headers: {
       "Content-Type": "application/json",
