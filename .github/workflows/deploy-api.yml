@@ -1,0 +1,117 @@
+name: Deploy API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/deploy-api.yml"
+
+concurrency:
+  group: deploy-api-${{ github.ref }}
+  cancel-in-progress: false # デプロイ中断で Cloud Run が壊れた状態になるのを防ぐ
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+              - '.github/workflows/deploy-api.yml'
+
+  build-push:
+    name: Build & Push
+    needs: detect-changes
+    if: needs.detect-changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Workload Identity Federation に必要
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Set image tag
+        id: meta
+        run: |
+          IMAGE="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api:${{ github.sha }}"
+          echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ steps.meta.outputs.image }} \
+            -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api:latest \
+            apps/api
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ steps.meta.outputs.image }}
+          docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api:latest
+
+  deploy:
+    name: Deploy to Cloud Run
+    needs: build-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Workload Identity Federation に必要
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: jyogi-navi-api
+          region: ${{ secrets.GCP_REGION }}
+          image: ${{ needs.build-push.outputs.image }}
+          flags: |
+            --port=8080
+            --memory=512Mi
+            --cpu=1
+            --min-instances=0
+            --max-instances=3
+            --allow-unauthenticated
+          env_vars: |
+            APP_ENV=production,
+            TIDB_PORT=${{ secrets.TIDB_PORT }},
+            DAILY_TOKEN_LIMIT=${{ secrets.DAILY_TOKEN_LIMIT }}
+          secrets: |
+            TIDB_HOST=TIDB_HOST:latest,
+            TIDB_USER=TIDB_USER:latest,
+            TIDB_PASSWORD=TIDB_PASSWORD:latest,
+            TIDB_DATABASE=TIDB_DATABASE:latest,
+            TIDB_SSL_CA=TIDB_SSL_CA:latest,
+            SUPABASE_URL=SUPABASE_URL:latest,
+            SUPABASE_SECRET=SUPABASE_SECRET:latest,
+            DIFY_API_BASE_URL=DIFY_API_BASE_URL:latest,
+            DIFY_API_KEY=DIFY_API_KEY:latest,
+            DISCORD_CLIENT_ID=DISCORD_CLIENT_ID:latest,
+            DISCORD_CLIENT_SECRET=DISCORD_CLIENT_SECRET:latest,
+            DISCORD_GUILD_ID=DISCORD_GUILD_ID:latest,
+            ALLOWED_ORIGINS=ALLOWED_ORIGINS:latest
