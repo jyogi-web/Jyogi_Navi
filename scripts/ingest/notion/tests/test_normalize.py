@@ -18,6 +18,7 @@ from normalize import (
     process_file,
     remove_pii,
     remove_urls,
+    to_faq_records,
 )
 
 SAMPLE_JSON = Path(__file__).parent / "sample_page.json"
@@ -269,6 +270,61 @@ class TestProcessFile:
         output_file = tmp_path / "subdir" / "output.txt"
         process_file(SAMPLE_JSON, output_file)
         assert output_file.exists()
+
+
+class TestToFaqRecords:
+    _PAGE = {
+        "properties": {
+            "title": {"type": "title", "title": [{"plain_text": "テストページ"}]}
+        }
+    }
+
+    def test_returns_one_record_per_text_block(self):
+        blocks = [
+            {"id": "b1", "type": "paragraph",
+             "paragraph": {"rich_text": [{"plain_text": "内容A"}]}},
+            {"id": "b2", "type": "paragraph",
+             "paragraph": {"rich_text": [{"plain_text": "内容B"}]}},
+        ]
+        records = to_faq_records("page-001", self._PAGE, blocks)
+        assert len(records) == 2
+
+    def test_empty_and_unsupported_blocks_excluded(self):
+        blocks = [
+            {"id": "b1", "type": "paragraph",
+             "paragraph": {"rich_text": []}},
+            {"id": "b2", "type": "image", "image": {}},
+            {"id": "b3", "type": "paragraph",
+             "paragraph": {"rich_text": [{"plain_text": "有効"}]}},
+        ]
+        records = to_faq_records("page-001", self._PAGE, blocks)
+        assert len(records) == 1
+        assert records[0]["content"] == "有効"
+
+    def test_record_has_expected_fields(self):
+        blocks = [
+            {"id": "block-abc", "type": "paragraph",
+             "paragraph": {"rich_text": [{"plain_text": "テスト内容"}]}},
+        ]
+        records = to_faq_records("page-xyz", self._PAGE, blocks)
+        rec = records[0]
+        assert rec["content"] == "テスト内容"
+        assert rec["page_id"] == "page-xyz"
+        assert rec["page_title"] == "テストページ"
+        assert rec["block_id"] == "block-abc"
+        assert rec["block_type"] == "paragraph"
+
+    def test_pii_cleaned_in_content(self):
+        blocks = [
+            {"id": "b1", "type": "paragraph",
+             "paragraph": {"rich_text": [{"plain_text": "連絡先: secret@example.com"}]}},
+        ]
+        records = to_faq_records("page-001", self._PAGE, blocks)
+        assert "secret@example.com" not in records[0]["content"]
+        assert "[email]" in records[0]["content"]
+
+    def test_empty_blocks_returns_empty_list(self):
+        assert to_faq_records("page-001", self._PAGE, []) == []
 
 
 class TestFormatForDify:

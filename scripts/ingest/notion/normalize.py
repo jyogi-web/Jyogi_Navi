@@ -120,6 +120,30 @@ def format_for_dify(page: dict, blocks: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def to_faq_records(page_id: str, page: dict, blocks: list[dict]) -> list[dict]:
+    """ブロック 1 件を TiDB faq_embeddings 用の 1 レコードに変換して返す。
+
+    テキストを持たないブロック・空ブロックは除外する。
+    """
+    title = get_page_title(page)
+    records = []
+    for block in blocks:
+        text = block_to_text(block)
+        if text is None:
+            continue
+        cleaned = clean_text(text)
+        if not cleaned:
+            continue
+        records.append({
+            "content": cleaned,
+            "page_id": page_id,
+            "page_title": title,
+            "block_id": block.get("id", ""),
+            "block_type": block.get("type", ""),
+        })
+    return records
+
+
 def load_page(path: Path) -> tuple[dict, list[dict]]:
     """JSONファイルを読み込み、ページ情報とブロックリストを返す。"""
     with path.open(encoding="utf-8") as f:
