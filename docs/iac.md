@@ -123,12 +123,35 @@ Cloud Run バックエンド API に必要な GCP リソースをすべて Terra
 | `artifact_registry_url` | Docker イメージの push 先 URL |
 | `cloud_run_url` | Cloud Run サービスの URL |
 
+### terraform.tfvars の生成（推奨）
+
+`.env` ファイルがある場合は、`apps/api/scripts/gen_secret_payloads.py` を使うと
+`infra/gcp/terraform.tfvars` を自動生成できます。
+
+```bash
+# apps/api/ ディレクトリで実行する（uv run はここから呼ぶ必要がある）
+cd apps/api
+
+# 内容を標準出力で確認するだけ（ファイルは生成しない）
+uv run python scripts/gen_secret_payloads.py --env .env
+
+# terraform.tfvars を直接生成する
+uv run python scripts/gen_secret_payloads.py --env .env --write-tfvars
+```
+
+生成後、`infra/gcp/terraform.tfvars` を開いて `gcp_project_id` を手動で設定してください
+（スクリプトはこの値を知らないためコメントアウトされた状態で出力されます）。
+
+> **注意:** `terraform.tfvars` は `.gitignore` 済みです。Git にはコミットされません。
+
 ### 初回セットアップ手順
 
 ```bash
 cd infra/gcp
 
-# 1. terraform.tfvars を作成（テンプレートをコピーして値を埋める）
+# 1. terraform.tfvars を作成
+#    方法A: スクリプトで自動生成（推奨、上記「terraform.tfvars の生成」参照）
+#    方法B: テンプレートをコピーして手動で値を埋める
 cp terraform.tfvars.example terraform.tfvars
 # terraform.tfvars を編集して各値を設定する（.gitignore 済みのため Git にはコミットされない）
 
