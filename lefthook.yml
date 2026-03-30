@@ -20,3 +20,14 @@ pre-commit:
       glob: "apps/api/**/*.py"
       run: uv run --project apps/api ruff format {staged_files} && uv run --project apps/api ruff check --fix {staged_files}
       stage_fixed: true
+
+    # Infra: terraform fmt で自動フォーマット
+    - name: fmt-infra
+      glob: "infra/**/*.tf"
+      run: terraform fmt -write=true {staged_files}
+      stage_fixed: true
+
+    # Infra: tflint で Lint (変更があった infra/* サブディレクトリを動的に検出して実行)
+    - name: lint-infra
+      glob: "infra/**/*.tf"
+      run: echo {staged_files} | tr ' ' '\n' | sed 's|/[^/]*$||' | sort -u | xargs -I{} tflint --chdir={}

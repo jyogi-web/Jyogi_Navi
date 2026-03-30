@@ -49,7 +49,7 @@ flowchart LR
     %% =======================
     subgraph EDGE["Edge Layer (Cloudflare)"]
         CDN["CDN / Edge Network"]:::edge
-        FE["Frontend<br/>Cloudflare Pages<br/>(Next.js)"]:::svc
+        FE["Frontend<br/>Cloudflare Workers<br/>(Next.js / OpenNext)"]:::svc
         TUNNEL["Cloudflare Tunnel<br/>(自宅PC公開)"]:::edge
     end
 
@@ -132,12 +132,13 @@ flowchart LR
 - キャッシュ
 - DDoS基本防御（Cloudflare標準）
 
-### Cloudflare Pages（Next.js）
+### Cloudflare Workers（Next.js / OpenNext）
 
 役割：
 - 新入生向けチャットUI（P0）
 - 管理画面UI（P1）
-- OpenNextでCloudflare対応
+- OpenNext で Cloudflare Workers 対応
+- Wrangler（GitHub Actions）で自動デプロイ
 
 ### Cloudflare Tunnel
 
@@ -266,9 +267,9 @@ flowchart LR
 
 ## Cloudflareを使う理由
 
-- Pages：静的ホスティング＋Edge SSRが無料
+- Workers：Edge SSR が無料枠で動作
 - CDN・DDoS防御が標準付属
-- Next.js（OpenNext）のデプロイがそのまま動く
+- Next.js（OpenNext）のデプロイが Wrangler でそのまま動く
 
 ---
 

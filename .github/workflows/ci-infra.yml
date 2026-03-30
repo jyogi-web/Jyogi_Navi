@@ -1,0 +1,45 @@
+name: CI (Infra)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/**/*.tf"
+      - ".github/workflows/ci-infra.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  terraform:
+    name: Terraform Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/cloudflare
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "1.14.8"
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Setup tflint
+        uses: terraform-linters/setup-tflint@v6
+
+      - name: tflint init
+        run: tflint --init
+
+      - name: tflint
+        run: tflint
