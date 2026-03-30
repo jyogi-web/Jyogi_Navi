@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     discord_guild_id: str = ""
     discord_redirect_uri: str = "http://localhost:8080/api/auth/callback"
 
-    jwt_secret: SecretStr = SecretStr("change-me-in-production")
+    jwt_secret: SecretStr
     jwt_expire_minutes: int = 60 * 24  # 24時間
 
     admin_frontend_url: str = "http://localhost:3001"
