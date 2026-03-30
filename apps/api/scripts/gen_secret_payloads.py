@@ -3,13 +3,14 @@
 JSON ペイロードを生成するスクリプト。
 
 使用方法:
+    # 標準出力に表示するだけ
     uv run python scripts/gen_secret_payloads.py [--env .env]
 
-出力:
-    TIDB_CONFIG:
-      {"host": "...", "user": "...", "password": "...", ...}
+    # infra/gcp/terraform.tfvars を直接生成
+    uv run python scripts/gen_secret_payloads.py --write-tfvars
 
-    infra/gcp/terraform.tfvars への追記スニペット
+    # .env と出力先を明示
+    uv run python scripts/gen_secret_payloads.py --env .env.local --write-tfvars
 """
 
 import argparse
@@ -17,6 +18,8 @@ import json
 import sys
 from pathlib import Path
 
+# リポジトリルートからの相対パス
+TFVARS_PATH = Path(__file__).parents[3] / "infra" / "gcp" / "terraform.tfvars"
 DEFAULT_SSL_CA = "/etc/ssl/certs/ca-certificates.crt"
 
 
@@ -65,9 +68,15 @@ def build_payloads(env: dict[str, str]) -> dict[str, str]:
     }
 
 
-def build_tfvars(env: dict[str, str]) -> str:
+def build_tfvars_content(env: dict[str, str]) -> str:
     ssl_ca = env.get("TIDB_SSL_CA", DEFAULT_SSL_CA)
     lines = [
+        "# このファイルは gen_secret_payloads.py により自動生成されました",
+        "# terraform.tfvars は .gitignore 済みのため Git にはコミットされません",
+        "",
+        '# gcp_project_id = "<your-gcp-project-id>"  # 手動で設定してください',
+        '# gcp_region = "asia-northeast1"',
+        "",
         f'tidb_host             = "{env.get("TIDB_HOST", "")}"',
         f'tidb_user             = "{env.get("TIDB_USER", "")}"',
         f'tidb_password         = "{env.get("TIDB_PASSWORD", "")}"',
@@ -82,7 +91,7 @@ def build_tfvars(env: dict[str, str]) -> str:
         f'discord_guild_id      = "{env.get("DISCORD_GUILD_ID", "")}"',
         f'allowed_origins       = "{env.get("ALLOWED_ORIGINS", "")}"',
     ]
-    return "\n".join(lines)
+    return "\n".join(lines) + "\n"
 
 
 def main() -> None:
@@ -91,6 +100,11 @@ def main() -> None:
     )
     parser.add_argument(
         "--env", default=".env", help=".env ファイルのパス (デフォルト: .env)"
+    )
+    parser.add_argument(
+        "--write-tfvars",
+        action="store_true",
+        help=f"infra/gcp/terraform.tfvars を直接生成する (出力先: {TFVARS_PATH})",
     )
     args = parser.parse_args()
 
@@ -102,6 +116,7 @@ def main() -> None:
     env = load_env(env_path)
     payloads = build_payloads(env)
 
+    # --- Secret Manager ペイロードの表示 ---
     print("=" * 60)
     print("GCP Secret Manager ペイロード (5 secrets)")
     print("=" * 60)
@@ -109,12 +124,20 @@ def main() -> None:
         print(f"\n{name}:")
         print(f"  {value}")
 
-    print()
-    print("=" * 60)
-    print("infra/gcp/terraform.tfvars への追記内容")
-    print("(terraform.tfvars に貼り付けてください)")
-    print("=" * 60)
-    print(build_tfvars(env))
+    # --- terraform.tfvars の生成 ---
+    tfvars_content = build_tfvars_content(env)
+
+    if args.write_tfvars:
+        TFVARS_PATH.write_text(tfvars_content, encoding="utf-8")
+        print(f"\n\u2705 terraform.tfvars を生成しました: {TFVARS_PATH}")
+        print("gcp_project_id は手動で設定してください。")
+    else:
+        print()
+        print("=" * 60)
+        print("infra/gcp/terraform.tfvars の内容")
+        print("(--write-tfvars で直接生成することもできます)")
+        print("=" * 60)
+        print(tfvars_content)
 
 
 if __name__ == "__main__":
