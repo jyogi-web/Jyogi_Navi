@@ -126,6 +126,7 @@ class User(Base):
     discord_user_id: Mapped[str] = mapped_column(
         String(64), unique=True, nullable=False
     )
+    user_name: Mapped[str] = mapped_column(String(64), nullable=False, default="")
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole),
         default=UserRole.MEMBER,

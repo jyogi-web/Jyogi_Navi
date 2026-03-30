@@ -12,4 +12,5 @@ class UserResponse(BaseModel):
 
     id: str
     discord_user_id: str
+    user_name: str
     role: UserRole

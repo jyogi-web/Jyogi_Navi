@@ -65,8 +65,10 @@ async def check_guild_member(access_token: str) -> bool:
     return response.status_code == 200
 
 
-async def upsert_user(session: AsyncSession, discord_user_id: str) -> User:
-    """DB に users レコードを作成する。既存ユーザーの場合は role を維持する。"""
+async def upsert_user(
+    session: AsyncSession, discord_user_id: str, user_name: str
+) -> User:
+    """DB に users レコードを作成する。既存ユーザーの場合は role を維持し user_name を更新する。"""
     import uuid
 
     result = await session.execute(
@@ -77,9 +79,12 @@ async def upsert_user(session: AsyncSession, discord_user_id: str) -> User:
         user = User(
             id=str(uuid.uuid4()),
             discord_user_id=discord_user_id,
+            user_name=user_name,
             role=UserRole.MEMBER,
         )
         session.add(user)
-        await session.commit()
-        await session.refresh(user)
+    else:
+        user.user_name = user_name
+    await session.commit()
+    await session.refresh(user)
     return user

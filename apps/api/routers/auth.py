@@ -57,12 +57,13 @@ async def callback(
 
     discord_user = await get_discord_user(access_token)
     discord_user_id: str = discord_user["id"]
+    discord_username: str = discord_user["username"]
 
     is_member = await check_guild_member(access_token)
     if not is_member:
         return RedirectResponse(url=f"{ADMIN_FRONTEND_URL}/login?error=not_member")
 
-    user = await upsert_user(session, discord_user_id)
+    user = await upsert_user(session, discord_user_id, discord_username)
     jwt_token = create_access_token(user)
 
     response = RedirectResponse(url=f"{ADMIN_FRONTEND_URL}/dashboard")

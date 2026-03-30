@@ -23,6 +23,7 @@ def upgrade() -> None:
         "users",
         sa.Column("id", sa.String(36), primary_key=True),
         sa.Column("discord_user_id", sa.String(64), nullable=False, unique=True),
+        sa.Column("user_name", sa.String(64), nullable=False, server_default=""),
         sa.Column(
             "role",
             sa.Enum("ADMIN", "MEMBER", name="userrole"),
