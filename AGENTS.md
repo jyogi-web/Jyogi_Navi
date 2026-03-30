@@ -19,3 +19,19 @@
 | `docs/09_schedule_and_issues.md` | スケジュールと課題 |
 
 これらのドキュメントはプロジェクトの仕様・設計の唯一の情報源です。実装方針や設計判断は必ずこれらのドキュメントに基づいてください。
+
+## 型定義のルール
+
+フロントエンド（`apps/admin` 等）で型を定義する際は、`packages/openapi` に同等の型が存在しないか必ず確認してください。
+
+- バックエンドのレスポンス型は `@jyogi-navi/openapi/types` からインポートして使用する
+- 独自に再定義しない（バックエンドとの乖離・二重管理を防ぐため）
+- `packages/openapi` の型は `openapi-ts` でバックエンドの OpenAPI スキーマから自動生成される
+
+```ts
+// Good
+import type { UserResponse, UserRole } from "@jyogi-navi/openapi/types";
+
+// Bad
+export type UserRole = "ADMIN" | "MEMBER"; // 再定義しない
+```
