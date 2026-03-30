@@ -55,6 +55,7 @@ jobs:
           SUPABASE_URL: ""
           SUPABASE_SECRET: ""
           APP_ENV: "development"
+          JWT_SECRET: "dummy-secret-for-openapi-export"
         run: pnpm openapi
 
       - name: Check for schema drift

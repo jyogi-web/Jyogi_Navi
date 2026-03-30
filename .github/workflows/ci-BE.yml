@@ -74,4 +74,5 @@ jobs:
           SUPABASE_URL: "https://placeholder.supabase.co"
           SUPABASE_SECRET: "placeholder"
           APP_ENV: "test"
+          JWT_SECRET: "dummy-secret-for-testing"
         run: uv run pytest
