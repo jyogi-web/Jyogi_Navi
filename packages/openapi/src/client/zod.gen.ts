@@ -151,6 +151,7 @@ export const zUserRole = z.enum(["ADMIN", "MEMBER"]);
 export const zUserResponse = z.object({
   id: z.string(),
   discord_user_id: z.string(),
+  user_name: z.string(),
   role: zUserRole,
 });
 

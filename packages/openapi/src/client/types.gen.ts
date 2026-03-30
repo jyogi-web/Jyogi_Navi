@@ -270,6 +270,10 @@ export type UserResponse = {
    * Discord User Id
    */
   discord_user_id: string;
+  /**
+   * User Name
+   */
+  user_name: string;
   role: UserRole;
 };
 

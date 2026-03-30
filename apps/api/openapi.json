@@ -769,6 +769,10 @@
             "type": "string",
             "title": "Discord User Id"
           },
+          "user_name": {
+            "type": "string",
+            "title": "User Name"
+          },
           "role": {
             "$ref": "#/components/schemas/UserRole"
           }
@@ -777,6 +781,7 @@
         "required": [
           "id",
           "discord_user_id",
+          "user_name",
           "role"
         ],
         "title": "UserResponse",
