@@ -21,18 +21,16 @@
 
 これらのドキュメントはプロジェクトの仕様・設計の唯一の情報源です。実装方針や設計判断は必ずこれらのドキュメントに基づいてください。
 
-## 型定義のルール
+## スキーマ駆動開発ルール（必須）
 
-フロントエンド（`apps/admin` 等）で型を定義する際は、`packages/openapi` に同等の型が存在しないか必ず確認してください。
+詳細は `docs/schema-driven.md` を参照。
 
-- バックエンドのレスポンス型は `@jyogi-navi/openapi/types` からインポートして使用する
-- 独自に再定義しない（バックエンドとの乖離・二重管理を防ぐため）
-- `packages/openapi` の型は `openapi-ts` でバックエンドの OpenAPI スキーマから自動生成される
+### やること
 
-```ts
-// Good
-import type { UserResponse, UserRole } from "@jyogi-navi/openapi/types";
+- バックエンドのエンドポイント・モデルを変更したら **必ず** `/schema-sync` を実行する
+- フロントエンドでAPIの型が必要なときは `packages/openapi/src/client/` からimportする
 
-// Bad
-export type UserRole = "ADMIN" | "MEMBER"; // 再定義しない
-```
+### やってはいけないこと
+
+- `type XxxResponse = { ... }` のようなAPI型の手書き定義
+- `pnpm openapi` を実行せずにフロントエンドの実装を進める
