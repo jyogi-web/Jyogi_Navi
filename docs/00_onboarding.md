@@ -1,7 +1,7 @@
 # 00_onboarding
 
 作成日時: 2026-03-30
-最終更新者: Alice
+最終更新者: KOU050223
 
 # 🚀 Jyogi Navi オンボーディングガイド
 
@@ -79,7 +79,7 @@ echo 'eval "$(direnv hook bash)"' >> ~/.bashrc && source ~/.bashrc
 ### ステップ 3: リポジトリをクローン・環境を有効化
 
 ```bash
-git clone https://github.com/jyogi-navi/Jyogi_Navi.git
+git clone https://github.com/jyogi-web/Jyogi_Navi.git
 cd Jyogi_Navi
 
 # .envrc を許可（初回のみ）
@@ -112,13 +112,19 @@ cd apps/api && uv sync --dev && cd ../..
 
 ### ステップ 5: 環境変数を設定
 
-`apps/api/.env.example` をコピーして `.env` を作成します：
+各アプリケーションディレクトリ（api, web, admin）で `.env` ファイルを作成します。
+
+まず、各ディレクトリの `.env.example` をコピーしてください：
 
 ```bash
 cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+cp apps/admin/.env.example apps/admin/.env
 ```
 
-`.env` を開いて、チームメンバーから共有された値を設定してください。
+その後、`.env` を開いて、チームメンバーから共有された値や必要な値を設定してください。
+
+（例：apps/api の場合）
 
 | 変数 | 用途 | 取得先 |
 |---|---|---|
@@ -134,6 +140,12 @@ cp apps/api/.env.example apps/api/.env
 ### バックエンド（apps/api）
 
 ```bash
+# ルートディレクトリから
+pnpm run dev:api
+```
+
+または従来通り、
+```bash
 cd apps/api
 uv run uvicorn main:app --reload --port 8080
 ```
@@ -143,6 +155,12 @@ uv run uvicorn main:app --reload --port 8080
 ### フロントエンド・新入生向け（apps/web）
 
 ```bash
+# ルートディレクトリから
+pnpm run dev:web
+```
+
+または従来通り、
+```bash
 pnpm --filter web dev
 ```
 
@@ -150,6 +168,12 @@ pnpm --filter web dev
 
 ### フロントエンド・管理画面（apps/admin）
 
+```bash
+# ルートディレクトリから
+pnpm run dev:admin
+```
+
+または従来通り、
 ```bash
 pnpm --filter admin dev
 ```
@@ -187,8 +211,11 @@ Jyogi_Navi/
 ```
 main                    ← 本番デプロイのソース（直接 push 禁止）
 └── {名前}/issue{番号}/{概要}   ← 作業ブランチ
-    例: Alice/issue52/admin_display_create
+  例: Alice/issue52/admin_display_create
 ```
+
+> ※上記は推奨命名例です。厳密な強制ルールではなく、ある程度柔軟に運用しています。
+> チームで分かりやすければ、issue番号や概要だけ・名前なし等でもOKです。
 
 ### 作業の流れ
 
@@ -300,6 +327,6 @@ const { data } = useQuery(adminStatsApiAdminStatsGetOptions());
 
 ## 9️⃣ 困ったときは
 
-- **Slack / Discord** でチームに質問する
+- **Discord** でチームに質問する
 - **GitHub Issues** で「question」ラベルを付けて起票する
 - ドキュメントに誤りや不足があれば PR を出してください
