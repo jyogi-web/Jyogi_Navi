@@ -37,8 +37,8 @@ class Settings(BaseSettings):
     daily_token_limit: int = 10000
     dify_timeout_seconds: float = 30.0
 
-    # GCP Secret Manager から注入される JSON 設定（本番環境）
-    # 例: TIDB_CONFIG='{"host":"...","user":"...","password":"...","database":"...","ssl_ca":"..."}'
+    # GCP Secret Manager から注入される JSON 設定 (本番環境)
+    # 例: TIDB_CONFIG='{"host":"...","user":"...","password":"..."}'
     tidb_config: str = ""
     supabase_config: str = ""
     dify_config: str = ""
