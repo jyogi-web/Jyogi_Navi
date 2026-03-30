@@ -68,7 +68,10 @@ async def check_guild_member(access_token: str) -> bool:
 async def upsert_user(
     session: AsyncSession, discord_user_id: str, user_name: str
 ) -> User:
-    """DB に users レコードを作成する。既存ユーザーの場合は role を維持し user_name を更新する。"""
+    """DB に users レコードを作成する。
+
+    既存ユーザーの場合は role を維持し user_name を更新する。
+    """
     import uuid
 
     result = await session.execute(
