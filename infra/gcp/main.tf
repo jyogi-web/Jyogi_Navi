@@ -44,7 +44,23 @@ resource "google_service_account" "github_actions" {
   description  = "Service account used by GitHub Actions to deploy to Cloud Run"
 }
 
-# WIF からこの SA を借用する権限を付与
+# ============================================================
+# Service Account（Cloud Run ランタイム用）
+# ============================================================
+resource "google_service_account" "cloud_run_runtime" {
+  account_id   = "cloud-run-api-runtime"
+  display_name = "Cloud Run API Runtime"
+  description  = "Service account for Cloud Run API runtime (minimum required permissions only)"
+}
+
+# ランタイム SA に Secret Manager アクセス権限のみ付与
+resource "google_project_iam_member" "runtime_sm_accessor" {
+  project = var.gcp_project_id
+  role    = "roles/secretmanager.secretAccessor"
+  member  = "serviceAccount:${google_service_account.cloud_run_runtime.email}"
+}
+
+# WIF からデプロイ用 SA を借用する権限を付与
 resource "google_service_account_iam_member" "wif_impersonation" {
   service_account_id = google_service_account.github_actions.name
   role               = "roles/iam.workloadIdentityUser"
@@ -63,16 +79,12 @@ resource "google_project_iam_member" "ar_writer" {
   member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
-resource "google_project_iam_member" "sa_user" {
-  project = var.gcp_project_id
-  role    = "roles/iam.serviceAccountUser"
-  member  = "serviceAccount:${google_service_account.github_actions.email}"
-}
-
-resource "google_project_iam_member" "sm_accessor" {
-  project = var.gcp_project_id
-  role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.github_actions.email}"
+# デプロイ用 SA がランタイム SA を Cloud Run に割り当てるための権限
+# プロジェクト全体ではなくランタイム SA に対してのみ付与（最小権限）
+resource "google_service_account_iam_member" "sa_user" {
+  service_account_id = google_service_account.cloud_run_runtime.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
 # ============================================================
@@ -126,7 +138,7 @@ resource "google_cloud_run_v2_service" "api" {
       max_instance_count = 3
     }
 
-    service_account = google_service_account.github_actions.email
+    service_account = google_service_account.cloud_run_runtime.email
 
     containers {
       # イメージは GitHub Actions が deploy-api.yml でデプロイ時に更新する
