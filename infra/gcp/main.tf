@@ -1,7 +1,25 @@
 # ============================================================
+# GCP APIs の有効化
+# ============================================================
+resource "google_project_service" "apis" {
+  for_each = toset([
+    "artifactregistry.googleapis.com",
+    "run.googleapis.com",
+    "secretmanager.googleapis.com",
+    "iam.googleapis.com",
+    "iamcredentials.googleapis.com",
+  ])
+
+  project            = var.gcp_project_id
+  service            = each.key
+  disable_on_destroy = false
+}
+
+# ============================================================
 # Artifact Registry
 # ============================================================
 resource "google_artifact_registry_repository" "api" {
+  depends_on    = [google_project_service.apis]
   repository_id = "jyogi-navi"
   location      = var.gcp_region
   format        = "DOCKER"
@@ -12,9 +30,11 @@ resource "google_artifact_registry_repository" "api" {
 # Workload Identity Federation（GitHub Actions OIDC 連携）
 # ============================================================
 resource "google_iam_workload_identity_pool" "github" {
-  workload_identity_pool_id = "github-actions"
+  workload_identity_pool_id = "github-actions-pool"
   display_name              = "GitHub Actions"
   description               = "Workload Identity Pool for GitHub Actions"
+
+  depends_on = [google_project_service.apis]
 }
 
 resource "google_iam_workload_identity_pool_provider" "github" {
@@ -125,6 +145,8 @@ resource "google_secret_manager_secret" "api_secrets" {
   replication {
     auto {}
   }
+
+  depends_on = [google_project_service.apis]
 }
 
 resource "google_secret_manager_secret_version" "api_secrets" {
@@ -151,9 +173,10 @@ resource "google_cloud_run_v2_service" "api" {
     service_account = google_service_account.cloud_run_runtime.email
 
     containers {
-      # イメージは GitHub Actions が deploy-api.yml でデプロイ時に更新する
-      # 初回 terraform apply では placeholder を使用し、以降は CI/CD に任せる
-      image = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project_id}/jyogi-navi/api:latest"
+      # 初回 terraform apply では公式 placeholder を使用する
+      # 以降は deploy-api.yml（GitHub Actions）が実際のイメージに更新する
+      # lifecycle.ignore_changes により Terraform は image の変更を無視する
+      image = "us-docker.pkg.dev/cloudrun/container/hello:latest"
 
       ports {
         container_port = 8080
@@ -184,6 +207,15 @@ resource "google_cloud_run_v2_service" "api" {
         }
       }
     }
+  }
+
+  lifecycle {
+    # image は deploy-api.yml（CI/CD）が管理するため Terraform の変更対象から除外する
+    # scaling は GCP が manual_instance_count を自動付与するため無視する
+    ignore_changes = [
+      template[0].containers[0].image,
+      template[0].scaling,
+    ]
   }
 }
 
