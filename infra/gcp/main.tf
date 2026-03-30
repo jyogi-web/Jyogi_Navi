@@ -88,23 +88,33 @@ resource "google_service_account_iam_member" "sa_user" {
 }
 
 # ============================================================
-# Secret Manager（機密環境変数）
+# Secret Manager（機密環境変数 / 5 secrets = 無料枠内）
+# 各 secret は関連する値を JSON でまとめて1つの secret に格納する
+# apps/api/config.py の model_validator が JSON を個別フィールドに展開する
 # ============================================================
 locals {
   secrets = {
-    TIDB_HOST             = var.tidb_host
-    TIDB_USER             = var.tidb_user
-    TIDB_PASSWORD         = var.tidb_password
-    TIDB_DATABASE         = var.tidb_database
-    TIDB_SSL_CA           = var.tidb_ssl_ca
-    SUPABASE_URL          = var.supabase_url
-    SUPABASE_SECRET       = var.supabase_secret
-    DIFY_API_BASE_URL     = var.dify_api_base_url
-    DIFY_API_KEY          = var.dify_api_key
-    DISCORD_CLIENT_ID     = var.discord_client_id
-    DISCORD_CLIENT_SECRET = var.discord_client_secret
-    DISCORD_GUILD_ID      = var.discord_guild_id
-    ALLOWED_ORIGINS       = var.allowed_origins
+    TIDB_CONFIG = jsonencode({
+      host     = var.tidb_host
+      user     = var.tidb_user
+      password = var.tidb_password
+      database = var.tidb_database
+      ssl_ca   = var.tidb_ssl_ca
+    })
+    SUPABASE_CONFIG = jsonencode({
+      url    = var.supabase_url
+      secret = var.supabase_secret
+    })
+    DIFY_CONFIG = jsonencode({
+      api_base_url = var.dify_api_base_url
+      api_key      = var.dify_api_key
+    })
+    DISCORD_CONFIG = jsonencode({
+      client_id     = var.discord_client_id
+      client_secret = var.discord_client_secret
+      guild_id      = var.discord_guild_id
+    })
+    ALLOWED_ORIGINS = var.allowed_origins
   }
 }
 

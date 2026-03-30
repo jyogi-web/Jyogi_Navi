@@ -1,5 +1,6 @@
 # GitHub Actions Secrets を一元管理するモジュール。
 # Cloudflare 用と GCP 用の両方を管理する。
+# API 機密値（DB接続情報・APIキー等）は infra/gcp/ の Secret Manager で管理する。
 
 # ============================================================
 # Cloudflare 用 GitHub Actions Secrets

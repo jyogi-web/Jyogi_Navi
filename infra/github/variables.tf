@@ -51,13 +51,13 @@ variable "gcp_region" {
 }
 
 variable "tidb_port" {
-  description = "TiDB Serverless ポート番号"
+  description = "TiDB Serverless ポート番号（非機密）"
   type        = string
   default     = "4000"
 }
 
 variable "daily_token_limit" {
-  description = "1日あたりの最大トークン数"
+  description = "1日あたりの最大トークン数（非機密）"
   type        = string
   default     = "10000"
 }

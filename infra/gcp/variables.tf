@@ -21,7 +21,7 @@ variable "github_repo" {
   default     = "Jyogi_Navi"
 }
 
-# Secret Manager に格納する機密値
+# Secret Manager に格納する機密値（JSON にまとめて5 secrets = 無料枠内）
 variable "tidb_host" {
   description = "TiDB Serverless ホスト名"
   type        = string
@@ -47,7 +47,7 @@ variable "tidb_database" {
 }
 
 variable "tidb_ssl_ca" {
-  description = "TiDB SSL CA 証明書のパス（本番環境）"
+  description = "TiDB SSL CA パス（Cloud Run Linux 環境: /etc/ssl/certs/ca-certificates.crt）"
   type        = string
   default     = "/etc/ssl/certs/ca-certificates.crt"
 }

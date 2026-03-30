@@ -82,16 +82,8 @@ jobs:
             TIDB_PORT=${{ secrets.TIDB_PORT }},
             DAILY_TOKEN_LIMIT=${{ secrets.DAILY_TOKEN_LIMIT }}
           secrets: |
-            TIDB_HOST=TIDB_HOST:latest,
-            TIDB_USER=TIDB_USER:latest,
-            TIDB_PASSWORD=TIDB_PASSWORD:latest,
-            TIDB_DATABASE=TIDB_DATABASE:latest,
-            TIDB_SSL_CA=TIDB_SSL_CA:latest,
-            SUPABASE_URL=SUPABASE_URL:latest,
-            SUPABASE_SECRET=SUPABASE_SECRET:latest,
-            DIFY_API_BASE_URL=DIFY_API_BASE_URL:latest,
-            DIFY_API_KEY=DIFY_API_KEY:latest,
-            DISCORD_CLIENT_ID=DISCORD_CLIENT_ID:latest,
-            DISCORD_CLIENT_SECRET=DISCORD_CLIENT_SECRET:latest,
-            DISCORD_GUILD_ID=DISCORD_GUILD_ID:latest,
+            TIDB_CONFIG=TIDB_CONFIG:latest,
+            SUPABASE_CONFIG=SUPABASE_CONFIG:latest,
+            DIFY_CONFIG=DIFY_CONFIG:latest,
+            DISCORD_CONFIG=DISCORD_CONFIG:latest,
             ALLOWED_ORIGINS=ALLOWED_ORIGINS:latest

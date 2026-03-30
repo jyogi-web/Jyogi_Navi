@@ -10,22 +10,22 @@ gcp_project_id = "<your-gcp-project-id>"
 # github_owner = "jyogi-web"   # デフォルト値
 # github_repo  = "Jyogi_Navi"  # デフォルト値
 
-# TiDB Serverless
+# TiDB Serverless（TIDB_CONFIG として JSON にまとめて Secret Manager に格納）
 tidb_host     = "<gateway01.ap-northeast-1.prod.aws.tidbcloud.com 等>"
 tidb_user     = "<your-tidb-user>"
 tidb_password = "<your-tidb-password>"
 tidb_database = "<your-database-name>"
 # tidb_ssl_ca = "/etc/ssl/certs/ca-certificates.crt"  # Cloud Run (Linux) のデフォルト
 
-# Supabase
+# Supabase（SUPABASE_CONFIG として JSON にまとめて Secret Manager に格納）
 supabase_url    = "https://<project-ref>.supabase.co"
 supabase_secret = "<service-role-key>"
 
-# Dify Chat API
+# Dify（DIFY_CONFIG として JSON にまとめて Secret Manager に格納）
 dify_api_base_url = "https://<your-dify-domain>/v1"
 dify_api_key      = "<your-dify-api-key>"
 
-# Discord OAuth（P1: 管理画面認証）
+# Discord OAuth（DISCORD_CONFIG として JSON にまとめて Secret Manager に格納）
 discord_client_id     = "<your-discord-client-id>"
 discord_client_secret = "<your-discord-client-secret>"
 discord_guild_id      = "<your-discord-guild-id>"
