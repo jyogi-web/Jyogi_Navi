@@ -1,6 +1,6 @@
-import type { DailyCount, AdminStatsResponse } from "@jyogi-navi/openapi/types";
+import type { DailyCount, AdminStatsResponse, FeedbackItem, FeedbackListResponse } from "@jyogi-navi/openapi/types";
 
-export type { DailyCount };
+export type { DailyCount, FeedbackItem, FeedbackListResponse };
 export type AdminStats = AdminStatsResponse;
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
@@ -17,18 +17,6 @@ function generateMockStats(): AdminStats {
   return { daily_counts: days, total_tokens, good_rate: 0 };
 }
 
-export interface FeedbackItem {
-  id: string;
-  session_id: string;
-  rating: "good" | "bad";
-  comment: string | null;
-  created_at: string;
-}
-
-export interface FeedbackListResponse {
-  feedbacks: FeedbackItem[];
-  total: number;
-}
 
 export async function fetchFeedbacks(
   limit = 50,
