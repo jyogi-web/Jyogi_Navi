@@ -2,7 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { fetchFeedbacks, type FeedbackItem } from "@/lib/api";
+import type { FeedbackItem } from "@jyogi-navi/openapi/types";
+import { fetchFeedbacks } from "@/lib/api";
 
 function RatingBadge({ rating }: { rating: FeedbackItem["rating"] }) {
   if (rating === "good") {
