@@ -15,8 +15,6 @@ jobs:
     permissions:
       contents: read
       id-token: write # Workload Identity Federation に必要
-    outputs:
-      image: ${{ steps.meta.outputs.image }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,23 +30,14 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
 
-      - name: Set image tag
-        id: meta
+      - name: Build and push Docker image
+        env:
+          REGISTRY: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api
+          SHA: ${{ github.sha }}
         run: |
-          IMAGE="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api:${{ github.sha }}"
-          echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
-
-      - name: Build Docker image
-        run: |
-          docker build \
-            -t ${{ steps.meta.outputs.image }} \
-            -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api:latest \
-            apps/api
-
-      - name: Push Docker image
-        run: |
-          docker push ${{ steps.meta.outputs.image }}
-          docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api:latest
+          docker build -t "${REGISTRY}:${SHA}" -t "${REGISTRY}:latest" apps/api
+          docker push "${REGISTRY}:${SHA}"
+          docker push "${REGISTRY}:latest"
 
   deploy:
     name: Deploy to Cloud Run
@@ -69,7 +58,7 @@ jobs:
         with:
           service: jyogi-navi-api
           region: ${{ secrets.GCP_REGION }}
-          image: ${{ needs.build-push.outputs.image }}
+          image: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/jyogi-navi/api:${{ github.sha }}
           flags: |
             --port=8080
             --memory=512Mi
