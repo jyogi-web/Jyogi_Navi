@@ -47,6 +47,12 @@ class Settings(BaseSettings):
     @model_validator(mode="before")
     @classmethod
     def expand_json_configs(cls, values: dict) -> dict:
+        # ALLOWED_ORIGINS がカンマ区切り文字列で渡された場合にリストへ変換する
+        # (GCP Secret Manager はカンマ区切り文字列として注入するため)
+        if isinstance(values.get("allowed_origins"), str):
+            raw = values["allowed_origins"].strip()
+            values["allowed_origins"] = [o.strip() for o in raw.split(",") if o.strip()]
+
         if cfg := values.get("tidb_config"):
             data = json.loads(cfg)
             values.setdefault("tidb_host", data.get("host", ""))
