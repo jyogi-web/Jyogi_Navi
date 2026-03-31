@@ -3,6 +3,10 @@
 import asyncio
 import ssl as ssl_mod
 import sys
+
+# Windows の ProactorEventLoop は SSL + aiomysql と非互換のため SelectorEventLoop を使用
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 from logging.config import fileConfig
 from pathlib import Path
 

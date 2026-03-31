@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     discord_client_id: str = ""
     discord_client_secret: SecretStr = SecretStr("")
     discord_guild_id: str = ""
+    discord_redirect_uri: str = "http://localhost:8080/api/auth/callback"
+
+    jwt_secret: SecretStr
+    jwt_expire_minutes: int = 60 * 24  # 24時間
+
+    admin_frontend_url: str = "http://localhost:3001"
+    jwt_cookie_secure: bool = False  # 本番(HTTPS)環境では True に設定
 
     allowed_origins: list[str] = [
         "http://localhost:3000",  # apps/web

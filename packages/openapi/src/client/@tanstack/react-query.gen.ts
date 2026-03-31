@@ -2,6 +2,8 @@
 
 import {
   type DefaultError,
+  type InfiniteData,
+  infiniteQueryOptions,
   queryOptions,
   type UseMutationOptions,
 } from "@tanstack/react-query";
@@ -9,16 +11,23 @@ import {
 import { client } from "../client.gen";
 import {
   adminStatsApiAdminStatsGet,
+  callbackApiAuthCallbackGet,
   chatApiChatPost,
   createFeedbackApiFeedbackPost,
   createUsageLogApiUsageLogsPost,
+  feedbackListApiAdminFeedbacksGet,
   healthCheckHealthGet,
+  loginApiAuthLoginGet,
+  logoutApiAuthLogoutPost,
+  meApiAuthMeGet,
   type Options,
   searchFaqApiFaqSearchGet,
 } from "../sdk.gen";
 import type {
   AdminStatsApiAdminStatsGetData,
   AdminStatsApiAdminStatsGetResponse,
+  CallbackApiAuthCallbackGetData,
+  CallbackApiAuthCallbackGetError,
   ChatApiChatPostData,
   ChatApiChatPostError,
   ChatApiChatPostResponse,
@@ -28,8 +37,15 @@ import type {
   CreateUsageLogApiUsageLogsPostData,
   CreateUsageLogApiUsageLogsPostError,
   CreateUsageLogApiUsageLogsPostResponse,
+  FeedbackListApiAdminFeedbacksGetData,
+  FeedbackListApiAdminFeedbacksGetError,
+  FeedbackListApiAdminFeedbacksGetResponse,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponse,
+  LoginApiAuthLoginGetData,
+  LogoutApiAuthLogoutPostData,
+  MeApiAuthMeGetData,
+  MeApiAuthMeGetResponse,
   SearchFaqApiFaqSearchGetData,
   SearchFaqApiFaqSearchGetError,
   SearchFaqApiFaqSearchGetResponse,
@@ -104,6 +120,122 @@ export const healthCheckHealthGetOptions = (
     },
     queryKey: healthCheckHealthGetQueryKey(options),
   });
+
+export const loginApiAuthLoginGetQueryKey = (
+  options?: Options<LoginApiAuthLoginGetData>,
+) => createQueryKey("loginApiAuthLoginGet", options);
+
+/**
+ * Login
+ *
+ * Discord OAuth 認可画面にリダイレクトする。
+ */
+export const loginApiAuthLoginGetOptions = (
+  options?: Options<LoginApiAuthLoginGetData>,
+) =>
+  queryOptions<
+    unknown,
+    DefaultError,
+    unknown,
+    ReturnType<typeof loginApiAuthLoginGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await loginApiAuthLoginGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: loginApiAuthLoginGetQueryKey(options),
+  });
+
+export const callbackApiAuthCallbackGetQueryKey = (
+  options: Options<CallbackApiAuthCallbackGetData>,
+) => createQueryKey("callbackApiAuthCallbackGet", options);
+
+/**
+ * Callback
+ *
+ * Discord OAuth コールバック。トークンを交換してセッション Cookie を発行する。
+ */
+export const callbackApiAuthCallbackGetOptions = (
+  options: Options<CallbackApiAuthCallbackGetData>,
+) =>
+  queryOptions<
+    unknown,
+    CallbackApiAuthCallbackGetError,
+    unknown,
+    ReturnType<typeof callbackApiAuthCallbackGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await callbackApiAuthCallbackGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: callbackApiAuthCallbackGetQueryKey(options),
+  });
+
+export const meApiAuthMeGetQueryKey = (options?: Options<MeApiAuthMeGetData>) =>
+  createQueryKey("meApiAuthMeGet", options);
+
+/**
+ * Me
+ *
+ * 現在ログイン中のユーザー情報を返す。
+ */
+export const meApiAuthMeGetOptions = (options?: Options<MeApiAuthMeGetData>) =>
+  queryOptions<
+    MeApiAuthMeGetResponse,
+    DefaultError,
+    MeApiAuthMeGetResponse,
+    ReturnType<typeof meApiAuthMeGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await meApiAuthMeGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: meApiAuthMeGetQueryKey(options),
+  });
+
+/**
+ * Logout
+ *
+ * Cookie を削除してログアウトする。
+ */
+export const logoutApiAuthLogoutPostMutation = (
+  options?: Partial<Options<LogoutApiAuthLogoutPostData>>,
+): UseMutationOptions<
+  unknown,
+  DefaultError,
+  Options<LogoutApiAuthLogoutPostData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    unknown,
+    DefaultError,
+    Options<LogoutApiAuthLogoutPostData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await logoutApiAuthLogoutPost({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
 
 /**
  * Chat
@@ -251,3 +383,119 @@ export const adminStatsApiAdminStatsGetOptions = (
     },
     queryKey: adminStatsApiAdminStatsGetQueryKey(options),
   });
+
+export const feedbackListApiAdminFeedbacksGetQueryKey = (
+  options?: Options<FeedbackListApiAdminFeedbacksGetData>,
+) => createQueryKey("feedbackListApiAdminFeedbacksGet", options);
+
+/**
+ * Feedback List
+ *
+ * フィードバック一覧を返す。
+ */
+export const feedbackListApiAdminFeedbacksGetOptions = (
+  options?: Options<FeedbackListApiAdminFeedbacksGetData>,
+) =>
+  queryOptions<
+    FeedbackListApiAdminFeedbacksGetResponse,
+    FeedbackListApiAdminFeedbacksGetError,
+    FeedbackListApiAdminFeedbacksGetResponse,
+    ReturnType<typeof feedbackListApiAdminFeedbacksGetQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await feedbackListApiAdminFeedbacksGet({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: feedbackListApiAdminFeedbacksGetQueryKey(options),
+  });
+
+const createInfiniteParams = <
+  K extends Pick<QueryKey<Options>[0], "body" | "headers" | "path" | "query">,
+>(
+  queryKey: QueryKey<Options>,
+  page: K,
+) => {
+  const params = { ...queryKey[0] };
+  if (page.body) {
+    params.body = {
+      ...(queryKey[0].body as any),
+      ...(page.body as any),
+    };
+  }
+  if (page.headers) {
+    params.headers = {
+      ...queryKey[0].headers,
+      ...page.headers,
+    };
+  }
+  if (page.path) {
+    params.path = {
+      ...(queryKey[0].path as any),
+      ...(page.path as any),
+    };
+  }
+  if (page.query) {
+    params.query = {
+      ...(queryKey[0].query as any),
+      ...(page.query as any),
+    };
+  }
+  return params as unknown as typeof page;
+};
+
+export const feedbackListApiAdminFeedbacksGetInfiniteQueryKey = (
+  options?: Options<FeedbackListApiAdminFeedbacksGetData>,
+): QueryKey<Options<FeedbackListApiAdminFeedbacksGetData>> =>
+  createQueryKey("feedbackListApiAdminFeedbacksGet", options, true);
+
+/**
+ * Feedback List
+ *
+ * フィードバック一覧を返す。
+ */
+export const feedbackListApiAdminFeedbacksGetInfiniteOptions = (
+  options?: Options<FeedbackListApiAdminFeedbacksGetData>,
+) =>
+  infiniteQueryOptions<
+    FeedbackListApiAdminFeedbacksGetResponse,
+    FeedbackListApiAdminFeedbacksGetError,
+    InfiniteData<FeedbackListApiAdminFeedbacksGetResponse>,
+    QueryKey<Options<FeedbackListApiAdminFeedbacksGetData>>,
+    | number
+    | Pick<
+        QueryKey<Options<FeedbackListApiAdminFeedbacksGetData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<FeedbackListApiAdminFeedbacksGetData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  offset: pageParam,
+                },
+              };
+        const params = createInfiniteParams(queryKey, page);
+        const { data } = await feedbackListApiAdminFeedbacksGet({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        });
+        return data;
+      },
+      queryKey: feedbackListApiAdminFeedbacksGetInfiniteQueryKey(options),
+    },
+  );

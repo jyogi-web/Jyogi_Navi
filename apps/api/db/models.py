@@ -1,9 +1,21 @@
 """SQLAlchemy ORM モデル定義 (TiDB Serverless)."""
 
+import enum
 import uuid
 from datetime import datetime
+from typing import Literal
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text, text
+from sqlalchemy import (
+    JSON,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    text,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -81,7 +93,9 @@ class Feedback(Base):
         String(36),
         ForeignKey("sessions.id"),
     )
-    rating: Mapped[str] = mapped_column(String(10), nullable=False)
+    rating: Mapped[Literal["good", "bad"]] = mapped_column(
+        Enum("good", "bad"), nullable=False
+    )
     comment: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
@@ -89,6 +103,39 @@ class Feedback(Base):
     )
 
     session: Mapped["Session"] = relationship(back_populates="feedbacks")
+
+
+class UserRole(enum.StrEnum):
+    """管理ユーザーのロール。"""
+
+    ADMIN = "ADMIN"
+    MEMBER = "MEMBER"
+
+
+class User(Base):
+    """管理画面ユーザー (Discord OAuth で認証)。"""
+
+    __tablename__ = "users"
+    __table_args__ = (Index("ix_users_discord_user_id", "discord_user_id"),)
+
+    id: Mapped[str] = mapped_column(
+        String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+    )
+    discord_user_id: Mapped[str] = mapped_column(
+        String(64), unique=True, nullable=False
+    )
+    user_name: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    role: Mapped[UserRole] = mapped_column(
+        Enum(UserRole),
+        default=UserRole.MEMBER,
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
 
 
 class FaqEmbedding(Base):
