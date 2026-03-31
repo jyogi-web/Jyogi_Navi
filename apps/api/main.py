@@ -91,7 +91,7 @@ async def unhandled_error_handler(request: Request, exc: Exception) -> JSONRespo
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
+    allow_origins=settings.allowed_origins_list,
     allow_credentials=True,  # Cookie 送受信のため必要
     allow_methods=["*"],
     allow_headers=["*"],

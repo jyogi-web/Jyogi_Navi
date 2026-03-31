@@ -1,0 +1,35 @@
+# このファイルをコピーして terraform.tfvars を作成してください
+# terraform.tfvars は .gitignore 済みのため Git にはコミットされません
+#
+# cp terraform.tfvars.example terraform.tfvars
+
+gcp_project_id = "<your-gcp-project-id>"
+# gcp_region = "asia-northeast1"  # デフォルト値のまま変更不要な場合はコメントのまま
+
+# GitHub リポジトリ情報（GitHub Actions OIDC 連携に使用）
+# github_owner = "jyogi-web"   # デフォルト値
+# github_repo  = "Jyogi_Navi"  # デフォルト値
+
+# TiDB Serverless（TIDB_CONFIG として JSON にまとめて Secret Manager に格納）
+tidb_host     = "<gateway01.ap-northeast-1.prod.aws.tidbcloud.com 等>"
+tidb_user     = "<your-tidb-user>"
+tidb_password = "<your-tidb-password>"
+tidb_database = "<your-database-name>"
+# tidb_ssl_ca = "/etc/ssl/certs/ca-certificates.crt"  # Cloud Run (Linux) のデフォルト
+
+# Supabase（SUPABASE_CONFIG として JSON にまとめて Secret Manager に格納）
+supabase_url    = "https://<project-ref>.supabase.co"
+supabase_secret = "<service-role-key>"
+
+# Dify（DIFY_CONFIG として JSON にまとめて Secret Manager に格納）
+dify_api_base_url = "https://<your-dify-domain>/v1"
+dify_api_key      = "<your-dify-api-key>"
+
+# Discord OAuth（DISCORD_CONFIG として JSON にまとめて Secret Manager に格納）
+discord_client_id     = "<your-discord-client-id>"
+discord_client_secret = "<your-discord-client-secret>"
+discord_guild_id      = "<your-discord-guild-id>"
+
+# CORS 許可オリジン（カンマ区切り）
+# 本番デプロイ後に Cloudflare Workers の URL が確定したら更新する
+allowed_origins = "https://jyogi-navi-web.<your-domain>,https://jyogi-navi-admin.<your-domain>"

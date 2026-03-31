@@ -1,0 +1,23 @@
+# このファイルをコピーして terraform.tfvars を作成してください
+# terraform.tfvars は .gitignore 済みのため Git にはコミットされません
+#
+# cp terraform.tfvars.example terraform.tfvars
+#
+# 事前に infra/gcp/ で terraform apply を完了させ、以下のコマンドで outputs を確認してください:
+#   cd ../gcp && terraform output
+
+github_token = "<github-pat>"  # Fine-grained PAT: Secrets:Read and write / Classic PAT: repo スコープ
+
+# Cloudflare
+cloudflare_api_token  = "<your-cf-api-token>"
+cloudflare_account_id = "<your-cf-account-id>"
+
+# GCP（infra/gcp/ の terraform output から取得）
+gcp_workload_identity_provider = "<projects/.../locations/global/workloadIdentityPools/.../providers/...>"
+gcp_service_account            = "github-actions-deploy@<project-id>.iam.gserviceaccount.com"
+gcp_project_id                 = "<your-gcp-project-id>"
+# gcp_region = "asia-northeast1"  # デフォルト値のまま変更不要な場合はコメントのまま
+
+# 非機密値（デフォルト値のまま変更不要な場合はコメントのまま）
+# tidb_port         = "4000"
+# daily_token_limit = "10000"

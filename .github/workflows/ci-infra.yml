@@ -13,11 +13,17 @@ concurrency:
 
 jobs:
   terraform:
-    name: Terraform Check
+    name: Terraform Check (${{ matrix.dir }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          - infra/cloudflare
+          - infra/gcp
+          - infra/github
     defaults:
       run:
-        working-directory: infra/cloudflare
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
 

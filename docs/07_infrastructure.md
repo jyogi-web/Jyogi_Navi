@@ -159,7 +159,25 @@ flowchart LR
 - usage_logs / feedbacks 保存（TiDB）
 - Discord OAuth連携（P1）
 
-デプロイ：GitHub Actions (cloud-hosted) → Cloud Run へ自動デプロイ
+デプロイフロー：
+
+```
+main ブランチへ push
+  ↓
+detect-changes（apps/api/** の変更検知）
+  ↓
+build-push（Docker build → Artifact Registry push）
+  イメージ: <region>-docker.pkg.dev/<project>/jyogi-navi/api:<git-sha>
+  ↓
+deploy（google-github-actions/deploy-cloudrun@v2）
+  サービス: jyogi-navi-api / ポート: 8080
+  スケール: min=0, max=3
+  環境変数: GCP Secret Manager 経由で注入
+```
+
+認証：Workload Identity Federation（OIDC）— サービスアカウントキー不要
+
+機密環境変数（DB 接続情報・API キー等）は GCP Secret Manager で管理し、Cloud Run 起動時に自動注入されます。詳細は `docs/iac.md` を参照してください。
 
 ---
 

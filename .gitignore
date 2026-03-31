@@ -56,3 +56,9 @@ infra/dify/data/
 
 # Local one-off debug scripts
 infra/dify/tmp_*.py
+
+# Terraform
+.terraform/
+terraform.tfvars
+*.tfstate
+*.tfstate.*
