@@ -47,12 +47,14 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   }
 
   attribute_mapping = {
-    "google.subject"       = "assertion.sub"
-    "attribute.actor"      = "assertion.actor"
-    "attribute.repository" = "assertion.repository"
+    "google.subject"         = "assertion.sub"
+    "attribute.actor"        = "assertion.actor"
+    "attribute.repository"   = "assertion.repository"
+    "attribute.ref"          = "assertion.ref"
+    "attribute.workflow_ref" = "assertion.workflow_ref"
   }
 
-  attribute_condition = "assertion.repository == '${var.github_owner}/${var.github_repo}'"
+  attribute_condition = "attribute.repository == '${var.github_owner}/${var.github_repo}' && attribute.ref == 'refs/heads/main' && attribute.workflow_ref == '${var.github_owner}/${var.github_repo}/.github/workflows/deploy-api.yml@refs/heads/main'"
 }
 
 # ============================================================
@@ -73,11 +75,13 @@ resource "google_service_account" "cloud_run_runtime" {
   description  = "Service account for Cloud Run API runtime (minimum required permissions only)"
 }
 
-# ランタイム SA に Secret Manager アクセス権限のみ付与
-resource "google_project_iam_member" "runtime_sm_accessor" {
-  project = var.gcp_project_id
-  role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.cloud_run_runtime.email}"
+# ランタイム SA に対象 5 secrets のみ Secret Manager アクセス権限を付与（最小権限）
+resource "google_secret_manager_secret_iam_member" "runtime_sm_accessor" {
+  for_each  = google_secret_manager_secret.api_secrets
+  project   = var.gcp_project_id
+  secret_id = each.value.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.cloud_run_runtime.email}"
 }
 
 # WIF からデプロイ用 SA を借用する権限を付与
@@ -134,7 +138,10 @@ locals {
       client_secret = var.discord_client_secret
       guild_id      = var.discord_guild_id
     })
-    ALLOWED_ORIGINS = var.allowed_origins
+    ALLOWED_ORIGINS = jsonencode([
+      for origin in split(",", var.allowed_origins) : trimspace(origin)
+      if trimspace(origin) != ""
+    ])
   }
 }
 

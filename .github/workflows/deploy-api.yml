@@ -1,8 +1,11 @@
 name: Deploy API
 
 on:
-  push: # テスト中: 全ブランチからデプロイ可能（確認後 branches: [main] に戻す）
-  workflow_dispatch: # 手動実行も可能
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+  workflow_dispatch:
 
 concurrency:
   group: deploy-api-${{ github.ref }}
