@@ -20,3 +20,17 @@
 | `docs/iac.md` | IaC（Infrastructure as Code） |
 
 これらのドキュメントはプロジェクトの仕様・設計の唯一の情報源です。実装方針や設計判断は必ずこれらのドキュメントに基づいてください。
+
+## スキーマ駆動開発ルール（必須）
+
+詳細は `docs/schema-driven.md` を参照。
+
+### やること
+
+- バックエンドのエンドポイント・モデルを変更したら **必ず** `/schema-sync` を実行する
+- フロントエンドでAPIの型が必要なときは `packages/openapi/src/client/` からimportする
+
+### やってはいけないこと
+
+- `type XxxResponse = { ... }` のようなAPI型の手書き定義
+- `pnpm openapi` を実行せずにフロントエンドの実装を進める

@@ -158,14 +158,14 @@
         }
       }
     },
-    "/usage-logs": {
+    "/api/usage-logs": {
       "post": {
         "tags": [
           "usage-logs"
         ],
         "summary": "Create Usage Log",
         "description": "チャットAPIから呼ばれるトークン消費ログ保存エンドポイント。",
-        "operationId": "create_usage_log_usage_logs_post",
+        "operationId": "create_usage_log_api_usage_logs_post",
         "requestBody": {
           "content": {
             "application/json": {

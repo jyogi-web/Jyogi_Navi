@@ -5,7 +5,7 @@ from db.session import get_db_session
 from schemas.session import UsageLogCreate, UsageLogResponse
 from services.log_store import save_usage_log
 
-router = APIRouter(prefix="/usage-logs", tags=["usage-logs"])
+router = APIRouter(prefix="/api/usage-logs", tags=["usage-logs"])
 
 
 @router.post("", response_model=UsageLogResponse, status_code=201)

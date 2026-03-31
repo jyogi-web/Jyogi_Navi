@@ -11,7 +11,7 @@ import {
   adminStatsApiAdminStatsGet,
   chatApiChatPost,
   createFeedbackApiFeedbackPost,
-  createUsageLogUsageLogsPost,
+  createUsageLogApiUsageLogsPost,
   healthCheckHealthGet,
   type Options,
   searchFaqApiFaqSearchGet,
@@ -25,9 +25,9 @@ import type {
   CreateFeedbackApiFeedbackPostData,
   CreateFeedbackApiFeedbackPostError,
   CreateFeedbackApiFeedbackPostResponse,
-  CreateUsageLogUsageLogsPostData,
-  CreateUsageLogUsageLogsPostError,
-  CreateUsageLogUsageLogsPostResponse,
+  CreateUsageLogApiUsageLogsPostData,
+  CreateUsageLogApiUsageLogsPostError,
+  CreateUsageLogApiUsageLogsPostResponse,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponse,
   SearchFaqApiFaqSearchGetData,
@@ -198,20 +198,20 @@ export const createFeedbackApiFeedbackPostMutation = (
  *
  * チャットAPIから呼ばれるトークン消費ログ保存エンドポイント。
  */
-export const createUsageLogUsageLogsPostMutation = (
-  options?: Partial<Options<CreateUsageLogUsageLogsPostData>>,
+export const createUsageLogApiUsageLogsPostMutation = (
+  options?: Partial<Options<CreateUsageLogApiUsageLogsPostData>>,
 ): UseMutationOptions<
-  CreateUsageLogUsageLogsPostResponse,
-  CreateUsageLogUsageLogsPostError,
-  Options<CreateUsageLogUsageLogsPostData>
+  CreateUsageLogApiUsageLogsPostResponse,
+  CreateUsageLogApiUsageLogsPostError,
+  Options<CreateUsageLogApiUsageLogsPostData>
 > => {
   const mutationOptions: UseMutationOptions<
-    CreateUsageLogUsageLogsPostResponse,
-    CreateUsageLogUsageLogsPostError,
-    Options<CreateUsageLogUsageLogsPostData>
+    CreateUsageLogApiUsageLogsPostResponse,
+    CreateUsageLogApiUsageLogsPostError,
+    Options<CreateUsageLogApiUsageLogsPostData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await createUsageLogUsageLogsPost({
+      const { data } = await createUsageLogApiUsageLogsPost({
         ...options,
         ...fnOptions,
         throwOnError: true,

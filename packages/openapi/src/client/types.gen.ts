@@ -345,32 +345,32 @@ export type CreateFeedbackApiFeedbackPostResponses = {
 export type CreateFeedbackApiFeedbackPostResponse =
   CreateFeedbackApiFeedbackPostResponses[keyof CreateFeedbackApiFeedbackPostResponses];
 
-export type CreateUsageLogUsageLogsPostData = {
+export type CreateUsageLogApiUsageLogsPostData = {
   body: UsageLogCreate;
   path?: never;
   query?: never;
-  url: "/usage-logs";
+  url: "/api/usage-logs";
 };
 
-export type CreateUsageLogUsageLogsPostErrors = {
+export type CreateUsageLogApiUsageLogsPostErrors = {
   /**
    * Validation Error
    */
   422: HttpValidationError;
 };
 
-export type CreateUsageLogUsageLogsPostError =
-  CreateUsageLogUsageLogsPostErrors[keyof CreateUsageLogUsageLogsPostErrors];
+export type CreateUsageLogApiUsageLogsPostError =
+  CreateUsageLogApiUsageLogsPostErrors[keyof CreateUsageLogApiUsageLogsPostErrors];
 
-export type CreateUsageLogUsageLogsPostResponses = {
+export type CreateUsageLogApiUsageLogsPostResponses = {
   /**
    * Successful Response
    */
   201: UsageLogResponse;
 };
 
-export type CreateUsageLogUsageLogsPostResponse =
-  CreateUsageLogUsageLogsPostResponses[keyof CreateUsageLogUsageLogsPostResponses];
+export type CreateUsageLogApiUsageLogsPostResponse =
+  CreateUsageLogApiUsageLogsPostResponses[keyof CreateUsageLogApiUsageLogsPostResponses];
 
 export type AdminStatsApiAdminStatsGetData = {
   body?: never;
