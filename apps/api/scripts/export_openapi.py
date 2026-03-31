@@ -4,11 +4,15 @@
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 
 # プロジェクトルート(apps/api)をPythonパスに追加
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# スキーマ出力のみに使用するため、必須フィールドにダミー値を設定する
+os.environ.setdefault("JWT_SECRET", "dummy-for-schema-export")
 
 from main import app
 

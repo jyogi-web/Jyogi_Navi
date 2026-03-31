@@ -21,6 +21,6 @@ class FeedbackResponse(BaseModel):
 
     id: str
     session_id: str
-    rating: str
+    rating: Literal["good", "bad"]
     comment: str | None
     created_at: datetime

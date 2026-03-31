@@ -5,6 +5,9 @@ import { client } from "./client.gen";
 import type {
   AdminStatsApiAdminStatsGetData,
   AdminStatsApiAdminStatsGetResponses,
+  CallbackApiAuthCallbackGetData,
+  CallbackApiAuthCallbackGetErrors,
+  CallbackApiAuthCallbackGetResponses,
   ChatApiChatPostData,
   ChatApiChatPostErrors,
   ChatApiChatPostResponses,
@@ -14,8 +17,17 @@ import type {
   CreateUsageLogApiUsageLogsPostData,
   CreateUsageLogApiUsageLogsPostErrors,
   CreateUsageLogApiUsageLogsPostResponses,
+  FeedbackListApiAdminFeedbacksGetData,
+  FeedbackListApiAdminFeedbacksGetErrors,
+  FeedbackListApiAdminFeedbacksGetResponses,
   HealthCheckHealthGetData,
   HealthCheckHealthGetResponses,
+  LoginApiAuthLoginGetData,
+  LoginApiAuthLoginGetResponses,
+  LogoutApiAuthLogoutPostData,
+  LogoutApiAuthLogoutPostResponses,
+  MeApiAuthMeGetData,
+  MeApiAuthMeGetResponses,
   SearchFaqApiFaqSearchGetData,
   SearchFaqApiFaqSearchGetErrors,
   SearchFaqApiFaqSearchGetResponses,
@@ -51,6 +63,64 @@ export const healthCheckHealthGet = <ThrowOnError extends boolean = false>(
     unknown,
     ThrowOnError
   >({ url: "/health", ...options });
+
+/**
+ * Login
+ *
+ * Discord OAuth 認可画面にリダイレクトする。
+ */
+export const loginApiAuthLoginGet = <ThrowOnError extends boolean = false>(
+  options?: Options<LoginApiAuthLoginGetData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    LoginApiAuthLoginGetResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/auth/login", ...options });
+
+/**
+ * Callback
+ *
+ * Discord OAuth コールバック。トークンを交換してセッション Cookie を発行する。
+ */
+export const callbackApiAuthCallbackGet = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<CallbackApiAuthCallbackGetData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    CallbackApiAuthCallbackGetResponses,
+    CallbackApiAuthCallbackGetErrors,
+    ThrowOnError
+  >({ url: "/api/auth/callback", ...options });
+
+/**
+ * Me
+ *
+ * 現在ログイン中のユーザー情報を返す。
+ */
+export const meApiAuthMeGet = <ThrowOnError extends boolean = false>(
+  options?: Options<MeApiAuthMeGetData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    MeApiAuthMeGetResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/auth/me", ...options });
+
+/**
+ * Logout
+ *
+ * Cookie を削除してログアウトする。
+ */
+export const logoutApiAuthLogoutPost = <ThrowOnError extends boolean = false>(
+  options?: Options<LogoutApiAuthLogoutPostData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    LogoutApiAuthLogoutPostResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/auth/logout", ...options });
 
 /**
  * Chat
@@ -148,3 +218,19 @@ export const adminStatsApiAdminStatsGet = <
     unknown,
     ThrowOnError
   >({ url: "/api/admin/stats", ...options });
+
+/**
+ * Feedback List
+ *
+ * フィードバック一覧を返す。
+ */
+export const feedbackListApiAdminFeedbacksGet = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<FeedbackListApiAdminFeedbacksGetData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    FeedbackListApiAdminFeedbacksGetResponses,
+    FeedbackListApiAdminFeedbacksGetErrors,
+    ThrowOnError
+  >({ url: "/api/admin/feedbacks", ...options });

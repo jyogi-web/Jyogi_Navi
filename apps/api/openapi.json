@@ -27,6 +27,109 @@
         }
       }
     },
+    "/api/auth/login": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "description": "Discord OAuth 認可画面にリダイレクトする。",
+        "operationId": "login_api_auth_login_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/callback": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Callback",
+        "description": "Discord OAuth コールバック。トークンを交換してセッション Cookie を発行する。",
+        "operationId": "callback_api_auth_callback_get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "description": "現在ログイン中のユーザー情報を返す。",
+        "operationId": "me_api_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "description": "Cookie を削除してログアウトする。",
+        "operationId": "logout_api_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/chat": {
       "post": {
         "tags": [
@@ -221,6 +324,63 @@
           }
         }
       }
+    },
+    "/api/admin/feedbacks": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Feedback List",
+        "description": "フィードバック一覧を返す。",
+        "operationId": "feedback_list_api_admin_feedbacks_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -380,6 +540,74 @@
         "title": "FeedbackCreate",
         "description": "フィードバック作成リクエスト。"
       },
+      "FeedbackItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "rating": {
+            "type": "string",
+            "enum": [
+              "good",
+              "bad"
+            ],
+            "title": "Rating"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "session_id",
+          "rating",
+          "comment",
+          "created_at"
+        ],
+        "title": "FeedbackItem",
+        "description": "フィードバック一覧の1件。"
+      },
+      "FeedbackListResponse": {
+        "properties": {
+          "feedbacks": {
+            "items": {
+              "$ref": "#/components/schemas/FeedbackItem"
+            },
+            "type": "array",
+            "title": "Feedbacks"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "feedbacks",
+          "total"
+        ],
+        "title": "FeedbackListResponse",
+        "description": "フィードバック一覧レスポンス。"
+      },
       "FeedbackResponse": {
         "properties": {
           "id": {
@@ -392,6 +620,10 @@
           },
           "rating": {
             "type": "string",
+            "enum": [
+              "good",
+              "bad"
+            ],
             "title": "Rating"
           },
           "comment": {
@@ -526,6 +758,43 @@
         ],
         "title": "UsageLogResponse",
         "description": "トークン消費ログレスポンス。"
+      },
+      "UserResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "discord_user_id": {
+            "type": "string",
+            "title": "Discord User Id"
+          },
+          "user_name": {
+            "type": "string",
+            "title": "User Name"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "discord_user_id",
+          "user_name",
+          "role"
+        ],
+        "title": "UserResponse",
+        "description": "管理ユーザー情報レスポンス。"
+      },
+      "UserRole": {
+        "type": "string",
+        "enum": [
+          "ADMIN",
+          "MEMBER"
+        ],
+        "title": "UserRole",
+        "description": "管理ユーザーのロール。"
       },
       "ValidationError": {
         "properties": {

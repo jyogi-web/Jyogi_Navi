@@ -1,11 +1,8 @@
-import type { DailyCount, AdminStatsResponse } from "@jyogi-navi/openapi/types";
+import { feedbackListApiAdminFeedbacksGet, adminStatsApiAdminStatsGet } from "@jyogi-navi/openapi/sdk";
+import type { DailyCount, AdminStatsResponse, FeedbackListResponse } from "@jyogi-navi/openapi/types";
 
-export type { DailyCount };
-export type AdminStats = AdminStatsResponse;
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
-
-function generateMockStats(): AdminStats {
+function generateMockStats(): AdminStatsResponse {
   const days: DailyCount[] = [];
   for (let i = 29; i >= 0; i--) {
     const d = new Date();
@@ -17,15 +14,28 @@ function generateMockStats(): AdminStats {
   return { daily_counts: days, total_tokens, good_rate: 0 };
 }
 
-export async function fetchAdminStats(): Promise<AdminStats> {
+
+export async function fetchFeedbacks(
+  limit = 50,
+  offset = 0,
+): Promise<FeedbackListResponse> {
+  const { data, error } = await feedbackListApiAdminFeedbacksGet({
+    query: { limit, offset },
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (error) throw new Error("Failed to fetch feedbacks");
+  return data!;
+}
+
+export async function fetchAdminStats(): Promise<AdminStatsResponse> {
   if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
     return generateMockStats();
   }
-  const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
+  const { data, error } = await adminStatsApiAdminStatsGet({
+    credentials: "include",
     cache: "no-store",
   });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch admin stats: ${res.status}`);
-  }
-  return res.json() as Promise<AdminStats>;
+  if (error) throw new Error("Failed to fetch admin stats");
+  return data!;
 }

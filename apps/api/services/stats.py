@@ -4,7 +4,12 @@ from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import Feedback, UsageLog
-from schemas.admin import AdminStatsResponse, DailyCount
+from schemas.admin import (
+    AdminStatsResponse,
+    DailyCount,
+    FeedbackItem,
+    FeedbackListResponse,
+)
 
 
 async def get_admin_stats(session: AsyncSession) -> AdminStatsResponse:
@@ -41,3 +46,21 @@ async def get_admin_stats(session: AsyncSession) -> AdminStatsResponse:
         total_tokens=total_tokens,
         good_rate=round(good_rate, 1),
     )
+
+
+async def get_feedback_list(
+    session: AsyncSession, limit: int = 50, offset: int = 0
+) -> FeedbackListResponse:
+    """フィードバック一覧を降順で返す。"""
+    rows = await session.execute(
+        select(Feedback)
+        .order_by(Feedback.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    feedbacks = [FeedbackItem.model_validate(row) for row in rows.scalars().all()]
+
+    total_result = await session.execute(select(func.count()).select_from(Feedback))
+    total: int = total_result.scalar() or 0
+
+    return FeedbackListResponse(feedbacks=feedbacks, total=total)

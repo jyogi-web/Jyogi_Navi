@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { fetchAdminStats } from "@/lib/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -13,8 +14,13 @@ export function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-muted/40">
-      <header className="border-b bg-background px-6 py-4">
+      <header className="border-b bg-background px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-semibold">Jyogi Navi 管理ダッシュボード</h1>
+        <nav className="flex gap-4 text-sm">
+          <Link href="/feedbacks" className="text-indigo-600 hover:text-indigo-800">
+            フィードバックを見る →
+          </Link>
+        </nav>
       </header>
 
       <main className="mx-auto max-w-5xl space-y-6 p-6">

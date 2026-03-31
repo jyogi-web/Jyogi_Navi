@@ -11,12 +11,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config import settings
+from dependencies.auth import AuthError
 from exceptions import AppError
 from middleware.request_id import RequestIDMiddleware
-from routers import admin, chat, consent, faq, feedback, health, usage_logs
+from routers import admin, auth, chat, consent, faq, feedback, health, usage_logs
 from services.log_store import _emit_structured_log
 
 app = FastAPI(title="Jyogi Navi API", version="0.1.0")
+
+
+@app.exception_handler(AuthError)
+async def auth_error_handler(request: Request, exc: AuthError) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+    )
 
 
 @app.exception_handler(AppError)
@@ -83,12 +92,13 @@ app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins_list,
-    allow_credentials=False,
+    allow_credentials=True,  # Cookie 送受信のため必要
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(health.router)
+app.include_router(auth.router)
 app.include_router(chat.router)
 app.include_router(faq.router)
 app.include_router(consent.router)

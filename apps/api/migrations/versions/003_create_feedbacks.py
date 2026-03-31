@@ -28,7 +28,7 @@ def upgrade() -> None:
             sa.ForeignKey("sessions.id"),
             nullable=False,
         ),
-        sa.Column("rating", sa.String(10), nullable=False),
+        sa.Column("rating", sa.Enum("good", "bad"), nullable=False),
         sa.Column("comment", sa.String(500), nullable=True),
         sa.Column(
             "created_at",

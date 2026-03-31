@@ -69,6 +69,29 @@ export const zFeedbackCreate = z.object({
 });
 
 /**
+ * FeedbackItem
+ *
+ * フィードバック一覧の1件。
+ */
+export const zFeedbackItem = z.object({
+  id: z.string(),
+  session_id: z.string(),
+  rating: z.enum(["good", "bad"]),
+  comment: z.string().nullable(),
+  created_at: z.iso.datetime(),
+});
+
+/**
+ * FeedbackListResponse
+ *
+ * フィードバック一覧レスポンス。
+ */
+export const zFeedbackListResponse = z.object({
+  feedbacks: z.array(zFeedbackItem),
+  total: z.int(),
+});
+
+/**
  * FeedbackResponse
  *
  * フィードバックレスポンス。
@@ -76,7 +99,7 @@ export const zFeedbackCreate = z.object({
 export const zFeedbackResponse = z.object({
   id: z.string(),
   session_id: z.string(),
-  rating: z.string(),
+  rating: z.enum(["good", "bad"]),
   comment: z.string().nullable(),
   created_at: z.iso.datetime(),
 });
@@ -114,6 +137,25 @@ export const zUsageLogResponse = z.object({
 });
 
 /**
+ * UserRole
+ *
+ * 管理ユーザーのロール。
+ */
+export const zUserRole = z.enum(["ADMIN", "MEMBER"]);
+
+/**
+ * UserResponse
+ *
+ * 管理ユーザー情報レスポンス。
+ */
+export const zUserResponse = z.object({
+  id: z.string(),
+  discord_user_id: z.string(),
+  user_name: z.string(),
+  role: zUserRole,
+});
+
+/**
  * ValidationError
  */
 export const zValidationError = z.object({
@@ -141,6 +183,37 @@ export const zHealthCheckHealthGetData = z.object({
  * Successful Response
  */
 export const zHealthCheckHealthGetResponse = zHealthResponse;
+
+export const zLoginApiAuthLoginGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zCallbackApiAuthCallbackGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    code: z.string(),
+  }),
+});
+
+export const zMeApiAuthMeGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Successful Response
+ */
+export const zMeApiAuthMeGetResponse = zUserResponse;
+
+export const zLogoutApiAuthLogoutPostData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
 
 export const zChatApiChatPostData = z.object({
   body: zChatRequest,
@@ -198,3 +271,19 @@ export const zAdminStatsApiAdminStatsGetData = z.object({
  * Successful Response
  */
 export const zAdminStatsApiAdminStatsGetResponse = zAdminStatsResponse;
+
+export const zFeedbackListApiAdminFeedbacksGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      limit: z.int().gte(1).lte(200).optional().default(50),
+      offset: z.int().gte(0).optional().default(0),
+    })
+    .optional(),
+});
+
+/**
+ * Successful Response
+ */
+export const zFeedbackListApiAdminFeedbacksGetResponse = zFeedbackListResponse;

@@ -49,6 +49,7 @@ node_modules/
 .next/
 .open-next/
 out/
+next-env.d.ts
 
 # Dify local runtime data (contains private keys, plugin caches)
 infra/dify/data/
