@@ -26,12 +26,17 @@ class Settings(BaseSettings):
     discord_client_secret: SecretStr = SecretStr("")
     discord_guild_id: str = ""
 
-    allowed_origins: list[str] = [
-        "http://localhost:3000",  # apps/web
-        "http://localhost:3001",  # apps/admin
-        "http://localhost:3101",  # Dify Web UI
-        "http://127.0.0.1:3101",  # Dify Web UI (127.0.0.1)
-    ]
+    # カンマ区切り文字列で受け取る (pydantic-settings が list を JSON 扱いするため)
+    allowed_origins: str = (
+        "http://localhost:3000,"
+        "http://localhost:3001,"
+        "http://localhost:3101,"
+        "http://127.0.0.1:3101"
+    )
+
+    @property
+    def allowed_origins_list(self) -> list[str]:
+        return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
 
     app_env: str = "development"
     daily_token_limit: int = 10000
@@ -47,12 +52,6 @@ class Settings(BaseSettings):
     @model_validator(mode="before")
     @classmethod
     def expand_json_configs(cls, values: dict) -> dict:
-        # ALLOWED_ORIGINS がカンマ区切り文字列で渡された場合にリストへ変換する
-        # (GCP Secret Manager はカンマ区切り文字列として注入するため)
-        if isinstance(values.get("allowed_origins"), str):
-            raw = values["allowed_origins"].strip()
-            values["allowed_origins"] = [o.strip() for o in raw.split(",") if o.strip()]
-
         if cfg := values.get("tidb_config"):
             data = json.loads(cfg)
             values.setdefault("tidb_host", data.get("host", ""))
