@@ -1,7 +1,5 @@
 import { logoutApiAuthLogoutPost, meApiAuthMeGet } from "@jyogi-navi/openapi/sdk";
-import type { UserResponse, UserRole } from "@jyogi-navi/openapi/types";
-
-export type { UserResponse, UserRole };
+import type { UserResponse } from "@jyogi-navi/openapi/types";
 
 /** 現在ログイン中のユーザー情報を取得する。未認証時は null を返す。 */
 export async function getMe(): Promise<UserResponse | null> {
