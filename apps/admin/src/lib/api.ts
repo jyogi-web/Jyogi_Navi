@@ -1,3 +1,4 @@
+import { feedbackListApiAdminFeedbacksGet } from "@jyogi-navi/openapi/sdk";
 import type { DailyCount, AdminStatsResponse, FeedbackListResponse } from "@jyogi-navi/openapi/types";
 
 export type AdminStats = AdminStatsResponse;
@@ -21,14 +22,13 @@ export async function fetchFeedbacks(
   limit = 50,
   offset = 0,
 ): Promise<FeedbackListResponse> {
-  const res = await fetch(
-    `${API_BASE_URL}/api/admin/feedbacks?limit=${limit}&offset=${offset}`,
-    { cache: "no-store", credentials: "include" },
-  );
-  if (!res.ok) {
-    throw new Error(`Failed to fetch feedbacks: ${res.status}`);
-  }
-  return res.json() as Promise<FeedbackListResponse>;
+  const { data, error } = await feedbackListApiAdminFeedbacksGet({
+    query: { limit, offset },
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (error) throw new Error("Failed to fetch feedbacks");
+  return data!;
 }
 
 export async function fetchAdminStats(): Promise<AdminStats> {
