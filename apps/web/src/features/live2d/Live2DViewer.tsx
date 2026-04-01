@@ -51,9 +51,9 @@ export function Live2DViewer({ modelPath }: Props) {
         (h / model.internalModel.originalHeight) * 0.9
       );
       model.scale.set(scale);
-      model.anchor.set(0.5, 0.5);
+      model.anchor.set(0.5, 0);
       model.x = w / 2;
-      model.y = h / 2;
+      model.y = (h - model.height) / 2;
       console.log("[Live2D] model positioned, scale:", scale, "x:", model.x, "y:", model.y);
     }
 
