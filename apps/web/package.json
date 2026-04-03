@@ -21,8 +21,10 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@jyogi-navi/openapi": "workspace:*",
+    "@mastra/core": "^1.20.0",
     "@opennextjs/cloudflare": "^1",
     "@tanstack/react-query": "^5.90.21",
+    "@tidbcloud/serverless": "^0.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.576.0",
@@ -44,6 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^4",
+    "dotenv": "^17.4.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "eslint-plugin-security": "^4.0.0",
@@ -57,6 +60,7 @@
     "stylelint-config-standard": "^40.0.0",
     "stylelint-config-tailwindcss": "^1.0.1",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.1.2",
     "wrangler": "^4"
